@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.squareup.android</groupId>
+    <artifactId>grampa</artifactId>
+    <version>2.7</version>
+  </parent>
+
+  <groupId>com.squareup.radiography</groupId>
+  <artifactId>radiography</artifactId>
+  <name>Radiography</name>
+  <description>Pretty printing of view hierarchies</description>
+  <version>1.6-SNAPSHOT</version>
+
+  <scm>
+    <developerConnection>scm:git:ssh://git@github.com:square/radiography.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.sourceEncoding>UTF-8</project.reporting.sourceEncoding>
+
+    <!-- Compilation -->
+    <android-maven.version>3.8.0</android-maven.version>
+    <java.version>1.6</java.version>
+
+    <!-- Dependencies -->
+    <android.version>4.4.2_r3</android.version>
+    <android.platform>17</android.platform>
+
+    <!-- Test Dependencies -->
+    <junit.version>4.10</junit.version>
+    <fest-android.version>1.0.7</fest-android.version>
+    <fest-assert.version>2.0M10</fest-assert.version>
+    <mockito.version>1.9.5</mockito.version>
+    <robolectric.version>2.2</robolectric.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>android</groupId>
+      <artifactId>android</artifactId>
+      <scope>provided</scope>
+      <version>${android.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup</groupId>
+      <artifactId>fest-android</artifactId>
+      <version>${fest-android.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easytesting</groupId>
+      <artifactId>fest-assert-core</artifactId>
+      <version>${fest-assert.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.robolectric</groupId>
+      <artifactId>robolectric</artifactId>
+      <version>${robolectric.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <!--
+          - Robolectric has a self conflicting transitive dependency to plexus-utils.
+          - It depends on plexus-utils version 1.0.4, 1.4.2 and 1.5.15.
+        -->
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-utils</artifactId>
+        </exclusion>
+        <!-- Robolectric depends on objenesis 1.3, mockito-core depends on objenesis 1.0 -->
+        <exclusion>
+          <groupId>org.objenesis</groupId>
+          <artifactId>objenesis</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+</project>
