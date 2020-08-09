@@ -51,7 +51,7 @@ window-focus:true
 
 
 <pre>
-Copyright 2015 Square Inc.
+Copyright 2020 Square Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
