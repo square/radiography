@@ -1,3 +1,5 @@
+package com.squareup.radiography;
+
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
@@ -9,8 +11,8 @@ import com.squareup.radiography.Xrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -24,7 +26,7 @@ public class XraysTest {
 
   @Before
   public void setUp() {
-    context = Robolectric.application;
+    context = RuntimeEnvironment.application;
     xrays = Xrays.create();
   }
 
