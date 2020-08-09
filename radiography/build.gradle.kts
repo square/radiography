@@ -16,6 +16,7 @@
 
 plugins {
   id("com.android.library")
+  kotlin("android")
   id("com.vanniktech.maven.publish")
 }
 
@@ -38,6 +39,8 @@ android {
 }
 
 dependencies {
+  implementation(kotlin("stdlib"))
+
   testImplementation("junit:junit:4.13")
   testImplementation("com.squareup:fest-android:1.0.7")
   testImplementation("org.easytesting:fest-assert-core:2.0M10")
