@@ -22,6 +22,8 @@ buildscript {
     mavenCentral()
     gradlePluginPortal()
     google()
+    // For binary compatibility validator.
+    maven { url = uri("https://kotlin.bintray.com/kotlinx") }
   }
 
   dependencies {
@@ -29,8 +31,11 @@ buildscript {
     classpath("com.vanniktech:gradle-maven-publish-plugin:0.12.0")
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
     classpath("org.jlleitschuh.gradle:ktlint-gradle:9.2.1")
+    classpath("org.jetbrains.kotlinx:binary-compatibility-validator:0.2.3")
   }
 }
+
+apply(plugin = "binary-compatibility-validator")
 
 // See https://stackoverflow.com/questions/25324880/detect-ide-environment-with-gradle
 val isRunningFromIde get() = project.properties["android.injected.invoked.from.ide"] == "true"
