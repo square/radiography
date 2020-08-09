@@ -15,10 +15,8 @@ import java.util.List;
  */
 public class WindowScanner {
 
-  private static final String WINDOW_MANAGER_IMPL_CLASS = "android.view.WindowManagerImpl";
   private static final String WINDOW_MANAGER_GLOBAL_CLASS = "android.view.WindowManagerGlobal";
   private static final String VIEWS_FIELD = "mViews";
-  private static final String GET_DEFAULT_IMPL = "getDefault";
   private static final String GET_GLOBAL_INSTANCE = "getInstance";
 
   private static final WindowScanner INSTANCE = new WindowScanner();
@@ -61,13 +59,8 @@ public class WindowScanner {
     initialized = true;
     String accessClass;
     String instanceMethod;
-    if (Build.VERSION.SDK_INT > 16) {
-      accessClass = WINDOW_MANAGER_GLOBAL_CLASS;
-      instanceMethod = GET_GLOBAL_INSTANCE;
-    } else {
-      accessClass = WINDOW_MANAGER_IMPL_CLASS;
-      instanceMethod = GET_DEFAULT_IMPL;
-    }
+    accessClass = WINDOW_MANAGER_GLOBAL_CLASS;
+    instanceMethod = GET_GLOBAL_INSTANCE;
 
     try {
       Class<?> clazz = Class.forName(accessClass);

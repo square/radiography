@@ -8,8 +8,8 @@ import android.view.WindowManager;
 import android.widget.Checkable;
 import android.widget.TextView;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.CUPCAKE;
 import static android.view.View.NO_ID;
 import static java.util.Arrays.binarySearch;
@@ -24,7 +24,7 @@ public final class Xrays {
   private final int textFieldMaxLength;
   private final int[] skippedIds;
 
-  private Xrays(Builder builder) {
+  private Xrays(@NotNull Builder builder) {
     this.showTextFieldContent = builder.showTextFieldContent;
     this.textFieldMaxLength = builder.textFieldMaxLength;
     this.skippedIds = builder.skippedIds == null ? new int[0] : builder.skippedIds;
@@ -78,7 +78,7 @@ public final class Xrays {
    *
    * @see #scan(StringBuilder, View)
    */
-  public String scanAllWindows() {
+  @NotNull public String scanAllWindows() {
     StringBuilder result = new StringBuilder();
 
     List<View> rootViews = WindowScanner.getInstance().findAllRootViews();
@@ -110,7 +110,7 @@ public final class Xrays {
    *
    * @see #scan(StringBuilder, View)
    */
-  public String scanFromRoot(View view) {
+  @NotNull public String scanFromRoot(@NotNull View view) {
     return scan(view.getRootView());
   }
 
@@ -119,12 +119,12 @@ public final class Xrays {
    *
    * @see #scan(StringBuilder, View)
    */
-  public void scanFromRoot(StringBuilder result, View view) {
+  public void scanFromRoot(StringBuilder result, @NotNull View view) {
     scan(result, view.getRootView());
   }
 
   /** @see #scan(StringBuilder, View) */
-  public String scan(View view) {
+  @NotNull public String scan(View view) {
     StringBuilder result = new StringBuilder();
     scan(result, view);
     return result.toString();
@@ -135,7 +135,7 @@ public final class Xrays {
    * {@link StringBuilder}.
    * @param view the parent view that gets its hierarchy pretty printed.
    */
-  public void scan(StringBuilder result, View view) {
+  public void scan(@NotNull StringBuilder result, View view) {
     int startPosition = result.length();
     try {
       if (view != null) {
@@ -170,7 +170,7 @@ public final class Xrays {
     }
   }
 
-  private int findLastNonSkippedChildIndex(ViewGroup viewGroup) {
+  private int findLastNonSkippedChildIndex(@NotNull ViewGroup viewGroup) {
     int lastChildIndex = viewGroup.getChildCount() - 1;
     for (int index = lastChildIndex; index >= 0; index--) {
       View child = viewGroup.getChildAt(index);
@@ -181,12 +181,13 @@ public final class Xrays {
     return -1;
   }
 
-  private boolean skipChild(View child) {
+  private boolean skipChild(@NotNull View child) {
     int childId = child.getId();
     return childId != NO_ID && binarySearch(skippedIds, childId) >= 0;
   }
 
-  private static void appendLinePrefix(StringBuilder result, int depth, long lastChildMask) {
+  private static void appendLinePrefix(@NotNull StringBuilder result, int depth,
+      long lastChildMask) {
     int lastDepth = depth - 1;
     // Add a non-breaking space at the beginning of the line because Logcat eats normal spaces.
     result.append('\u00a0');
@@ -266,10 +267,8 @@ public final class Xrays {
           result.append(", text:\"").append(text).append("\"");
         }
       }
-      if (SDK_INT >= CUPCAKE) {
-        if (textView.isInputMethodTarget()) {
-          result.append(", ime-target");
-        }
+      if (textView.isInputMethodTarget()) {
+        result.append(", ime-target");
       }
     }
     if (view instanceof Checkable) {

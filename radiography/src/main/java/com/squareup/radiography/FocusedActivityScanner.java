@@ -2,6 +2,7 @@ package com.squareup.radiography;
 
 import android.app.Activity;
 import android.view.View;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Keeps a reference to the root view of the currently focused {@link Activity} to enable pretty
@@ -31,7 +32,7 @@ public final class FocusedActivityScanner {
     focusedRootView = activity.getWindow().getDecorView().getRootView();
   }
 
-  public String scanFocusedActivity() {
+  @NotNull public String scanFocusedActivity() {
     if (focusedRootView == null) {
       return "No focused root view";
     }
