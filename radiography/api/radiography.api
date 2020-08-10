@@ -7,41 +7,41 @@ public final class com/squareup/radiography/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class radiography/FocusedActivityScanner {
-	public fun <init> ([I)V
-	public final fun resetFocusedActivity ()V
-	public final fun scanFocusedActivity ()Ljava/lang/String;
-	public final fun setFocusedActivity (Landroid/app/Activity;)V
-}
-
-public final class radiography/WindowScanner {
-	public static final field INSTANCE Lradiography/WindowScanner;
-	public final fun findAllRootViews ()Ljava/util/List;
-	public static final fun getInstance ()Lradiography/WindowScanner;
-}
-
-public final class radiography/Xrays {
-	public static final field Companion Lradiography/Xrays$Companion;
-	public synthetic fun <init> (Lradiography/Xrays$Builder;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public static final fun create ()Lradiography/Xrays;
-	public final fun scan (Landroid/view/View;)Ljava/lang/String;
-	public final fun scan (Ljava/lang/StringBuilder;Landroid/view/View;)V
-	public final fun scanAllWindows ()Ljava/lang/String;
-	public final fun scanFromRoot (Landroid/view/View;)Ljava/lang/String;
-	public final fun scanFromRoot (Ljava/lang/StringBuilder;Landroid/view/View;)V
-	public static final fun withSkippedIds ([I)Lradiography/Xrays;
-}
-
-public final class radiography/Xrays$Builder {
+public final class radiography/FocusedWindowViewFilter : radiography/ViewFilter {
 	public fun <init> ()V
-	public final fun build ()Lradiography/Xrays;
-	public final fun showTextFieldContent (Z)Lradiography/Xrays$Builder;
-	public final fun skippedIds ([I)Lradiography/Xrays$Builder;
-	public final fun textFieldMaxLength (I)Lradiography/Xrays$Builder;
+	public fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
+	public fun matches (Landroid/view/View;)Z
 }
 
-public final class radiography/Xrays$Companion {
-	public final fun create ()Lradiography/Xrays;
-	public final fun withSkippedIds ([I)Lradiography/Xrays;
+public final class radiography/Radiography {
+	public static final field INSTANCE Lradiography/Radiography;
+	public static final fun scan (Landroid/view/View;ZILradiography/ViewFilter;)Ljava/lang/String;
+	public static synthetic fun scan$default (Landroid/view/View;ZILradiography/ViewFilter;ILjava/lang/Object;)Ljava/lang/String;
+}
+
+public final class radiography/SkipIdsViewFilter : radiography/ViewFilter {
+	public fun <init> ([I)V
+	public fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
+	public fun matches (Landroid/view/View;)Z
+}
+
+public abstract interface class radiography/ViewFilter {
+	public abstract fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
+	public abstract fun matches (Landroid/view/View;)Z
+}
+
+public final class radiography/ViewFilter$All : radiography/ViewFilter {
+	public static final field INSTANCE Lradiography/ViewFilter$All;
+	public fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
+	public fun matches (Landroid/view/View;)Z
+}
+
+public final class radiography/ViewFilter$DefaultImpls {
+	public static fun and (Lradiography/ViewFilter;Lradiography/ViewFilter;)Lradiography/ViewFilter;
+}
+
+public final class radiography/ViewsKt {
+	public static final synthetic fun scan (Landroid/view/View;ZILradiography/ViewFilter;)Ljava/lang/String;
+	public static synthetic fun scan$default (Landroid/view/View;ZILradiography/ViewFilter;ILjava/lang/Object;)Ljava/lang/String;
 }
 
