@@ -13,7 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-rootProject.name = "radiography"
 
-include(":radiography")
-include(":sample")
+plugins {
+  id("com.android.application")
+  kotlin("android")
+}
+
+android {
+  compileSdkVersion(30)
+
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
+
+  defaultConfig {
+    minSdkVersion(17)
+    targetSdkVersion(30)
+    applicationId = "com.squareup.radiography.sample"
+  }
+}
+
+dependencies {
+  implementation(project(":radiography"))
+  implementation(kotlin("stdlib"))
+}

@@ -74,7 +74,7 @@ object Radiography {
 
       val startPosition = length
       try {
-        appendln("window-focus:${view.hasWinFocusedWindowViewFilter.ktdowFocus()}")
+        appendln("window-focus:${view.hasWindowFocus()}")
         config.scanRecursively(this, 0, 0, view)
       } catch (e: Throwable) {
         insert(
