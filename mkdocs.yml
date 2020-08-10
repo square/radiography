@@ -1,0 +1,78 @@
+#
+#  Copyright 2020 Square Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+site_name: Square Radiography
+repo_name: Radiography
+repo_url: https://github.com/square/radiography
+site_description: "Pretty printing of view hierarchies"
+site_author: Square, Inc.
+site_url: https://square.github.io/radiography/
+remote_branch: gh-pages
+
+copyright: 'Copyright &copy; 2020 Square, Inc.'
+
+theme:
+  name: 'material'
+  logo: images/icon-square.png
+  favicon: images/icon-square.png
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    primary: 'red'
+    accent: 'pink'
+  features:
+    - tabs
+    - instant
+
+#extra_css:
+#  - 'css/app.css'
+
+markdown_extensions:
+  - admonition
+  - smarty
+  - codehilite:
+      guess_lang: false
+      linenums: True
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - tables
+
+plugins:
+  - search
+
+extra:
+  # type is the name of the FontAwesome icon without the fa- prefix.
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/square
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/squareeng
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/joinsquare/
+
+nav:
+  - 'Overview': README.md
