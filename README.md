@@ -9,17 +9,41 @@ Radiography provides a utility class to pretty print a view hierarchy.
 
 ## Usage
 
-```kotlin
-val prettyHierarchy = Xrays.create().scan(myView)
+Add the `radiography` dependency to your app's build.gradle file:
+
+```gradle
+dependencies {
+  implementation 'com.squareup.radiography:radiography:2.0.0'
+}
 ```
 
-You can ignore parts of the view hierarchy (e.g. a debug view) by providing ids to skip. You can scan from the root of the view hierarchy with `Xrays.scanFromRoot()`.
+`Radiography.scan()` returns a pretty string rendering of the view hierarchy of all windows managed by the current process.
 
 ```kotlin
-prettyPrintButton.setOnClickListener {
-    val skippedId = prettyPrintButton.getId()
-    Log.d("ViewHierarchy", Xrays.withSkippedIds(skippedId).scanFromRoot(prettyPrintButton))
-}
+// Render the view hierarchy for all windows.
+val prettyHierarchy = Radiography.scan()
+
+// Include the text content from TextView instances.
+val prettyHierarchy = Radiography.scan(includeTextViewText = true)
+
+// Ellipsize if the text content is too long.
+val prettyHierarchy = Radiography.scan(includeTextViewText = true, textViewTextMaxLength = 10)
+```
+
+You can print a subset of the view hierarchies.
+
+```
+// Extension function on View, renders starting from that view.
+val prettyHierarchy = someView.scan()
+
+// Render only the view hierarchy from the focused window, if any.
+val prettyHierarchy = Radiography.scan(viewFilter = FocusedWindowViewFilter)
+
+// Filter out views with specific ids.
+Radiography.scan(viewFilter = SkipIdsViewFilter(R.id.debug_drawer))
+
+// Combine view filters.
+Radiography.scan(viewFilter = FocusedWindowViewFilter and MyCustomViewFilter())
 ```
 
 ## Result example
@@ -27,6 +51,7 @@ prettyPrintButton.setOnClickListener {
 ![screenshot](.images/demo_screenshot.png)
 
 ```
+com.squareup.radiography.sample/com.squareup.radiography.sample.MainActivity:
 window-focus:true
      DecorView { 1080x2160px }
      +-LinearLayout { 1080x2028px }
@@ -47,7 +72,6 @@ window-focus:true
      |       `-ActionBarContextView { id:action_context_bar, GONE, 0x0px }
      +-View { id:navigationBarBackground, 1080x132px }
      `-View { id:statusBarBackground, 1080x66px }
-
 ```
 
 ## License
