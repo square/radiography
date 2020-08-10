@@ -3,12 +3,7 @@ package radiography
 internal abstract class TreeStringRenderer<N> {
 
   abstract fun StringBuilder.renderNode(node: N)
-
-  abstract fun N.getChildAt(index: Int): N?
-
-  abstract val N.childCount: Int
-
-  abstract fun N.matches(): Boolean
+  abstract val N.children: Collection<N?>
 
   fun render(
     stringBuilder: StringBuilder,
@@ -25,35 +20,21 @@ internal abstract class TreeStringRenderer<N> {
     appendLinePrefix(depth, lastChildMask)
     renderNode(node)
     appendln()
-    val childCount = node.childCount
-    if (childCount > 0) {
-      val lastNonSkippedChildIndex = node.findLastNonSkippedChildIndex()
-      val lastChildIndex = childCount - 1
+
+    val children = node.children
+    if (children.isNotEmpty()) {
+      val lastChildIndex = children.size - 1
       var newLastChildMask = lastChildMask
-      for (index in 0..lastChildIndex) {
-        if (index == lastNonSkippedChildIndex) {
+      children.forEachIndexed { index, childNode ->
+        if (index == lastChildIndex) {
           newLastChildMask = newLastChildMask or (1 shl depth).toLong()
         }
-        val childNode = node.getChildAt(index)
         // Never null on the main thread, but if called from another thread all bets are off.
         childNode?.let {
-          if (childNode.matches()) {
-            renderRecursively(childNode, depth + 1, newLastChildMask)
-          }
+          renderRecursively(childNode, depth + 1, newLastChildMask)
         }
       }
     }
-  }
-
-  private fun N.findLastNonSkippedChildIndex(): Int {
-    val lastChildIndex = childCount - 1
-    for (index in lastChildIndex downTo 0) {
-      val child = getChildAt(index)
-      if (child != null && child.matches()) {
-        return index
-      }
-    }
-    return -1
   }
 
   private fun StringBuilder.appendLinePrefix(

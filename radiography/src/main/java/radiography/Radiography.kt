@@ -64,14 +64,8 @@ object Radiography {
         viewToString(node, includeTextViewText, textViewTextMaxLength)
       }
 
-      override fun View.getChildAt(index: Int): View? {
-        return if (this is ViewGroup) getChildAt(index) else null
-      }
-
-      override val View.childCount: Int
-        get() = if (this is ViewGroup) childCount else 0
-
-      override fun View.matches() = viewFilter.matches(this)
+      override val View.children: Collection<View?>
+        get() = if (this is ViewGroup) childrenAsList().filter(viewFilter::matches) else emptyList()
     }
 
     for (view in matchingRootViews) {

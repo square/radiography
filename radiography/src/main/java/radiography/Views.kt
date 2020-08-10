@@ -1,6 +1,7 @@
 package radiography
 
 import android.view.View
+import android.view.ViewGroup
 
 /**
  * Extension function for [Radiography.scan] when scanning starts from a specific view.
@@ -17,4 +18,9 @@ fun View?.scan(
   } else {
     Radiography.scan(this, includeTextViewText, textViewTextMaxLength, viewFilter)
   }
+}
+
+internal fun ViewGroup.childrenAsList(): List<View> = object : AbstractList<View>() {
+  override val size: Int get() = childCount
+  override fun get(index: Int): View = getChildAt(index)
 }
