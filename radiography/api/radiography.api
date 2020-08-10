@@ -23,11 +23,13 @@ public final class com/squareup/radiography/WindowScanner {
 public final class com/squareup/radiography/Xrays {
 	public static final field Companion Lcom/squareup/radiography/Xrays$Companion;
 	public synthetic fun <init> (Lcom/squareup/radiography/Xrays$Builder;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun create ()Lcom/squareup/radiography/Xrays;
 	public final fun scan (Landroid/view/View;)Ljava/lang/String;
 	public final fun scan (Ljava/lang/StringBuilder;Landroid/view/View;)V
 	public final fun scanAllWindows ()Ljava/lang/String;
 	public final fun scanFromRoot (Landroid/view/View;)Ljava/lang/String;
 	public final fun scanFromRoot (Ljava/lang/StringBuilder;Landroid/view/View;)V
+	public static final fun withSkippedIds ([I)Lcom/squareup/radiography/Xrays;
 }
 
 public final class com/squareup/radiography/Xrays$Builder {
