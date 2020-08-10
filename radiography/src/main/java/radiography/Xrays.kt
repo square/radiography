@@ -1,4 +1,4 @@
-package com.squareup.radiography
+package radiography
 
 import android.annotation.TargetApi
 import android.content.res.Resources.NotFoundException
