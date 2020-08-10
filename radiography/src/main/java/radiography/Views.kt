@@ -1,6 +1,7 @@
 package radiography
 
 import android.view.View
+import radiography.ViewStateRenderers.defaultsNoPii
 
 /**
  * Extension function for [Radiography.scan] when scanning starts from a specific view.
@@ -8,13 +9,12 @@ import android.view.View
  */
 @JvmSynthetic
 fun View?.scan(
-  includeTextViewText: Boolean = false,
-  textViewTextMaxLength: Int = Int.MAX_VALUE,
+  stateRenderers: List<StateRenderer<*>> = defaultsNoPii,
   viewFilter: ViewFilter = ViewFilter.All
 ): String {
   return if (this == null) {
     "null"
   } else {
-    Radiography.scan(this, includeTextViewText, textViewTextMaxLength, viewFilter)
+    Radiography.scan(this, stateRenderers, viewFilter)
   }
 }
