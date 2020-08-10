@@ -1,4 +1,4 @@
-package com.squareup.radiography
+package radiography
 
 import android.os.Build.VERSION
 import android.view.View

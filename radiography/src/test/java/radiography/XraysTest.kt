@@ -1,4 +1,4 @@
-package com.squareup.radiography
+package radiography
 
 import android.content.Context
 import android.view.View
@@ -7,7 +7,7 @@ import android.widget.CheckBox
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.squareup.radiography.Xrays.Builder
+import radiography.Xrays.Builder
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
