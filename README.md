@@ -1,22 +1,25 @@
 # Radiography
 
+
+[![Maven Central](https://img.shields.io/maven-central/v/com.squareup.radiography/radiography.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.squareup.radiography%22)
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
+![Android CI](https://github.com/square/radiography/workflows/Android%20CI/badge.svg)
+
 Radiography provides a utility class to pretty print a view hierarchy.
 
 ## Usage
 
-```
-String prettyHierarchy = Xrays.create().scan(myView);
+```kotlin
+val prettyHierarchy = Xrays.create().scan(myView)
 ```
 
 You can ignore parts of the view hierarchy (e.g. a debug view) by providing ids to skip. You can scan from the root of the view hierarchy with `Xrays.scanFromRoot()`.
 
-```
-prettyPrintButton.setOnClickListener(new View.OnClickListener() {
-  @Override public void onClick(View prettyPrintButton) {
-    int skippedId = prettyPrintButton.getId();
-    Log.d("ViewHierarchy", Xrays.withSkippedIds(skippedId).scanFromRoot(prettyPrintButton));
-  }
-});
+```kotlin
+prettyPrintButton.setOnClickListener {
+    val skippedId = prettyPrintButton.getId()
+    Log.d("ViewHierarchy", Xrays.withSkippedIds(skippedId).scanFromRoot(prettyPrintButton))
+}
 ```
 
 ## Result example
