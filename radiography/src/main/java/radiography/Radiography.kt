@@ -59,9 +59,20 @@ object Radiography {
 
     val matchingRootViews = rootViews.filter(viewFilter::matches)
 
-    val config = Config(
-        includeTextViewText, textViewTextMaxLength, viewFilter
-    )
+    val renderer = object : TreeStringRenderer<View>() {
+      override fun StringBuilder.renderNode(node: View) {
+        viewToString(node, includeTextViewText, textViewTextMaxLength)
+      }
+
+      override fun View.getChildAt(index: Int): View? {
+        return if (this is ViewGroup) getChildAt(index) else null
+      }
+
+      override val View.childCount: Int
+        get() = if (this is ViewGroup) childCount else 0
+
+      override fun View.matches() = viewFilter.matches(this)
+    }
 
     for (view in matchingRootViews) {
       if (length > 0) {
@@ -75,7 +86,7 @@ object Radiography {
       val startPosition = length
       try {
         appendln("window-focus:${view.hasWindowFocus()}")
-        config.scanRecursively(this, 0, 0, view)
+        renderer.render(this, view)
       } catch (e: Throwable) {
         insert(
             startPosition,
@@ -85,139 +96,61 @@ object Radiography {
     }
   }
 
-  private class Config(
-    val includeTextViewText: Boolean,
-    val textViewTextMaxLength: Int,
-    val viewFilter: ViewFilter
-  )
-
-  private fun Config.scanRecursively(
-    result: StringBuilder,
-    depth: Int,
-    lastChildMask: Long,
-    view: View
-  ) {
-    @Suppress("NAME_SHADOWING")
-    var lastChildMask = lastChildMask
-    appendLinePrefix(result, depth, lastChildMask)
-    viewToString(result, view)
-    result.appendln()
-
-    if (view is ViewGroup) {
-      val lastNonSkippedChildIndex = findLastNonSkippedChildIndex(view)
-      val lastChildIndex = view.childCount - 1
-      for (index in 0..lastChildIndex) {
-        if (index == lastNonSkippedChildIndex) {
-          lastChildMask = lastChildMask or (1 shl depth).toLong()
-        }
-        val child = view.getChildAt(index)
-        // Never null on the main thread, but if called from another thread all bets are off.
-        child?.let {
-          if (viewFilter.matches(child)) {
-            scanRecursively(result, depth + 1, lastChildMask, child)
-          }
-        }
-      }
-    }
-  }
-
-  private fun Config.findLastNonSkippedChildIndex(viewGroup: ViewGroup): Int {
-    val lastChildIndex = viewGroup.childCount - 1
-    for (index in lastChildIndex downTo 0) {
-      val child = viewGroup.getChildAt(index)
-      if (viewFilter.matches(child)) {
-        return index
-      }
-    }
-    return -1
-  }
-
   @TargetApi(CUPCAKE)
-  private fun Config.viewToString(
-    result: StringBuilder,
-    view: View
+  private fun StringBuilder.viewToString(
+    view: View,
+    includeTextViewText: Boolean,
+    textViewTextMaxLength: Int
   ) {
-    result.append("${view.javaClass.simpleName} { ")
+    append("${view.javaClass.simpleName} { ")
     if (view.id != View.NO_ID && view.resources != null) {
       try {
         val resourceName = view.resources.getResourceEntryName(view.id)
-        result.append("id:$resourceName, ")
+        append("id:$resourceName, ")
       } catch (ignore: NotFoundException) {
         // Do nothing.
       }
     }
 
     when (view.visibility) {
-      View.GONE -> result.append("GONE, ")
-      View.INVISIBLE -> result.append("INVISIBLE, ")
+      View.GONE -> append("GONE, ")
+      View.INVISIBLE -> append("INVISIBLE, ")
     }
 
-    result.append("${view.width}x${view.height}px")
+    append("${view.width}x${view.height}px")
 
     if (view.isFocused) {
-      result.append(", focused")
+      append(", focused")
     }
 
     if (!view.isEnabled) {
-      result.append(", disabled")
+      append(", disabled")
     }
 
     if (view.isSelected) {
-      result.append(", selected")
+      append(", selected")
     }
 
     if (view is TextView) {
       var text = view.text
       if (text != null) {
-        result.append(", text-length:${text.length}")
+        append(", text-length:${text.length}")
         if (includeTextViewText) {
           if (text.length > textViewTextMaxLength) {
             text = "${text.subSequence(0, textViewTextMaxLength - 1)}…"
           }
-          result.append(", text:\"$text\"")
+          append(", text:\"$text\"")
         }
       }
       if (view.isInputMethodTarget) {
-        result.append(", ime-target")
+        append(", ime-target")
       }
     }
     if (view is Checkable) {
       if (view.isChecked) {
-        result.append(", checked")
+        append(", checked")
       }
     }
-    result.append(" }")
-  }
-
-  private fun appendLinePrefix(
-    result: StringBuilder,
-    depth: Int,
-    lastChildMask: Long
-  ) {
-    val lastDepth = depth - 1
-    // Add a non-breaking space at the beginning of the line because Logcat eats normal spaces.
-    result.append('\u00a0')
-    for (parentDepth in 0..lastDepth) {
-      if (parentDepth > 0) {
-        result.append(' ')
-      }
-      val lastChild = lastChildMask and (1 shl parentDepth).toLong() != 0L
-      if (lastChild) {
-        if (parentDepth == lastDepth) {
-          result.append('`')
-        } else {
-          result.append(' ')
-        }
-      } else {
-        if (parentDepth == lastDepth) {
-          result.append('+')
-        } else {
-          result.append('|')
-        }
-      }
-    }
-    if (depth > 0) {
-      result.append("-")
-    }
+    append(" }")
   }
 }
