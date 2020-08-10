@@ -35,7 +35,7 @@ buildscript {
   }
 }
 
-apply(plugin = "binary-compatibility-validator")
+apply(from = rootProject.file(".buildscript/binary-validation.gradle"))
 
 // See https://stackoverflow.com/questions/25324880/detect-ide-environment-with-gradle
 val isRunningFromIde get() = project.properties["android.injected.invoked.from.ide"] == "true"

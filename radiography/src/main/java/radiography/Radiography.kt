@@ -32,8 +32,8 @@ object Radiography {
    * the rendered view hierarchy. Defaults to false to avoid including any PII.
    *
    * @param textViewTextMaxLength the max size of the string content of TextView instances when
-   * [includeTextViewText] is true. When the max size is reached, the text is trimmed and
-   * ellipsized with a '…' character.
+   * [includeTextViewText] is true. When the max size is reached, the text is trimmed to
+   * a [textViewTextMaxLength] - 1 length and ellipsized with a '…' character.
    *
    * @param viewFilter a filter to exclude specific views from the rendering. If a view is excluded
    * then all of its children are excluded as well. Use [SkipIdsViewFilter] to ignore views that
