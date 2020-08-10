@@ -4,10 +4,10 @@ import android.content.Context
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import radiography.Xrays.Builder
 import org.fest.assertions.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,10 +17,9 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class XraysTest {
+class RadiographyTest {
   @Suppress("DEPRECATION")
   private val context: Context = RuntimeEnvironment.application
-  private val xrays: Xrays = Xrays.create()
 
   @Test fun viewDetailsReported() {
     val view = View(context)
@@ -31,7 +30,7 @@ class XraysTest {
           isEnabled = false
           isSelected = true
         }
-    assertThat(xrays.scan(view))
+    assertThat(view.scan())
         .contains("INVISIBLE")
         .contains("30x30px")
         .contains("disabled")
@@ -39,21 +38,22 @@ class XraysTest {
   }
 
   @Test fun nullView() {
-    assertThat(xrays.scan(null))
+    val view: View? = null
+    assertThat(view.scan())
         .contains("null")
   }
 
   @Test fun checkableChecked() {
     val view = CheckBox(context)
     view.isChecked = true
-    assertThat(xrays.scan(view))
+    assertThat(view.scan())
         .contains("checked")
   }
 
   @Test fun textView() {
     val view = TextView(context)
     view.text = "Baguette"
-    val scan = xrays.scan(view)
+    val scan = view.scan()
     assertThat(scan)
         .contains("text-length:8")
         .doesNotContain("text:")
@@ -62,9 +62,7 @@ class XraysTest {
   @Test fun textViewContents() {
     val view = TextView(context)
     view.text = "Baguette Avec Fromage"
-    val xrays = Builder().showTextFieldContent(true)
-        .build()
-    val scan = xrays.scan(view)
+    val scan = view.scan(includeTextViewText = true)
     assertThat(scan)
         .contains("text-length:21")
         .contains("text:\"Baguette Avec Fromage\"")
@@ -73,10 +71,10 @@ class XraysTest {
   @Test fun textViewContentsEllipsized() {
     val view = TextView(context)
     view.text = "Baguette Avec Fromage"
-    val xrays = Builder().showTextFieldContent(true)
-        .textFieldMaxLength(11)
-        .build()
-    val scan = xrays.scan(view)
+    val scan = view.scan(
+        includeTextViewText = true,
+        textViewTextMaxLength = 11
+    )
     assertThat(scan)
         .contains("text-length:21")
         .contains("text:\"Baguette A…\"")
@@ -89,22 +87,37 @@ class XraysTest {
         throw UnsupportedOperationException("Leave me alone")
       }
     })
-    assertThat(xrays.scan(layout))
+    assertThat(layout.scan())
         .contains("FrameLayout")
         .contains("Leave me alone")
   }
 
   @Test fun skipIds() {
     val layout = FrameLayout(context)
-    val view = Button(context)
-    view.id = 42
+    val view = Button(context).apply {
+      id = 42
+    }
     layout.addView(view)
-    assertThat(
-        Xrays.withSkippedIds(42)
-            .scan(layout)
-    )
+    assertThat(layout.scan(viewFilter = SkipIdsViewFilter(42)))
         .contains("FrameLayout")
         .doesNotContain("Button")
+  }
+
+  @Test fun combineFilters() {
+    val layout = FrameLayout(context)
+    layout.addView(CheckBox(context))
+    layout.addView(Button(context).apply {
+      id = 42
+    })
+    layout.addView(EditText(context))
+
+    val filter = SkipIdsViewFilter(42) and object : ViewFilter {
+      override fun matches(view: View) = view !is EditText
+    }
+    assertThat(layout.scan(viewFilter = filter))
+        .contains("CheckBox")
+        .doesNotContain("Button")
+        .doesNotContain("TextView")
   }
 
   @Test fun nestedViews() {
@@ -123,7 +136,7 @@ class XraysTest {
           addView(View(context))
         }
     root.addView(childLayout2)
-    assertThat(xrays.scan(root)).contains(
+    assertThat(root.scan()).contains(
         """
           FrameLayout { 0x0px }
           $BLANK+-View { 0x0px }
