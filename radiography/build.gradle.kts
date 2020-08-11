@@ -32,7 +32,7 @@ android {
   }
 
   defaultConfig {
-    minSdkVersion(17)
+    minSdkVersion(21)
     targetSdkVersion(28)
     versionCode = 1
     versionName = "1.0"
@@ -56,7 +56,18 @@ tasks.withType<KotlinCompile> {
   }
 }
 
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf(
+        "-Xallow-jvm-ir-dependencies",
+        "-Xopt-in=kotlin.RequiresOptIn"
+    )
+  }
+}
+
 dependencies {
+  compileOnly(Dependencies.Compose.Tooling)
+
   implementation(kotlin("stdlib", Versions.KotlinStdlib))
 
   testImplementation(Dependencies.JUnit)

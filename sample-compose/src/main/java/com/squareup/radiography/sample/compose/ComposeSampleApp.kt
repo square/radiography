@@ -14,19 +14,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.currentComposer
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.viewinterop.emitView
 import radiography.Radiography
 import radiography.ViewFilter
 import radiography.ViewFilters.FocusedWindowViewFilter
@@ -37,10 +34,12 @@ import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.textViewRenderer
 import radiography.ViewStateRenderers.viewStateRendererFor
+import radiography.compose.ExperimentalRadiographyComposeApi
+import radiography.compose.ViewFilters.skipTestTagsViewFilter
+import radiography.compose.ViewStateRenderers.composeViewRenderer
 
 @Composable fun ComposeSampleApp() {
   val (isChecked, onCheckChanged) = remember { mutableStateOf(false) }
-  var text by remember { mutableStateOf("") }
   val context = ContextAmbient.current
   val composer = currentComposer
 
@@ -50,9 +49,8 @@ import radiography.ViewStateRenderers.viewStateRendererFor
       Checkbox(checked = isChecked, onCheckedChange = onCheckChanged)
       Text("Check me, or don't.")
     }
-    TextField(value = text, onValueChange = { text = it }, label = { Text("Text Field") })
     // Include a classic Android view in the composition.
-    AndroidView(::TextView) {
+    emitView(::TextView) {
       @SuppressLint("SetTextI18n")
       it.text = "inception"
     }
@@ -64,6 +62,7 @@ import radiography.ViewStateRenderers.viewStateRendererFor
   }
 }
 
+@OptIn(ExperimentalRadiographyComposeApi::class)
 private fun showSelectionDialog(
   context: Context,
   composer: Composer<*>
@@ -74,6 +73,12 @@ private fun showSelectionDialog(
       },
       "Focused window" to {
         Radiography.scan(viewFilter = FocusedWindowViewFilter)
+      },
+//      "Start from R.id.main" to {
+//        findViewById<View>(R.id.main).scan()
+//      },
+      "Skip testTag(\"show-rendering\")" to {
+        Radiography.scan(viewFilter = skipTestTagsViewFilter("show-rendering"))
       },
       "Focused window and custom filter" to {
         Radiography.scan(viewFilter = FocusedWindowViewFilter and object : ViewFilter {
@@ -88,7 +93,8 @@ private fun showSelectionDialog(
             viewStateRenderers = listOf(
                 ViewRenderer,
                 textViewRenderer(includeTextViewText = true, textViewTextMaxLength = 4),
-                CheckableRenderer
+                CheckableRenderer,
+                composeViewRenderer(includeText = true, maxTextLength = 4)
             )
         )
       },

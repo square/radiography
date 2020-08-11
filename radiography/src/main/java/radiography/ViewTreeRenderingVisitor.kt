@@ -4,6 +4,9 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION_CODES
 import android.view.View
 import android.view.ViewGroup
+import radiography.compose.ComposeTreeNodeRenderer
+import radiography.compose.isComposeView
+import radiography.compose.visitComposeView
 
 /**
  * A [TreeRenderingVisitor] that renders [View]s and their children which match [viewFilter] using
@@ -16,6 +19,16 @@ internal class ViewTreeRenderingVisitor(
 
   override fun RenderingScope.visitNode(node: View) {
     description.viewToString(node)
+
+    if (node.isComposeView) {
+      val treeNodeFormatter = viewStateRenderers.filterIsInstance<ComposeTreeNodeRenderer>()
+          .firstOrNull()
+      val collapseEmptyNodes = treeNodeFormatter?.collapseEmptyNodes ?: true
+      visitComposeView(
+          node, collapseEmptyNodes, treeNodeFormatter, viewFilter, this@ViewTreeRenderingVisitor
+      )
+      return
+    }
 
     if (node !is ViewGroup) return
 

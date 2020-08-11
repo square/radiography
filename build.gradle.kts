@@ -37,6 +37,13 @@ buildscript {
     classpath(Dependencies.Build.Ktlint)
     classpath(Dependencies.Build.BinaryCompatibility)
   }
+
+  configurations.classpath {
+    resolutionStrategy {
+      // Ktlint only supports Kotlin 1.4 in a pre-release version right now.
+      force("com.pinterest:ktlint:0.38.0-alpha01")
+    }
+  }
 }
 
 // We use JetBrain's Kotlin Binary Compatibility Validator to track changes to our public binary
