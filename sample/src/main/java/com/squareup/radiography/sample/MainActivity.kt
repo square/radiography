@@ -67,6 +67,15 @@ class MainActivity : Activity() {
           Radiography.scan(stateRenderers = defaultsNoPii + stateRendererFor<LinearLayout> {
             append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
           })
+        },
+        "View.toString() renderer" to {
+          Radiography.scan(stateRenderers = listOf(stateRendererFor<View> {
+            append(
+                it.toString()
+                    .substringAfter(' ')
+                    .substringBeforeLast('}')
+            )
+          }))
         }
     )
 
