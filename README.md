@@ -79,6 +79,38 @@ window-focus:true
 
 ![logo_512.png](assets/logo_512.png)
 
+## FAQ
+
+### What is Radiography useful for?
+
+This library is useful whenever you want to look at the view hierarchy and don't have the ability to connect hierarchy viewer. You can add this as metadata to crash reports, add a debug drawer button that will print it to Logcat, and to improve Espresso errors ([here's an example](https://twitter.com/Piwai/status/1291771701584252928)).
+
+### Is Radiography production ready?
+
+The code that retrieves the root views is based on Espresso's [RootsOracle](https://github.com/android/android-test/blob/master/espresso/core/java/androidx/test/espresso/base/RootsOracle.java) so it's unlikely to break in newer Android versions. We've been using Radiography for crash reports in production since 2015 without any issue.
+
+### Why use custom attribute string rendering instead of View.toString() ?
+
+The output of `View.toString()` is useful but harder to read:
+
+```
+// View.toString():
+Button { VFED..C.. ........ 0,135-652,261 #7f010001 app:id/show_dialog }
+// Radiography:
+Button { id:show_dialog, 652x126px, text-length:28 }
+```
+
+If you'd rather rely on View.toString(), you can provide a custom state renderer.
+```
+val prettyHierarchy = Radiography.scan(stateRenderers = listOf(stateRendererFor<View> {
+  append(
+      it.toString()
+          .substringAfter(' ')
+          .substringBeforeLast('}')
+  )
+}))
+```
+
 ## License
 
 
