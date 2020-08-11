@@ -8,7 +8,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import org.fest.assertions.api.Assertions.assertThat
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -30,11 +30,13 @@ class RadiographyTest {
           isEnabled = false
           isSelected = true
         }
-    assertThat(view.scan())
-        .contains("INVISIBLE")
-        .contains("30x30px")
-        .contains("disabled")
-        .contains("selected")
+    view.scan()
+        .also {
+          assertThat(it).contains("INVISIBLE")
+          assertThat(it).contains("30x30px")
+          assertThat(it).contains("disabled")
+          assertThat(it).contains("selected")
+        }
   }
 
   @Test fun nullView() {
@@ -53,31 +55,34 @@ class RadiographyTest {
   @Test fun textView() {
     val view = TextView(context)
     view.text = "Baguette"
-    val scan = view.scan()
-    assertThat(scan)
-        .contains("text-length:8")
-        .doesNotContain("text:")
+    view.scan()
+        .also {
+          assertThat(it).contains("text-length:8")
+          assertThat(it).doesNotContain("text:")
+        }
   }
 
   @Test fun textViewContents() {
     val view = TextView(context)
     view.text = "Baguette Avec Fromage"
-    val scan = view.scan(includeTextViewText = true)
-    assertThat(scan)
-        .contains("text-length:21")
-        .contains("text:\"Baguette Avec Fromage\"")
+    view.scan(includeTextViewText = true)
+        .also {
+          assertThat(it).contains("text-length:21")
+          assertThat(it).contains("text:\"Baguette Avec Fromage\"")
+        }
   }
 
   @Test fun textViewContentsEllipsized() {
     val view = TextView(context)
     view.text = "Baguette Avec Fromage"
-    val scan = view.scan(
+    view.scan(
         includeTextViewText = true,
         textViewTextMaxLength = 11
     )
-    assertThat(scan)
-        .contains("text-length:21")
-        .contains("text:\"Baguette A…\"")
+        .also {
+          assertThat(it).contains("text-length:21")
+          assertThat(it).contains("text:\"Baguette A…\"")
+        }
   }
 
   @Test fun recoversFromException() {
@@ -87,9 +92,11 @@ class RadiographyTest {
         throw UnsupportedOperationException("Leave me alone")
       }
     })
-    assertThat(layout.scan())
-        .contains("FrameLayout")
-        .contains("Leave me alone")
+    layout.scan()
+        .also {
+          assertThat(it).contains("FrameLayout")
+          assertThat(it).contains("Leave me alone")
+        }
   }
 
   @Test fun skipIds() {
@@ -98,9 +105,11 @@ class RadiographyTest {
       id = 42
     }
     layout.addView(view)
-    assertThat(layout.scan(viewFilter = SkipIdsViewFilter(42)))
-        .contains("FrameLayout")
-        .doesNotContain("Button")
+    layout.scan(viewFilter = SkipIdsViewFilter(42))
+        .also {
+          assertThat(it).contains("FrameLayout")
+          assertThat(it).doesNotContain("Button")
+        }
   }
 
   @Test fun combineFilters() {
@@ -114,10 +123,12 @@ class RadiographyTest {
     val filter = SkipIdsViewFilter(42) and object : ViewFilter {
       override fun matches(view: View) = view !is EditText
     }
-    assertThat(layout.scan(viewFilter = filter))
-        .contains("CheckBox")
-        .doesNotContain("Button")
-        .doesNotContain("TextView")
+    layout.scan(viewFilter = filter)
+        .also {
+          assertThat(it).contains("CheckBox")
+          assertThat(it).doesNotContain("Button")
+          assertThat(it).doesNotContain("TextView")
+        }
   }
 
   @Test fun nestedViews() {

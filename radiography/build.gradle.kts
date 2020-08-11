@@ -42,8 +42,7 @@ dependencies {
   implementation(kotlin("stdlib"))
 
   testImplementation("junit:junit:4.13")
-  testImplementation("com.squareup:fest-android:1.0.7")
-  testImplementation("org.easytesting:fest-assert-core:2.0M10")
+  testImplementation("com.google.truth:truth:1.0.1")
   testImplementation("org.mockito:mockito-core:3.4.6")
   testImplementation("org.robolectric:robolectric:4.3.1")
 }
