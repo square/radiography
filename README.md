@@ -83,7 +83,7 @@ window-focus:true
 
 ### What is Radiography useful for?
 
-This library is useful whenever you want to look at the view hierarchy and don't have the ability to connect hierarchy viewer. You can add this as metadata to crash reports, add a debug drawer button that will print it to Logcat, and to improve Espresso errors ([here's an example](https://twitter.com/Piwai/status/1291771701584252928)).
+Radiography is useful whenever you want to look at the view hierarchy and don't have the ability to connect the hierarchy viewer tool. You can add the view hierarchy string as metadata to crash reports, add a debug drawer button that will print it to Logcat, and use it to improve Espresso errors ([here's an example](https://twitter.com/Piwai/status/1291771701584252928)).
 
 ### Is Radiography production ready?
 
@@ -101,7 +101,8 @@ Button { id:show_dialog, 652x126px, text-length:28 }
 ```
 
 If you'd rather rely on View.toString(), you can provide a custom state renderer.
-```
+
+```kotlin
 val prettyHierarchy = Radiography.scan(stateRenderers = listOf(stateRendererFor<View> {
   append(
       it.toString()
