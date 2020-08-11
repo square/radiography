@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
+println("Building with Kotlin version ${Versions.Kotlin}")
+
 buildscript {
   repositories {
     mavenCentral()
