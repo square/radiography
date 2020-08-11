@@ -14,6 +14,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import radiography.ViewStateRenderers.textViewRenderer
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -65,7 +66,7 @@ class RadiographyTest {
   @Test fun textViewContents() {
     val view = TextView(context)
     view.text = "Baguette Avec Fromage"
-    view.scan(includeTextViewText = true)
+    view.scan(stateRenderers = listOf(textViewRenderer(includeTextViewText = true)))
         .also {
           assertThat(it).contains("text-length:21")
           assertThat(it).contains("text:\"Baguette Avec Fromage\"")
@@ -76,8 +77,12 @@ class RadiographyTest {
     val view = TextView(context)
     view.text = "Baguette Avec Fromage"
     view.scan(
-        includeTextViewText = true,
-        textViewTextMaxLength = 11
+        stateRenderers = listOf(
+            textViewRenderer(
+                includeTextViewText = true,
+                textViewTextMaxLength = 11
+            )
+        )
     )
         .also {
           assertThat(it).contains("text-length:21")

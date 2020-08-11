@@ -24,15 +24,18 @@ dependencies {
 val prettyHierarchy = Radiography.scan()
 
 // Include the text content from TextView instances.
-val prettyHierarchy = Radiography.scan(includeTextViewText = true)
+val prettyHierarchy = Radiography.scan(stateRenderers = defaultsIncludingPii)
 
-// Ellipsize if the text content is too long.
-val prettyHierarchy = Radiography.scan(includeTextViewText = true, textViewTextMaxLength = 10)
+// Append custom attribute rendering
+val prettyHierarchy = Radiography.scan(stateRenderers = defaultsNoPii +
+    stateRendererFor<LinearLayout> {
+      append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
+    })
 ```
 
 You can print a subset of the view hierarchies.
 
-```
+```kotlin
 // Extension function on View, renders starting from that view.
 val prettyHierarchy = someView.scan()
 

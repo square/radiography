@@ -1,14 +1,12 @@
 package radiography
 
 import android.annotation.TargetApi
-import android.content.res.Resources.NotFoundException
 import android.os.Build.VERSION_CODES.CUPCAKE
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Checkable
-import android.widget.TextView
 import radiography.Radiography.scan
+import radiography.ViewStateRenderers.defaultsNoPii
 
 /**
  * Utility class to scan through a view hierarchy and pretty print it to a [String].
@@ -28,12 +26,7 @@ object Radiography {
    * can call the extension function [View.scan] instead). If null, scanning retrieves all windows
    * for the current process using reflection and then scans the view hierarchy for each window.
    *
-   * @param includeTextViewText whether to include the string content of TextView instances in
-   * the rendered view hierarchy. Defaults to false to avoid including any PII.
-   *
-   * @param textViewTextMaxLength the max size of the string content of TextView instances when
-   * [includeTextViewText] is true. When the max size is reached, the text is trimmed to
-   * a [textViewTextMaxLength] - 1 length and ellipsized with a '…' character.
+   * @param stateRenderers render extra attributes for specifics types, in order.
    *
    * @param viewFilter a filter to exclude specific views from the rendering. If a view is excluded
    * then all of its children are excluded as well. Use [SkipIdsViewFilter] to ignore views that
@@ -43,16 +36,9 @@ object Radiography {
   @JvmStatic
   fun scan(
     rootView: View? = null,
-    includeTextViewText: Boolean = false,
-    textViewTextMaxLength: Int = Int.MAX_VALUE,
+    stateRenderers: List<StateRenderer<*>> = defaultsNoPii,
     viewFilter: ViewFilter = ViewFilter.All
   ): String = buildString {
-    if (includeTextViewText) {
-      check(textViewTextMaxLength >= 0) {
-        "textFieldMaxLength should be greater than 0, not $textViewTextMaxLength"
-      }
-    }
-
     val rootViews = rootView?.let {
       listOf(it)
     } ?: WindowScanner.findAllRootViews()
@@ -61,7 +47,7 @@ object Radiography {
 
     val renderer = object : TreeStringRenderer<View>() {
       override fun StringBuilder.renderNode(node: View) {
-        viewToString(node, includeTextViewText, textViewTextMaxLength)
+        viewToString(node, stateRenderers)
       }
 
       override fun View.getChildAt(index: Int): View? {
@@ -102,57 +88,12 @@ object Radiography {
   @TargetApi(CUPCAKE)
   private fun StringBuilder.viewToString(
     view: View,
-    includeTextViewText: Boolean,
-    textViewTextMaxLength: Int
+    stateRenderers: List<StateRenderer<*>>
   ) {
     append("${view.javaClass.simpleName} { ")
-    if (view.id != View.NO_ID && view.resources != null) {
-      try {
-        val resourceName = view.resources.getResourceEntryName(view.id)
-        append("id:$resourceName, ")
-      } catch (ignore: NotFoundException) {
-        // Do nothing.
-      }
-    }
-
-    when (view.visibility) {
-      View.GONE -> append("GONE, ")
-      View.INVISIBLE -> append("INVISIBLE, ")
-    }
-
-    append("${view.width}x${view.height}px")
-
-    if (view.isFocused) {
-      append(", focused")
-    }
-
-    if (!view.isEnabled) {
-      append(", disabled")
-    }
-
-    if (view.isSelected) {
-      append(", selected")
-    }
-
-    if (view is TextView) {
-      var text = view.text
-      if (text != null) {
-        append(", text-length:${text.length}")
-        if (includeTextViewText) {
-          if (text.length > textViewTextMaxLength) {
-            text = "${text.subSequence(0, textViewTextMaxLength - 1)}…"
-          }
-          append(", text:\"$text\"")
-        }
-      }
-      if (view.isInputMethodTarget) {
-        append(", ime-target")
-      }
-    }
-    if (view is Checkable) {
-      if (view.isChecked) {
-        append(", checked")
-      }
+    val appendable = AttributeAppendable(this)
+    for (renderer in stateRenderers) {
+      renderer.appendAttributes(appendable, view)
     }
     append(" }")
   }

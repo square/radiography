@@ -12,7 +12,11 @@ import android.widget.TextView
 import radiography.FocusedWindowViewFilter
 import radiography.Radiography
 import radiography.SkipIdsViewFilter
+import radiography.StateRenderer.Companion.stateRendererFor
 import radiography.ViewFilter
+import radiography.ViewStateRenderers
+import radiography.ViewStateRenderers.defaultsIncludingPii
+import radiography.ViewStateRenderers.defaultsNoPii
 import radiography.scan
 
 class MainActivity : Activity() {
@@ -43,11 +47,26 @@ class MainActivity : Activity() {
             override fun matches(view: View) = view !is LinearLayout
           })
         },
-        "Include text" to {
-          Radiography.scan(includeTextViewText = true)
+        "Include PII" to {
+          Radiography.scan(
+              stateRenderers = defaultsIncludingPii
+          )
         },
-        "Include text ellipsized" to {
-          Radiography.scan(includeTextViewText = true, textViewTextMaxLength = 4)
+        "Include PII ellipsized" to {
+          Radiography.scan(
+              stateRenderers = listOf(
+                  ViewStateRenderers.viewRenderer,
+                  ViewStateRenderers.textViewRenderer(
+                      includeTextViewText = true, textViewTextMaxLength = 4
+                  ),
+                  ViewStateRenderers.checkableRenderer
+              )
+          )
+        },
+        "Custom LinearLayout renderer" to {
+          Radiography.scan(stateRenderers = defaultsNoPii + stateRendererFor<LinearLayout> {
+            append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
+          })
         }
     )
 
