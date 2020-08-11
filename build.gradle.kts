@@ -36,6 +36,13 @@ buildscript {
     classpath(Dependencies.Build.Ktlint)
     classpath(Dependencies.Build.BinaryCompatibility)
   }
+
+  configurations.classpath {
+    resolutionStrategy {
+      // Ktlint only supports Kotlin 1.4 in a pre-release version right now.
+      force("com.pinterest:ktlint:0.38.0-alpha01")
+    }
+  }
 }
 
 // We use JetBrain's Kotlin Binary Compatibility Validator to track changes to our public binary
@@ -49,7 +56,10 @@ extensions.configure<ApiValidationExtension> {
   // Ignore all sample projects, since they're not part of our API.
   // Only leaf project name is valid configuration, and every project must be individually ignored.
   // See https://github.com/Kotlin/binary-compatibility-validator/issues/3
-  ignoredProjects = mutableSetOf("sample")
+  ignoredProjects = listOfNotNull(
+      "sample",
+      "sample-compose".takeIf { Versions.Kotlin.startsWith("1.4") }
+  ).toMutableSet()
 }
 
 // See https://stackoverflow.com/questions/25324880/detect-ide-environment-with-gradle

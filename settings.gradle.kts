@@ -15,5 +15,13 @@
  */
 rootProject.name = "radiography"
 
-include(":radiography")
-include(":sample")
+include(
+    ":radiography",
+    ":sample"
+)
+
+if (System.getProperty("square.kotlinVersion")
+        ?.startsWith("1.4") == true
+) {
+  include(":sample-compose")
+}

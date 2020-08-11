@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.android.library")
@@ -31,7 +32,7 @@ android {
   }
 
   defaultConfig {
-    minSdkVersion(17)
+    minSdkVersion(21)
     targetSdkVersion(28)
     versionCode = 1
     versionName = "1.0"
@@ -43,7 +44,18 @@ android {
   }
 }
 
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf(
+        "-Xallow-jvm-ir-dependencies",
+        "-Xopt-in=kotlin.RequiresOptIn"
+    )
+  }
+}
+
 dependencies {
+  compileOnly(Dependencies.Compose.Tooling)
+
   implementation(kotlin("stdlib"))
 
   testImplementation(Dependencies.JUnit)
