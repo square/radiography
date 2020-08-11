@@ -50,7 +50,10 @@ extensions.configure<ApiValidationExtension> {
   // Ignore all sample projects, since they're not part of our API.
   // Only leaf project name is valid configuration, and every project must be individually ignored.
   // See https://github.com/Kotlin/binary-compatibility-validator/issues/3
-  ignoredProjects = mutableSetOf("sample")
+  ignoredProjects = mutableSetOf(
+      "sample",
+      "sample-compose"
+  )
 }
 
 // See https://stackoverflow.com/questions/25324880/detect-ide-environment-with-gradle
