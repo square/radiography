@@ -24,6 +24,7 @@ internal abstract class TreeStringRenderer<N> {
   ) {
     appendLinePrefix(depth, lastChildMask)
     renderNode(node)
+    @Suppress("DEPRECATION")
     appendln()
     val childCount = node.childCount
     if (childCount > 0) {
