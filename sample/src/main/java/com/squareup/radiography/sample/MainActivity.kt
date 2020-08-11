@@ -13,6 +13,7 @@ import radiography.FocusedWindowViewFilter
 import radiography.Radiography
 import radiography.SkipIdsViewFilter
 import radiography.ViewFilter
+import radiography.scan
 
 class MainActivity : Activity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +33,7 @@ class MainActivity : Activity() {
           Radiography.scan(viewFilter = FocusedWindowViewFilter())
         },
         "Start from R.id.main" to {
-          Radiography.scan(rootView = findViewById(R.id.main))
+          findViewById<View>(R.id.main).scan()
         },
         "Skip R.id.show_dialog" to {
           Radiography.scan(viewFilter = SkipIdsViewFilter(R.id.show_dialog))
