@@ -8,7 +8,7 @@ public final class com/squareup/radiography/BuildConfig {
 }
 
 public final class radiography/FocusedWindowViewFilter : radiography/ViewFilter {
-	public fun <init> ()V
+	public static final field INSTANCE Lradiography/FocusedWindowViewFilter;
 	public fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
 	public fun matches (Landroid/view/View;)Z
 }

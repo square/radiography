@@ -30,7 +30,7 @@ class MainActivity : Activity() {
           Radiography.scan()
         },
         "Focused window" to {
-          Radiography.scan(viewFilter = FocusedWindowViewFilter())
+          Radiography.scan(viewFilter = FocusedWindowViewFilter)
         },
         "Start from R.id.main" to {
           findViewById<View>(R.id.main).scan()
@@ -39,7 +39,7 @@ class MainActivity : Activity() {
           Radiography.scan(viewFilter = SkipIdsViewFilter(R.id.show_dialog))
         },
         "Focused window and custom filter" to {
-          Radiography.scan(viewFilter = FocusedWindowViewFilter() and object : ViewFilter {
+          Radiography.scan(viewFilter = FocusedWindowViewFilter and object : ViewFilter {
             override fun matches(view: View) = view !is LinearLayout
           })
         },
