@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import kotlinx.validation.ApiValidationExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
@@ -37,7 +38,19 @@ buildscript {
   }
 }
 
-apply(from = rootProject.file(".buildscript/binary-validation.gradle"))
+// We use JetBrain's Kotlin Binary Compatibility Validator to track changes to our public binary
+// APIs.
+// When making a change that results in a public ABI change, the apiCheck task will fail. When this
+// happens, run ./gradlew apiDump to generate updated *.api files, and add those to your commit.
+// See https://github.com/Kotlin/binary-compatibility-validator
+apply(plugin = "binary-compatibility-validator")
+
+extensions.configure<ApiValidationExtension> {
+  // Ignore all sample projects, since they're not part of our API.
+  // Only leaf project name is valid configuration, and every project must be individually ignored.
+  // See https://github.com/Kotlin/binary-compatibility-validator/issues/3
+  ignoredProjects = mutableSetOf("sample")
+}
 
 // See https://stackoverflow.com/questions/25324880/detect-ide-environment-with-gradle
 val isRunningFromIde get() = project.properties["android.injected.invoked.from.ide"] == "true"
