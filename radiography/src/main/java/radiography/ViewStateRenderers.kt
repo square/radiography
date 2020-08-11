@@ -4,7 +4,10 @@ import android.content.res.Resources.NotFoundException
 import android.view.View
 import android.widget.Checkable
 import android.widget.TextView
+import radiography.compose.ComposeLayoutRenderers
+import radiography.compose.ExperimentalRadiographyComposeApi
 
+@OptIn(ExperimentalRadiographyComposeApi::class)
 public object ViewStateRenderers {
 
   @JvmField
@@ -23,7 +26,7 @@ public object ViewStateRenderers {
       View.INVISIBLE -> append("INVISIBLE")
     }
 
-    append("${view.width}×${view.height}px")
+    append(formatPixelDimensions(view.width, view.height))
 
     if (view.isFocused) {
       append("focused")
@@ -50,14 +53,14 @@ public object ViewStateRenderers {
       ViewRenderer,
       textViewRenderer(includeTextViewText = false, textViewTextMaxLength = 0),
       CheckableRenderer
-  )
+  ) + ComposeLayoutRenderers.DefaultsNoPii
 
   @JvmField
   public val DefaultsIncludingPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
       textViewRenderer(includeTextViewText = true),
       CheckableRenderer
-  )
+  ) + ComposeLayoutRenderers.DefaultsIncludingPii
 
   /**
    * @param includeTextViewText whether to include the string content of TextView instances in
@@ -83,9 +86,7 @@ public object ViewStateRenderers {
       if (text != null) {
         append("text-length:${text.length}")
         if (includeTextViewText) {
-          if (text.length > textViewTextMaxLength) {
-            text = "${text.subSequence(0, textViewTextMaxLength - 1)}…"
-          }
+          text = text.ellipsize(textViewTextMaxLength)
           append("text:\"$text\"")
         }
       }

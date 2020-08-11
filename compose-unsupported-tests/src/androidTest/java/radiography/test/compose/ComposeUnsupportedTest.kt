@@ -1,0 +1,33 @@
+package radiography.test.compose
+
+import androidx.ui.foundation.Text
+import androidx.ui.test.createComposeRule
+import androidx.ui.test.runOnIdleCompose
+import com.google.common.truth.Truth.assertThat
+import org.junit.Rule
+import org.junit.Test
+import radiography.Radiography
+import radiography.ViewStateRenderers.DefaultsIncludingPii
+
+class ComposeUnsupportedTest {
+
+  @get:Rule
+  val composeRule = createComposeRule()
+
+  @Test fun when_composeVersionNotSupported_then_failsGracefully() {
+    composeRule.setContent {
+      Text("FooBar")
+    }
+
+    runOnIdleCompose {
+      val hierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
+      assertThat(hierarchy).doesNotContain("FooBar")
+      assertThat(hierarchy).contains(
+          "Composition was found, but either Compose Tooling artifact is missing or the Compose " +
+              "version is not supported. Please ensure you have a dependency on " +
+              "androidx.ui:ui-tooling or check https://github.com/square/radiography for a new " +
+              "release."
+      )
+    }
+  }
+}

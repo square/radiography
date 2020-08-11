@@ -28,7 +28,7 @@ android {
   }
 
   defaultConfig {
-    minSdkVersion(17)
+    minSdkVersion(21)
     targetSdkVersion(30)
     applicationId = "com.squareup.radiography.sample"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
