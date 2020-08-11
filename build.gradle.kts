@@ -27,11 +27,11 @@ buildscript {
   }
 
   dependencies {
-    classpath("com.android.tools.build:gradle:4.0.0")
-    classpath("com.vanniktech:gradle-maven-publish-plugin:0.12.0")
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
-    classpath("org.jlleitschuh.gradle:ktlint-gradle:9.2.1")
-    classpath("org.jetbrains.kotlinx:binary-compatibility-validator:0.2.3")
+    classpath(Dependencies.Build.Android)
+    classpath(Dependencies.Build.MavenPublish)
+    classpath(Dependencies.Build.Kotlin)
+    classpath(Dependencies.Build.Ktlint)
+    classpath(Dependencies.Build.BinaryCompatibility)
   }
 }
 
