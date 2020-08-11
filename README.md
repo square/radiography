@@ -77,6 +77,8 @@ window-focus:true
      `-View { id:statusBarBackground, 1080x66px }
 ```
 
+![logo_512.png](assets/logo_512.png)
+
 ## License
 
 
