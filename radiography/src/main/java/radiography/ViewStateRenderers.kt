@@ -63,6 +63,7 @@ object ViewStateRenderers {
    * [includeTextViewText] is true. When the max size is reached, the text is trimmed to
    * a [textViewTextMaxLength] - 1 length and ellipsized with a '…' character.
    */
+  @JvmOverloads
   fun textViewRenderer(
     includeTextViewText: Boolean = false,
     textViewTextMaxLength: Int = Int.MAX_VALUE

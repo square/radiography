@@ -37,6 +37,7 @@ object Radiography {
    * views of the currently focused window, if any.
    */
   @JvmStatic
+  @JvmOverloads
   fun scan(
     rootView: View? = null,
     viewStateRenderers: List<ViewStateRenderer<*>> = defaultsNoPii,
