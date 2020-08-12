@@ -21,15 +21,6 @@ public final class radiography/SkipIdsViewFilter : radiography/ViewFilter {
 	public fun matches (Ljava/lang/Object;)Z
 }
 
-public final class radiography/StateRenderer {
-	public static final field Companion Lradiography/StateRenderer$Companion;
-	public fun <init> (Ljava/lang/Class;Lkotlin/jvm/functions/Function2;)V
-	public final fun appendAttributes (Lradiography/AttributeAppendable;Ljava/lang/Object;)V
-}
-
-public final class radiography/StateRenderer$Companion {
-}
-
 public abstract interface class radiography/ViewFilter {
 	public abstract fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
 	public abstract fun matches (Ljava/lang/Object;)Z
@@ -45,14 +36,19 @@ public final class radiography/ViewFilter$DefaultImpls {
 	public static fun and (Lradiography/ViewFilter;Lradiography/ViewFilter;)Lradiography/ViewFilter;
 }
 
+public final class radiography/ViewStateRenderer {
+	public fun <init> (Ljava/lang/Class;Lkotlin/jvm/functions/Function2;)V
+	public final fun appendAttributes (Lradiography/AttributeAppendable;Ljava/lang/Object;)V
+}
+
 public final class radiography/ViewStateRenderers {
 	public static final field INSTANCE Lradiography/ViewStateRenderers;
-	public final fun getCheckableRenderer ()Lradiography/StateRenderer;
+	public final fun getCheckableRenderer ()Lradiography/ViewStateRenderer;
 	public final fun getDefaultsIncludingPii ()Ljava/util/List;
 	public final fun getDefaultsNoPii ()Ljava/util/List;
-	public final fun getViewRenderer ()Lradiography/StateRenderer;
-	public final fun textViewRenderer (ZI)Lradiography/StateRenderer;
-	public static synthetic fun textViewRenderer$default (Lradiography/ViewStateRenderers;ZIILjava/lang/Object;)Lradiography/StateRenderer;
+	public final fun getViewRenderer ()Lradiography/ViewStateRenderer;
+	public final fun textViewRenderer (ZI)Lradiography/ViewStateRenderer;
+	public static synthetic fun textViewRenderer$default (Lradiography/ViewStateRenderers;ZIILjava/lang/Object;)Lradiography/ViewStateRenderer;
 }
 
 public final class radiography/ViewsKt {

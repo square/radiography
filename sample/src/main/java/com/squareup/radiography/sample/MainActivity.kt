@@ -12,12 +12,12 @@ import android.widget.TextView
 import radiography.FocusedWindowViewFilter
 import radiography.Radiography
 import radiography.SkipIdsViewFilter
-import radiography.StateRenderer.Companion.stateRendererFor
 import radiography.ViewFilter
 import radiography.ViewStateRenderers
 import radiography.ViewStateRenderers.defaultsIncludingPii
 import radiography.ViewStateRenderers.defaultsNoPii
 import radiography.scan
+import radiography.viewStateRendererFor
 
 class MainActivity : Activity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,12 +49,12 @@ class MainActivity : Activity() {
         },
         "Include PII" to {
           Radiography.scan(
-              stateRenderers = defaultsIncludingPii
+              viewStateRenderers = defaultsIncludingPii
           )
         },
         "Include PII ellipsized" to {
           Radiography.scan(
-              stateRenderers = listOf(
+              viewStateRenderers = listOf(
                   ViewStateRenderers.viewRenderer,
                   ViewStateRenderers.textViewRenderer(
                       includeTextViewText = true, textViewTextMaxLength = 4
@@ -64,12 +64,12 @@ class MainActivity : Activity() {
           )
         },
         "Custom LinearLayout renderer" to {
-          Radiography.scan(stateRenderers = defaultsNoPii + stateRendererFor<LinearLayout> {
+          Radiography.scan(viewStateRenderers = defaultsNoPii + viewStateRendererFor<LinearLayout> {
             append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
           })
         },
         "View.toString() renderer" to {
-          Radiography.scan(stateRenderers = listOf(stateRendererFor<View> {
+          Radiography.scan(viewStateRenderers = listOf(viewStateRendererFor<View> {
             append(
                 it.toString()
                     .substringAfter(' ')

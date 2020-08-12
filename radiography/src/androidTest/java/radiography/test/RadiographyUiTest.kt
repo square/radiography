@@ -39,7 +39,7 @@ class RadiographyUiTest {
   @Test fun when_includingPii_then_hierarchyContainsText() {
     activityRule.launchActivity(Intent().withTextViewText("Yo"))
 
-    val hierarchy = Radiography.scan(stateRenderers = defaultsIncludingPii)
+    val hierarchy = Radiography.scan(viewStateRenderers = defaultsIncludingPii)
     assertThat(hierarchy).contains("Yo")
   }
 
@@ -66,7 +66,7 @@ class RadiographyUiTest {
     }
 
     val hierarchy =
-      Radiography.scan(stateRenderers = defaultsIncludingPii, viewFilter = FocusedWindowViewFilter)
+      Radiography.scan(viewStateRenderers = defaultsIncludingPii, viewFilter = FocusedWindowViewFilter)
 
     assertThat(hierarchy).contains("window-focus:true")
     assertThat(hierarchy).contains("Dialog title")
