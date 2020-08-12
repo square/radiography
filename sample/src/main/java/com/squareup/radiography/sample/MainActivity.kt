@@ -14,8 +14,8 @@ import radiography.Radiography
 import radiography.SkipIdsViewFilter
 import radiography.ViewFilter
 import radiography.ViewStateRenderers
-import radiography.ViewStateRenderers.defaultsIncludingPii
-import radiography.ViewStateRenderers.defaultsNoPii
+import radiography.ViewStateRenderers.DefaultsIncludingPii
+import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.scan
 import radiography.viewStateRendererFor
 
@@ -49,22 +49,22 @@ class MainActivity : Activity() {
         },
         "Include PII" to {
           Radiography.scan(
-              viewStateRenderers = defaultsIncludingPii
+              viewStateRenderers = DefaultsIncludingPii
           )
         },
         "Include PII ellipsized" to {
           Radiography.scan(
               viewStateRenderers = listOf(
-                  ViewStateRenderers.viewRenderer,
+                  ViewStateRenderers.ViewRenderer,
                   ViewStateRenderers.textViewRenderer(
                       includeTextViewText = true, textViewTextMaxLength = 4
                   ),
-                  ViewStateRenderers.checkableRenderer
+                  ViewStateRenderers.CheckableRenderer
               )
           )
         },
         "Custom LinearLayout renderer" to {
-          Radiography.scan(viewStateRenderers = defaultsNoPii + viewStateRendererFor<LinearLayout> {
+          Radiography.scan(viewStateRenderers = DefaultsNoPii + viewStateRendererFor<LinearLayout> {
             append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
           })
         },

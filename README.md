@@ -24,10 +24,10 @@ dependencies {
 val prettyHierarchy = Radiography.scan()
 
 // Include the text content from TextView instances.
-val prettyHierarchy = Radiography.scan(stateRenderers = defaultsIncludingPii)
+val prettyHierarchy = Radiography.scan(stateRenderers = DefaultsIncludingPii)
 
 // Append custom attribute rendering
-val prettyHierarchy = Radiography.scan(stateRenderers = defaultsNoPii +
+val prettyHierarchy = Radiography.scan(stateRenderers = DefaultsNoPii +
     viewStateRendererFor<LinearLayout> {
       append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
     })

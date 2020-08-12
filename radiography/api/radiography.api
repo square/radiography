@@ -45,15 +45,15 @@ public final class radiography/ViewStateRenderer {
 }
 
 public final class radiography/ViewStateRenderers {
+	public static final field CheckableRenderer Lradiography/ViewStateRenderer;
+	public static final field DefaultsIncludingPii Ljava/util/List;
+	public static final field DefaultsNoPii Ljava/util/List;
 	public static final field INSTANCE Lradiography/ViewStateRenderers;
-	public final fun getCheckableRenderer ()Lradiography/ViewStateRenderer;
-	public final fun getDefaultsIncludingPii ()Ljava/util/List;
-	public final fun getDefaultsNoPii ()Ljava/util/List;
-	public final fun getViewRenderer ()Lradiography/ViewStateRenderer;
-	public final fun textViewRenderer ()Lradiography/ViewStateRenderer;
-	public final fun textViewRenderer (Z)Lradiography/ViewStateRenderer;
-	public final fun textViewRenderer (ZI)Lradiography/ViewStateRenderer;
-	public static synthetic fun textViewRenderer$default (Lradiography/ViewStateRenderers;ZIILjava/lang/Object;)Lradiography/ViewStateRenderer;
+	public static final field ViewRenderer Lradiography/ViewStateRenderer;
+	public static final fun textViewRenderer ()Lradiography/ViewStateRenderer;
+	public static final fun textViewRenderer (Z)Lradiography/ViewStateRenderer;
+	public static final fun textViewRenderer (ZI)Lradiography/ViewStateRenderer;
+	public static synthetic fun textViewRenderer$default (ZIILjava/lang/Object;)Lradiography/ViewStateRenderer;
 }
 
 public final class radiography/ViewsKt {

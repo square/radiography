@@ -5,7 +5,7 @@ import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import radiography.Radiography.scan
-import radiography.ViewStateRenderers.defaultsNoPii
+import radiography.ViewStateRenderers.DefaultsNoPii
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit.SECONDS
 import java.util.concurrent.atomic.AtomicReference
@@ -40,7 +40,7 @@ object Radiography {
   @JvmOverloads
   fun scan(
     rootView: View? = null,
-    viewStateRenderers: List<ViewStateRenderer<*>> = defaultsNoPii,
+    viewStateRenderers: List<ViewStateRenderer<*>> = DefaultsNoPii,
     viewFilter: ViewFilter = ViewFilter.All
   ): String {
 

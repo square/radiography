@@ -7,7 +7,8 @@ import android.widget.TextView
 
 object ViewStateRenderers {
 
-  val viewRenderer: ViewStateRenderer<View> = viewStateRendererFor { view ->
+  @JvmField
+  val ViewRenderer: ViewStateRenderer<View> = viewStateRendererFor { view ->
     if (view.id != View.NO_ID && view.resources != null) {
       try {
         val resourceName = view.resources.getResourceEntryName(view.id)
@@ -37,22 +38,25 @@ object ViewStateRenderers {
     }
   }
 
-  val checkableRenderer: ViewStateRenderer<Checkable> = viewStateRendererFor { checkable ->
+  @JvmField
+  val CheckableRenderer: ViewStateRenderer<Checkable> = viewStateRendererFor { checkable ->
     if (checkable.isChecked) {
       append("checked")
     }
   }
 
-  val defaultsNoPii: List<ViewStateRenderer<*>> = listOf(
-      viewRenderer,
+  @JvmField
+  val DefaultsNoPii: List<ViewStateRenderer<*>> = listOf(
+      ViewRenderer,
       textViewRenderer(includeTextViewText = false, textViewTextMaxLength = 0),
-      checkableRenderer
+      CheckableRenderer
   )
 
-  val defaultsIncludingPii: List<ViewStateRenderer<*>> = listOf(
-      viewRenderer,
+  @JvmField
+  val DefaultsIncludingPii: List<ViewStateRenderer<*>> = listOf(
+      ViewRenderer,
       textViewRenderer(includeTextViewText = true),
-      checkableRenderer
+      CheckableRenderer
   )
 
   /**
@@ -63,6 +67,7 @@ object ViewStateRenderers {
    * [includeTextViewText] is true. When the max size is reached, the text is trimmed to
    * a [textViewTextMaxLength] - 1 length and ellipsized with a '…' character.
    */
+  @JvmStatic
   @JvmOverloads
   fun textViewRenderer(
     includeTextViewText: Boolean = false,
