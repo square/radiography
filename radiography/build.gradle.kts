@@ -37,6 +37,10 @@ android {
     versionName = "1.0"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
+
+  buildFeatures {
+    buildConfig = false
+  }
 }
 
 dependencies {
