@@ -15,4 +15,11 @@ object Dependencies {
   const val Mockito = "org.mockito:mockito-core:3.4.6"
   const val Robolectric = "org.robolectric:robolectric:4.3.1"
   const val Truth = "com.google.truth:truth:1.0.1"
+
+  object InstrumentationTests {
+    const val Core = "androidx.test:core:1.0.0"
+    const val Espresso = "androidx.test.espresso:espresso-core:3.1.0"
+    const val Rules = "androidx.test:rules:1.1.0"
+    const val Runner = "androidx.test:runner:1.1.0"
+  }
 }
