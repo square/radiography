@@ -1,9 +1,14 @@
 package radiography
 
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import radiography.Radiography.scan
 import radiography.ViewStateRenderers.defaultsNoPii
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit.SECONDS
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Utility class to scan through a view hierarchy and pretty print it to a [String].
@@ -15,9 +20,10 @@ object Radiography {
    * Scans the view hierarchies and pretty print them to a [String].
    *
    * You should generally call this method from the main thread, as views are meant to be accessed
-   * from a single thread. If you call this from a background thread, it may work or the views
-   * might throw an exception. This method will not throw, instead the exception message will be
-   * included in the returned string.
+   * from a single thread. If you call this from a background thread, this will schedule a message
+   * to the main thread to retrieve the view hierarchy from there and will wait up to 5 seconds
+   * or return an error message. This method will never throw, any thrown exception will have
+   * its message included in the returned string.
    *
    * @param rootView if not null, scanning starts from [rootView] and goes down recursively (you
    * can call the extension function [View.scan] instead). If null, scanning retrieves all windows
@@ -35,6 +41,32 @@ object Radiography {
     rootView: View? = null,
     stateRenderers: List<StateRenderer<*>> = defaultsNoPii,
     viewFilter: ViewFilter = ViewFilter.All
+  ): String {
+
+    // The entire view tree is single threaded, and that's typically the main thread, but
+    // it doesn't have to be, and we don't know where the passed in view is coming from.
+    val viewLooper = rootView?.handler?.looper ?: Looper.getMainLooper()!!
+
+    if (viewLooper.thread == Thread.currentThread()) {
+      return scanFromLooperThread(rootView, stateRenderers, viewFilter)
+    }
+    val latch = CountDownLatch(1)
+    val hierarchyString = AtomicReference<String>()
+    Handler(viewLooper).post {
+      hierarchyString.set(scanFromLooperThread(rootView, stateRenderers, viewFilter))
+      latch.countDown()
+    }
+    return if (latch.await(5, SECONDS)) {
+      hierarchyString.get()!!
+    } else {
+      "Could not retrieve view hierarchy from main thread after 5 seconds wait"
+    }
+  }
+
+  private fun scanFromLooperThread(
+    rootView: View?,
+    stateRenderers: List<StateRenderer<*>>,
+    viewFilter: ViewFilter
   ): String = buildString {
     val rootViews = rootView?.let {
       listOf(it)
