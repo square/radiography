@@ -35,6 +35,7 @@ android {
     targetSdkVersion(28)
     versionCode = 1
     versionName = "1.0"
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 }
 
@@ -45,4 +46,10 @@ dependencies {
   testImplementation(Dependencies.Mockito)
   testImplementation(Dependencies.Robolectric)
   testImplementation(Dependencies.Truth)
+
+  androidTestImplementation(Dependencies.InstrumentationTests.Core)
+  androidTestImplementation(Dependencies.InstrumentationTests.Espresso)
+  androidTestImplementation(Dependencies.InstrumentationTests.Rules)
+  androidTestImplementation(Dependencies.InstrumentationTests.Runner)
+  androidTestImplementation(Dependencies.Truth)
 }
