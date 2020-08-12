@@ -126,7 +126,7 @@ class RadiographyTest {
     layout.addView(EditText(context))
 
     val filter = SkipIdsViewFilter(42) and object : ViewFilter {
-      override fun matches(view: View) = view !is EditText
+      override fun matches(view: Any) = view !is EditText
     }
     layout.scan(viewFilter = filter)
         .also {

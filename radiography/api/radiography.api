@@ -6,7 +6,7 @@ public final class radiography/AttributeAppendable {
 public final class radiography/FocusedWindowViewFilter : radiography/ViewFilter {
 	public static final field INSTANCE Lradiography/FocusedWindowViewFilter;
 	public fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
-	public fun matches (Landroid/view/View;)Z
+	public fun matches (Ljava/lang/Object;)Z
 }
 
 public final class radiography/Radiography {
@@ -18,7 +18,7 @@ public final class radiography/Radiography {
 public final class radiography/SkipIdsViewFilter : radiography/ViewFilter {
 	public fun <init> ([I)V
 	public fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
-	public fun matches (Landroid/view/View;)Z
+	public fun matches (Ljava/lang/Object;)Z
 }
 
 public final class radiography/StateRenderer {
@@ -32,13 +32,13 @@ public final class radiography/StateRenderer$Companion {
 
 public abstract interface class radiography/ViewFilter {
 	public abstract fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
-	public abstract fun matches (Landroid/view/View;)Z
+	public abstract fun matches (Ljava/lang/Object;)Z
 }
 
 public final class radiography/ViewFilter$All : radiography/ViewFilter {
 	public static final field INSTANCE Lradiography/ViewFilter$All;
 	public fun and (Lradiography/ViewFilter;)Lradiography/ViewFilter;
-	public fun matches (Landroid/view/View;)Z
+	public fun matches (Ljava/lang/Object;)Z
 }
 
 public final class radiography/ViewFilter$DefaultImpls {

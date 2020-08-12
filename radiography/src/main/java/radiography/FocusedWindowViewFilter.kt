@@ -7,7 +7,7 @@ import android.view.View
  */
 object FocusedWindowViewFilter : ViewFilter {
 
-  override fun matches(view: View): Boolean {
-    return view.parent?.parent != null || view.hasWindowFocus()
+  override fun matches(view: Any): Boolean {
+    return view is View && (view.parent?.parent != null || view.hasWindowFocus())
   }
 }
