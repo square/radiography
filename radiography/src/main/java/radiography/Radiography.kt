@@ -1,9 +1,6 @@
 package radiography
 
-import android.annotation.TargetApi
-import android.os.Build.VERSION_CODES.CUPCAKE
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import radiography.Radiography.scan
 import radiography.ViewStateRenderers.defaultsNoPii
@@ -44,21 +41,7 @@ object Radiography {
     } ?: WindowScanner.findAllRootViews()
 
     val matchingRootViews = rootViews.filter(viewFilter::matches)
-
-    val renderer = object : TreeStringRenderer<View>() {
-      override fun StringBuilder.renderNode(node: View) {
-        viewToString(node, stateRenderers)
-      }
-
-      override fun View.getChildAt(index: Int): View? {
-        return if (this is ViewGroup) getChildAt(index) else null
-      }
-
-      override val View.childCount: Int
-        get() = if (this is ViewGroup) childCount else 0
-
-      override fun View.matches() = viewFilter.matches(this)
-    }
+    val viewVisitor = ViewTreeRenderingVisitor(stateRenderers, viewFilter)
 
     for (view in matchingRootViews) {
       if (length > 0) {
@@ -75,7 +58,7 @@ object Radiography {
       try {
         @Suppress("DEPRECATION")
         appendln("window-focus:${view.hasWindowFocus()}")
-        renderer.render(this, view)
+        renderTreeString(view, viewVisitor)
       } catch (e: Throwable) {
         insert(
             startPosition,
@@ -83,18 +66,5 @@ object Radiography {
         )
       }
     }
-  }
-
-  @TargetApi(CUPCAKE)
-  private fun StringBuilder.viewToString(
-    view: View,
-    stateRenderers: List<StateRenderer<*>>
-  ) {
-    append("${view.javaClass.simpleName} { ")
-    val appendable = AttributeAppendable(this)
-    for (renderer in stateRenderers) {
-      renderer.appendAttributes(appendable, view)
-    }
-    append(" }")
   }
 }
