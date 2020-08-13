@@ -43,10 +43,10 @@ val prettyHierarchy = someView.scan()
 val prettyHierarchy = Radiography.scan(viewFilter = FocusedWindowViewFilter)
 
 // Filter out views with specific ids.
-Radiography.scan(viewFilter = SkipIdsViewFilter(R.id.debug_drawer))
+val prettyHierarchy = Radiography.scan(viewFilter = SkipIdsViewFilter(R.id.debug_drawer))
 
 // Combine view filters.
-Radiography.scan(viewFilter = FocusedWindowViewFilter and MyCustomViewFilter())
+val prettyHierarchy = Radiography.scan(viewFilter = FocusedWindowViewFilter and MyCustomViewFilter())
 ```
 
 ## Result example
