@@ -1,17 +1,15 @@
 package radiography
 
-import radiography.StateRenderer.Companion.stateRendererFor
-
 /**
  * Renders extra attributes for specifics types in the output of [Radiography.scan].
- * Call [stateRendererFor] to create instances with reified types:
+ * Call [viewStateRendererFor] to create instances with reified types:
  * ```
- *  val myRenderer: StateRenderer<MyView> = stateRendererFor {
+ *  val myRenderer: StateRenderer<MyView> = viewStateRendererFor {
  *    append(it.customAttributeValue)
  *  }
  * ```
  */
-class StateRenderer<in T> @PublishedApi internal constructor(
+class ViewStateRenderer<in T> @PublishedApi internal constructor(
   private val renderedClass: Class<T>,
   private val renderer: AttributeAppendable.(T) -> Unit
 ) {
@@ -27,9 +25,7 @@ class StateRenderer<in T> @PublishedApi internal constructor(
       }
     }
   }
-
-  companion object {
-    inline fun <reified T> stateRendererFor(noinline renderer: AttributeAppendable.(T) -> Unit) =
-      StateRenderer(T::class.java, renderer)
-  }
 }
+
+inline fun <reified T> viewStateRendererFor(noinline renderer: AttributeAppendable.(T) -> Unit) =
+  ViewStateRenderer(T::class.java, renderer)

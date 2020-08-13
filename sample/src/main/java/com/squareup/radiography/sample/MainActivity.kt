@@ -12,12 +12,13 @@ import android.widget.TextView
 import radiography.FocusedWindowViewFilter
 import radiography.Radiography
 import radiography.SkipIdsViewFilter
-import radiography.StateRenderer.Companion.stateRendererFor
 import radiography.ViewFilter
 import radiography.ViewStateRenderers
-import radiography.ViewStateRenderers.defaultsIncludingPii
-import radiography.ViewStateRenderers.defaultsNoPii
+import radiography.ViewStateRenderers.DefaultsIncludingPii
+import radiography.ViewStateRenderers.DefaultsNoPii
+import radiography.and
 import radiography.scan
+import radiography.viewStateRendererFor
 
 class MainActivity : Activity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,27 +50,27 @@ class MainActivity : Activity() {
         },
         "Include PII" to {
           Radiography.scan(
-              stateRenderers = defaultsIncludingPii
+              viewStateRenderers = DefaultsIncludingPii
           )
         },
         "Include PII ellipsized" to {
           Radiography.scan(
-              stateRenderers = listOf(
-                  ViewStateRenderers.viewRenderer,
+              viewStateRenderers = listOf(
+                  ViewStateRenderers.ViewRenderer,
                   ViewStateRenderers.textViewRenderer(
                       includeTextViewText = true, textViewTextMaxLength = 4
                   ),
-                  ViewStateRenderers.checkableRenderer
+                  ViewStateRenderers.CheckableRenderer
               )
           )
         },
         "Custom LinearLayout renderer" to {
-          Radiography.scan(stateRenderers = defaultsNoPii + stateRendererFor<LinearLayout> {
+          Radiography.scan(viewStateRenderers = DefaultsNoPii + viewStateRendererFor<LinearLayout> {
             append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
           })
         },
         "View.toString() renderer" to {
-          Radiography.scan(stateRenderers = listOf(stateRendererFor<View> {
+          Radiography.scan(viewStateRenderers = listOf(viewStateRendererFor<View> {
             append(
                 it.toString()
                     .substringAfter(' ')

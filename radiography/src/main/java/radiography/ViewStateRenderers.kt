@@ -4,11 +4,11 @@ import android.content.res.Resources.NotFoundException
 import android.view.View
 import android.widget.Checkable
 import android.widget.TextView
-import radiography.StateRenderer.Companion.stateRendererFor
 
 object ViewStateRenderers {
 
-  val viewRenderer: StateRenderer<View> = stateRendererFor { view ->
+  @JvmField
+  val ViewRenderer: ViewStateRenderer<View> = viewStateRendererFor { view ->
     if (view.id != View.NO_ID && view.resources != null) {
       try {
         val resourceName = view.resources.getResourceEntryName(view.id)
@@ -38,22 +38,25 @@ object ViewStateRenderers {
     }
   }
 
-  val checkableRenderer: StateRenderer<Checkable> = stateRendererFor { checkable ->
+  @JvmField
+  val CheckableRenderer: ViewStateRenderer<Checkable> = viewStateRendererFor { checkable ->
     if (checkable.isChecked) {
       append("checked")
     }
   }
 
-  val defaultsNoPii: List<StateRenderer<*>> = listOf(
-      viewRenderer,
+  @JvmField
+  val DefaultsNoPii: List<ViewStateRenderer<*>> = listOf(
+      ViewRenderer,
       textViewRenderer(includeTextViewText = false, textViewTextMaxLength = 0),
-      checkableRenderer
+      CheckableRenderer
   )
 
-  val defaultsIncludingPii: List<StateRenderer<*>> = listOf(
-      viewRenderer,
+  @JvmField
+  val DefaultsIncludingPii: List<ViewStateRenderer<*>> = listOf(
+      ViewRenderer,
       textViewRenderer(includeTextViewText = true),
-      checkableRenderer
+      CheckableRenderer
   )
 
   /**
@@ -64,16 +67,18 @@ object ViewStateRenderers {
    * [includeTextViewText] is true. When the max size is reached, the text is trimmed to
    * a [textViewTextMaxLength] - 1 length and ellipsized with a '…' character.
    */
+  @JvmStatic
+  @JvmOverloads
   fun textViewRenderer(
     includeTextViewText: Boolean = false,
     textViewTextMaxLength: Int = Int.MAX_VALUE
-  ): StateRenderer<TextView> {
+  ): ViewStateRenderer<TextView> {
     if (includeTextViewText) {
       check(textViewTextMaxLength >= 0) {
         "textFieldMaxLength should be greater than 0, not $textViewTextMaxLength"
       }
     }
-    return stateRendererFor { textView ->
+    return viewStateRendererFor { textView ->
       var text = textView.text
       if (text != null) {
         append("text-length:${text.length}")

@@ -7,10 +7,10 @@ import android.view.ViewGroup
 
 /**
  * A [TreeRenderingVisitor] that renders [View]s and their children which match [viewFilter] using
- * [stateRenderers].
+ * [viewStateRenderers].
  */
 internal class ViewTreeRenderingVisitor(
-  private val stateRenderers: List<StateRenderer<*>>,
+  private val viewStateRenderers: List<ViewStateRenderer<*>>,
   private val viewFilter: ViewFilter
 ) : TreeRenderingVisitor<View>() {
 
@@ -35,7 +35,7 @@ internal class ViewTreeRenderingVisitor(
   private fun StringBuilder.viewToString(view: View) {
     append("${view.javaClass.simpleName} { ")
     val appendable = AttributeAppendable(this)
-    for (renderer in stateRenderers) {
+    for (renderer in viewStateRenderers) {
       renderer.appendAttributes(appendable, view)
     }
     append(" }")

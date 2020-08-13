@@ -11,7 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 import radiography.FocusedWindowViewFilter
 import radiography.Radiography
-import radiography.ViewStateRenderers.defaultsIncludingPii
+import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.test.utilities.TestActivity
 import radiography.test.utilities.TestActivity.Companion.withTextViewText
 import java.util.concurrent.CountDownLatch
@@ -39,7 +39,7 @@ class RadiographyUiTest {
   @Test fun when_includingPii_then_hierarchyContainsText() {
     activityRule.launchActivity(Intent().withTextViewText("Yo"))
 
-    val hierarchy = Radiography.scan(stateRenderers = defaultsIncludingPii)
+    val hierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
     assertThat(hierarchy).contains("Yo")
   }
 
@@ -65,8 +65,10 @@ class RadiographyUiTest {
           .create()
     }
 
-    val hierarchy =
-      Radiography.scan(stateRenderers = defaultsIncludingPii, viewFilter = FocusedWindowViewFilter)
+    val hierarchy = Radiography.scan(
+        viewStateRenderers = DefaultsIncludingPii,
+        viewFilter = FocusedWindowViewFilter
+    )
 
     assertThat(hierarchy).contains("window-focus:true")
     assertThat(hierarchy).contains("Dialog title")

@@ -5,7 +5,7 @@ import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import radiography.Radiography.scan
-import radiography.ViewStateRenderers.defaultsNoPii
+import radiography.ViewStateRenderers.DefaultsNoPii
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit.SECONDS
 import java.util.concurrent.atomic.AtomicReference
@@ -29,7 +29,7 @@ object Radiography {
    * can call the extension function [View.scan] instead). If null, scanning retrieves all windows
    * for the current process using reflection and then scans the view hierarchy for each window.
    *
-   * @param stateRenderers render extra attributes for specifics types, in order.
+   * @param viewStateRenderers render extra attributes for specifics types, in order.
    *
    * @param viewFilter a filter to exclude specific views from the rendering. If a view is excluded
    * then all of its children are excluded as well. Use [SkipIdsViewFilter] to ignore views that
@@ -37,9 +37,10 @@ object Radiography {
    * views of the currently focused window, if any.
    */
   @JvmStatic
+  @JvmOverloads
   fun scan(
     rootView: View? = null,
-    stateRenderers: List<StateRenderer<*>> = defaultsNoPii,
+    viewStateRenderers: List<ViewStateRenderer<*>> = DefaultsNoPii,
     viewFilter: ViewFilter = ViewFilter.All
   ): String {
 
@@ -48,12 +49,12 @@ object Radiography {
     val viewLooper = rootView?.handler?.looper ?: Looper.getMainLooper()!!
 
     if (viewLooper.thread == Thread.currentThread()) {
-      return scanFromLooperThread(rootView, stateRenderers, viewFilter)
+      return scanFromLooperThread(rootView, viewStateRenderers, viewFilter)
     }
     val latch = CountDownLatch(1)
     val hierarchyString = AtomicReference<String>()
     Handler(viewLooper).post {
-      hierarchyString.set(scanFromLooperThread(rootView, stateRenderers, viewFilter))
+      hierarchyString.set(scanFromLooperThread(rootView, viewStateRenderers, viewFilter))
       latch.countDown()
     }
     return if (latch.await(5, SECONDS)) {
@@ -65,7 +66,7 @@ object Radiography {
 
   private fun scanFromLooperThread(
     rootView: View?,
-    stateRenderers: List<StateRenderer<*>>,
+    viewStateRenderers: List<ViewStateRenderer<*>>,
     viewFilter: ViewFilter
   ): String = buildString {
     val rootViews = rootView?.let {
@@ -73,7 +74,7 @@ object Radiography {
     } ?: WindowScanner.findAllRootViews()
 
     val matchingRootViews = rootViews.filter(viewFilter::matches)
-    val viewVisitor = ViewTreeRenderingVisitor(stateRenderers, viewFilter)
+    val viewVisitor = ViewTreeRenderingVisitor(viewStateRenderers, viewFilter)
 
     for (view in matchingRootViews) {
       if (length > 0) {
