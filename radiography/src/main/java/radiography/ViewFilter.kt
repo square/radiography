@@ -21,7 +21,6 @@ interface ViewFilter {
 infix fun ViewFilter.and(otherFilter: ViewFilter): ViewFilter {
   val thisFilter = this
   return object : ViewFilter {
-    override fun matches(view: Any) = thisFilter.matches(view) &&
-        otherFilter.matches(view)
+    override fun matches(view: Any) = thisFilter.matches(view) && otherFilter.matches(view)
   }
 }
