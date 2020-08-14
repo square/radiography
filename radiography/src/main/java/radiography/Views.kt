@@ -8,7 +8,7 @@ import radiography.ViewStateRenderers.DefaultsNoPii
  * @see Radiography.scan
  */
 @JvmSynthetic
-fun View?.scan(
+public fun View?.scan(
   viewStateRenderers: List<ViewStateRenderer<*>> = DefaultsNoPii,
   viewFilter: ViewFilter = ViewFilter.All
 ): String {

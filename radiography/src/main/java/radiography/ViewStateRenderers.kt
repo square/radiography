@@ -5,10 +5,10 @@ import android.view.View
 import android.widget.Checkable
 import android.widget.TextView
 
-object ViewStateRenderers {
+public object ViewStateRenderers {
 
   @JvmField
-  val ViewRenderer: ViewStateRenderer<View> = viewStateRendererFor { view ->
+  public val ViewRenderer: ViewStateRenderer<View> = viewStateRendererFor { view ->
     if (view.id != View.NO_ID && view.resources != null) {
       try {
         val resourceName = view.resources.getResourceEntryName(view.id)
@@ -39,21 +39,21 @@ object ViewStateRenderers {
   }
 
   @JvmField
-  val CheckableRenderer: ViewStateRenderer<Checkable> = viewStateRendererFor { checkable ->
+  public val CheckableRenderer: ViewStateRenderer<Checkable> = viewStateRendererFor { checkable ->
     if (checkable.isChecked) {
       append("checked")
     }
   }
 
   @JvmField
-  val DefaultsNoPii: List<ViewStateRenderer<*>> = listOf(
+  public val DefaultsNoPii: List<ViewStateRenderer<*>> = listOf(
       ViewRenderer,
       textViewRenderer(includeTextViewText = false, textViewTextMaxLength = 0),
       CheckableRenderer
   )
 
   @JvmField
-  val DefaultsIncludingPii: List<ViewStateRenderer<*>> = listOf(
+  public val DefaultsIncludingPii: List<ViewStateRenderer<*>> = listOf(
       ViewRenderer,
       textViewRenderer(includeTextViewText = true),
       CheckableRenderer
@@ -69,7 +69,7 @@ object ViewStateRenderers {
    */
   @JvmStatic
   @JvmOverloads
-  fun textViewRenderer(
+  public fun textViewRenderer(
     includeTextViewText: Boolean = false,
     textViewTextMaxLength: Int = Int.MAX_VALUE
   ): ViewStateRenderer<TextView> {
