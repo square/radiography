@@ -58,16 +58,21 @@ private fun <N> StringBuilder.renderRecursively(
   depth: Int,
   lastChildMask: Long
 ) {
-  appendLinePrefix(depth, lastChildMask)
-
   // Collect the children before actually visiting them. This ensures we know the full list of
   // children before we start iterating, which we need in order to be able to render the correct
   // line prefix for the last child.
   val children = mutableListOf<Pair<Any?, TreeRenderingVisitor<Any?>>>()
-  val scope = RenderingScope(this@renderRecursively, children)
+
+  // Render node into a separate buffer to append a prefix to every line.
+  val nodeDescription = StringBuilder()
+  val scope = RenderingScope(nodeDescription, children)
   with(visitor) { scope.visitNode(node) }
-  @Suppress("DEPRECATION")
-  appendln()
+
+  nodeDescription.lineSequence().forEachIndexed { index, line ->
+    appendLinePrefix(depth, continuePreviousLine = index > 0, lastChildMask = lastChildMask)
+    @Suppress("DEPRECATION")
+    appendln(line)
+  }
 
   if (children.isEmpty()) return
 
@@ -87,6 +92,7 @@ private fun <N> StringBuilder.renderRecursively(
 
 private fun StringBuilder.appendLinePrefix(
   depth: Int,
+  continuePreviousLine: Boolean,
   lastChildMask: Long
 ) {
   val lastDepth = depth - 1
@@ -98,13 +104,13 @@ private fun StringBuilder.appendLinePrefix(
     }
     val lastChild = lastChildMask and (1 shl parentDepth).toLong() != 0L
     if (lastChild) {
-      if (parentDepth == lastDepth) {
+      if (parentDepth == lastDepth && !continuePreviousLine) {
         append('`')
       } else {
         append(' ')
       }
     } else {
-      if (parentDepth == lastDepth) {
+      if (parentDepth == lastDepth && !continuePreviousLine) {
         append('+')
       } else {
         append('|')
@@ -112,6 +118,10 @@ private fun StringBuilder.appendLinePrefix(
     }
   }
   if (depth > 0) {
-    append("-")
+    if (continuePreviousLine) {
+      append(" ")
+    } else {
+      append("-")
+    }
   }
 }
