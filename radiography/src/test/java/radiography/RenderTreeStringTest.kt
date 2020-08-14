@@ -95,7 +95,7 @@ class RenderTreeStringTest {
     )
   }
 
-  @Test fun `renderTreeString handles maximum depth tree`() {
+  @Test fun `renderTreeString handles 64-deep tree`() {
     val tree = generateSequence(Node("leaf")) { child ->
       Node("node", Node("leaf"), child)
     }
@@ -114,11 +114,11 @@ class RenderTreeStringTest {
     )
   }
 
-  @Test fun `renderTreeString handles over maximum depth tree`() {
+  @Test fun `renderTreeString handles over 64-deep tree`() {
     val tree = generateSequence(Node("leaf")) { child ->
       Node("node", Node("leaf"), child)
     }
-        .take(34)
+        .take(300)
         .last()
 
     val rendering = buildString { renderTreeString(tree, NodeVisitor) }
@@ -128,7 +128,7 @@ class RenderTreeStringTest {
         .map { it.trim() }
 
     assertThat(lastTwoLines).containsExactly(
-        "`-leaf",
+        "+-leaf",
         "`-leaf"
     )
   }
