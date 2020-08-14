@@ -70,8 +70,7 @@ private fun <N> StringBuilder.renderRecursively(
 
   nodeDescription.lineSequence().forEachIndexed { index, line ->
     appendLinePrefix(depth, continuePreviousLine = index > 0, lastChildMask = lastChildMask)
-    @Suppress("DEPRECATION")
-    appendln(line)
+    appendLine(line)
   }
 
   if (children.isEmpty()) return

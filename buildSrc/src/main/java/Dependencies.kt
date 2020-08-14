@@ -1,5 +1,5 @@
 object Versions {
-  val Kotlin = System.getProperty("square.kotlinVersion") ?: "1.3.72"
+  val Kotlin = System.getProperty("square.kotlinVersion") ?: "1.4.0"
 }
 
 object Dependencies {
