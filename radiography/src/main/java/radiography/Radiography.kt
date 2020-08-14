@@ -40,7 +40,7 @@ public object Radiography {
   @JvmOverloads
   public fun scan(
     rootView: View? = null,
-    viewStateRenderers: List<ViewStateRenderer<*>> = DefaultsNoPii,
+    viewStateRenderers: List<ViewStateRenderer> = DefaultsNoPii,
     viewFilter: ViewFilter = ViewFilter.All
   ): String {
 
@@ -66,7 +66,7 @@ public object Radiography {
 
   private fun scanFromLooperThread(
     rootView: View?,
-    viewStateRenderers: List<ViewStateRenderer<*>>,
+    viewStateRenderers: List<ViewStateRenderer>,
     viewFilter: ViewFilter
   ): String = buildString {
     val rootViews = rootView?.let {

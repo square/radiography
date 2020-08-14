@@ -10,7 +10,7 @@ import android.view.ViewGroup
  * [viewStateRenderers].
  */
 internal class ViewTreeRenderingVisitor(
-  private val viewStateRenderers: List<ViewStateRenderer<*>>,
+  private val viewStateRenderers: List<ViewStateRenderer>,
   private val viewFilter: ViewFilter
 ) : TreeRenderingVisitor<View>() {
 
@@ -36,7 +36,9 @@ internal class ViewTreeRenderingVisitor(
     append("${view.javaClass.simpleName} { ")
     val appendable = AttributeAppendable(this)
     for (renderer in viewStateRenderers) {
-      renderer.appendAttributes(appendable, view)
+      with(renderer) {
+        appendable.render(view)
+      }
     }
     append(" }")
   }

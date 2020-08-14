@@ -35,9 +35,8 @@ public final class radiography/ViewFilters {
 	public static final fun and (Lradiography/ViewFilter;Lradiography/ViewFilter;)Lradiography/ViewFilter;
 }
 
-public final class radiography/ViewStateRenderer {
-	public fun <init> (Ljava/lang/Class;Lkotlin/jvm/functions/Function2;)V
-	public final fun appendAttributes (Lradiography/AttributeAppendable;Ljava/lang/Object;)V
+public abstract interface class radiography/ViewStateRenderer {
+	public abstract fun render (Lradiography/AttributeAppendable;Ljava/lang/Object;)V
 }
 
 public final class radiography/ViewStateRenderers {
@@ -50,6 +49,7 @@ public final class radiography/ViewStateRenderers {
 	public static final fun textViewRenderer (Z)Lradiography/ViewStateRenderer;
 	public static final fun textViewRenderer (ZI)Lradiography/ViewStateRenderer;
 	public static synthetic fun textViewRenderer$default (ZIILjava/lang/Object;)Lradiography/ViewStateRenderer;
+	public static final fun viewStateRendererFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function2;)Lradiography/ViewStateRenderer;
 }
 
 public final class radiography/ViewsKt {
