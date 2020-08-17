@@ -44,8 +44,6 @@ android {
 }
 
 dependencies {
-  implementation(kotlin("stdlib"))
-
   testImplementation(Dependencies.JUnit)
   testImplementation(Dependencies.Mockito)
   testImplementation(Dependencies.Robolectric)
