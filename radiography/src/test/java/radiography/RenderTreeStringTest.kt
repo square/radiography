@@ -133,6 +133,30 @@ class RenderTreeStringTest {
     )
   }
 
+  @Test fun `renderTreeString handles multiline nodes`() {
+    val tree = Node(
+        "root1\nroot2",
+        Node("1\n1", Node("11\n11")),
+        Node("2\n2")
+    )
+
+    val rendering = buildString { renderTreeString(tree, NodeVisitor) }
+
+    assertThat(rendering).isEqualTo(
+        """
+          |${BLANK}root1
+          |${BLANK}root2
+          |$BLANK+-1
+          |$BLANK| 1
+          |$BLANK| `-11
+          |$BLANK|   11
+          |$BLANK`-2
+          |$BLANK  2
+          |
+        """.trimMargin()
+    )
+  }
+
   @Test fun `addChildToVisit with different visitor`() {
     val tree = Node(
         "root",
