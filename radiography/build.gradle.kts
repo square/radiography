@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.android.library")
@@ -40,6 +41,18 @@ android {
 
   buildFeatures {
     buildConfig = false
+  }
+}
+
+tasks.withType<KotlinCompile> {
+  // Tests aren't part of the public API, don't turn explicit API mode on for them.
+  if (!name.contains("test", ignoreCase = true)) {
+    kotlinOptions {
+      // Require explicit public modifiers and types.
+      // TODO this should be moved to a top-level `kotlin { explicitApi() }` once that's working
+      //  for android projects, see https://youtrack.jetbrains.com/issue/KT-37652.
+      freeCompilerArgs = listOf("-Xexplicit-api=strict")
+    }
   }
 }
 

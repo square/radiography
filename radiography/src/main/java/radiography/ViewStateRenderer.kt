@@ -9,12 +9,12 @@ package radiography
  *  }
  * ```
  */
-class ViewStateRenderer<in T> @PublishedApi internal constructor(
+public class ViewStateRenderer<in T> @PublishedApi internal constructor(
   private val renderedClass: Class<T>,
   private val renderer: AttributeAppendable.(T) -> Unit
 ) {
 
-  fun appendAttributes(
+  public fun appendAttributes(
     appendable: AttributeAppendable,
     rendered: Any
   ) {
@@ -27,5 +27,6 @@ class ViewStateRenderer<in T> @PublishedApi internal constructor(
   }
 }
 
-inline fun <reified T> viewStateRendererFor(noinline renderer: AttributeAppendable.(T) -> Unit) =
-  ViewStateRenderer(T::class.java, renderer)
+public inline fun <reified T> viewStateRendererFor(
+  noinline renderer: AttributeAppendable.(T) -> Unit
+): ViewStateRenderer<T> = ViewStateRenderer(T::class.java, renderer)

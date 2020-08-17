@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference
  * Utility class to scan through a view hierarchy and pretty print it to a [String].
  * Call [scan] or [View.scan].
  */
-object Radiography {
+public object Radiography {
 
   /**
    * Scans the view hierarchies and pretty print them to a [String].
@@ -38,7 +38,7 @@ object Radiography {
    */
   @JvmStatic
   @JvmOverloads
-  fun scan(
+  public fun scan(
     rootView: View? = null,
     viewStateRenderers: List<ViewStateRenderer<*>> = DefaultsNoPii,
     viewFilter: ViewFilter = ViewFilter.All
