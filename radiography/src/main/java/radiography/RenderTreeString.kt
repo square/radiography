@@ -1,6 +1,7 @@
 package radiography
 
 import radiography.TreeRenderingVisitor.RenderingScope
+import java.util.BitSet
 
 /**
  * Renders [rootNode] as a [String] by passing it to [visitor]'s [TreeRenderingVisitor.visitNode]
@@ -10,7 +11,7 @@ internal fun <N> StringBuilder.renderTreeString(
   rootNode: N,
   visitor: TreeRenderingVisitor<N>
 ) {
-  renderRecursively(rootNode, visitor, depth = 0, lastChildMask = 0)
+  renderRecursively(rootNode, visitor, depth = 0, lastChildMask = BitSet())
 }
 
 internal abstract class TreeRenderingVisitor<in N> {
@@ -56,7 +57,7 @@ private fun <N> StringBuilder.renderRecursively(
   node: N,
   visitor: TreeRenderingVisitor<N>,
   depth: Int,
-  lastChildMask: Long
+  lastChildMask: BitSet
 ) {
   // Collect the children before actually visiting them. This ensures we know the full list of
   // children before we start iterating, which we need in order to be able to render the correct
@@ -76,15 +77,22 @@ private fun <N> StringBuilder.renderRecursively(
   if (children.isEmpty()) return
 
   val lastChildIndex = children.size - 1
-  var newLastChildMask = lastChildMask
   for (index in 0..lastChildIndex) {
-    if (index == lastChildIndex) {
-      newLastChildMask = newLastChildMask or (1 shl depth).toLong()
+    val isLastChild = (index == lastChildIndex)
+    // Set bit before recursing, will be unset again before returning.
+    if (isLastChild) {
+      lastChildMask.set(depth)
     }
+
     val (childNode, childNodeVisitor) = children[index]
     // Never null on the main thread, but if called from another thread all bets are off.
     childNode?.let {
-      renderRecursively(childNode, childNodeVisitor, depth + 1, newLastChildMask)
+      renderRecursively(childNode, childNodeVisitor, depth + 1, lastChildMask)
+    }
+
+    // Unset the bit we set above before returning.
+    if (isLastChild) {
+      lastChildMask.clear(depth)
     }
   }
 }
@@ -92,7 +100,7 @@ private fun <N> StringBuilder.renderRecursively(
 private fun StringBuilder.appendLinePrefix(
   depth: Int,
   continuePreviousLine: Boolean,
-  lastChildMask: Long
+  lastChildMask: BitSet
 ) {
   val lastDepth = depth - 1
   // Add a non-breaking space at the beginning of the line because Logcat eats normal spaces.
@@ -101,7 +109,7 @@ private fun StringBuilder.appendLinePrefix(
     if (parentDepth > 0) {
       append(' ')
     }
-    val lastChild = lastChildMask and (1 shl parentDepth).toLong() != 0L
+    val lastChild = lastChildMask[parentDepth]
     if (lastChild) {
       if (parentDepth == lastDepth && !continuePreviousLine) {
         append('`')
