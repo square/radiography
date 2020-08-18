@@ -6,9 +6,7 @@ public object ViewFilters {
 
   /** A [ViewFilter] that matches everything (does not do any filtering). */
   @JvmStatic
-  public val NoFilter: ViewFilter = object : ViewFilter {
-    override fun matches(view: Any): Boolean = true
-  }
+  public val NoFilter: ViewFilter = ViewFilter { true }
 
   /**
    * Filters out root views that don't currently have the window focus from the output of
@@ -33,10 +31,7 @@ public object ViewFilters {
    */
   @JvmStatic
   public infix fun ViewFilter.and(otherFilter: ViewFilter): ViewFilter {
-    val thisFilter = this
-    return object : ViewFilter {
-      override fun matches(view: Any) = thisFilter.matches(view) && otherFilter.matches(view)
-    }
+    return ViewFilter { this.matches(it) && otherFilter.matches(it) }
   }
 
   /**

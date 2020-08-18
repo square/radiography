@@ -44,9 +44,8 @@ class MainActivity : Activity() {
           Radiography.scan(viewFilter = skipIdsViewFilter(R.id.show_dialog))
         },
         "Focused window and custom filter" to {
-          Radiography.scan(viewFilter = FocusedWindowViewFilter and object : ViewFilter {
-            override fun matches(view: Any) = view !is LinearLayout
-          })
+          Radiography.scan(
+              viewFilter = FocusedWindowViewFilter and ViewFilter { it !is LinearLayout })
         },
         "Include PII" to {
           Radiography.scan(

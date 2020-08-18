@@ -11,7 +11,7 @@ import radiography.ViewStateRenderers.viewStateRendererFor
  *  }
  * ```
  */
-public interface ViewStateRenderer {
+public fun interface ViewStateRenderer {
   public fun AttributeAppendable.render(rendered: Any)
 }
 
