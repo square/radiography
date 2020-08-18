@@ -1,5 +1,7 @@
 package radiography
 
+import radiography.ViewStateRenderers.viewStateRendererFor
+
 /**
  * Renders extra attributes for specifics types in the output of [Radiography.scan].
  * Call [viewStateRendererFor] to create instances with reified types:
@@ -9,24 +11,23 @@ package radiography
  *  }
  * ```
  */
-public class ViewStateRenderer<in T> @PublishedApi internal constructor(
-  private val renderedClass: Class<T>,
-  private val renderer: AttributeAppendable.(T) -> Unit
-) {
+public interface ViewStateRenderer {
+  public fun AttributeAppendable.render(rendered: Any)
+}
 
-  public fun appendAttributes(
-    appendable: AttributeAppendable,
-    rendered: Any
-  ) {
-    if (renderedClass.isInstance(rendered)) {
-      with(appendable) {
-        @Suppress("UNCHECKED_CAST")
-        renderer(rendered as T)
-      }
+/**
+ * Base class for implementations of [ViewStateRenderer] that only want to render instances of a
+ * specific type. Instances of other types are ignored.
+ */
+internal abstract class TypedViewStateRenderer<in T : Any>(
+  private val renderClass: Class<T>
+) : ViewStateRenderer {
+  public abstract fun AttributeAppendable.renderTyped(rendered: T)
+
+  final override fun AttributeAppendable.render(rendered: Any) {
+    if (renderClass.isInstance(rendered)) {
+      @Suppress("UNCHECKED_CAST")
+      renderTyped(rendered as T)
     }
   }
 }
-
-public inline fun <reified T> viewStateRendererFor(
-  noinline renderer: AttributeAppendable.(T) -> Unit
-): ViewStateRenderer<T> = ViewStateRenderer(T::class.java, renderer)

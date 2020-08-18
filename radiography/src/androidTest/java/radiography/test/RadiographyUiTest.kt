@@ -9,8 +9,8 @@ import androidx.test.rule.ActivityTestRule
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
-import radiography.FocusedWindowViewFilter
 import radiography.Radiography
+import radiography.ViewFilters.FocusedWindowViewFilter
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.test.utilities.TestActivity
 import radiography.test.utilities.TestActivity.Companion.withTextViewText

@@ -32,16 +32,16 @@ public object Radiography {
    * @param viewStateRenderers render extra attributes for specifics types, in order.
    *
    * @param viewFilter a filter to exclude specific views from the rendering. If a view is excluded
-   * then all of its children are excluded as well. Use [SkipIdsViewFilter] to ignore views that
-   * match specific ids (e.g. a debug drawer). Use [FocusedWindowViewFilter] to keep only the
-   * views of the currently focused window, if any.
+   * then all of its children are excluded as well. Use [ViewFilters.skipIdsViewFilter] to ignore
+   * views that match specific ids (e.g. a debug drawer). Use [ViewFilters.FocusedWindowViewFilter]
+   * to keep only the views of the currently focused window, if any.
    */
   @JvmStatic
   @JvmOverloads
   public fun scan(
     rootView: View? = null,
-    viewStateRenderers: List<ViewStateRenderer<*>> = DefaultsNoPii,
-    viewFilter: ViewFilter = ViewFilter.All
+    viewStateRenderers: List<ViewStateRenderer> = DefaultsNoPii,
+    viewFilter: ViewFilter = ViewFilters.NoFilter
   ): String {
 
     // The entire view tree is single threaded, and that's typically the main thread, but
@@ -66,7 +66,7 @@ public object Radiography {
 
   private fun scanFromLooperThread(
     rootView: View?,
-    viewStateRenderers: List<ViewStateRenderer<*>>,
+    viewStateRenderers: List<ViewStateRenderer>,
     viewFilter: ViewFilter
   ): String = buildString {
     val rootViews = rootView?.let {

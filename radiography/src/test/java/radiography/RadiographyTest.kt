@@ -14,6 +14,8 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import radiography.ViewFilters.and
+import radiography.ViewFilters.skipIdsViewFilter
 import radiography.ViewStateRenderers.textViewRenderer
 
 @RunWith(RobolectricTestRunner::class)
@@ -110,7 +112,7 @@ class RadiographyTest {
       id = 42
     }
     layout.addView(view)
-    layout.scan(viewFilter = SkipIdsViewFilter(42))
+    layout.scan(viewFilter = skipIdsViewFilter(42))
         .also {
           assertThat(it).contains("FrameLayout")
           assertThat(it).doesNotContain("Button")
@@ -125,7 +127,7 @@ class RadiographyTest {
     })
     layout.addView(EditText(context))
 
-    val filter = SkipIdsViewFilter(42) and object : ViewFilter {
+    val filter = skipIdsViewFilter(42) and object : ViewFilter {
       override fun matches(view: Any) = view !is EditText
     }
     layout.scan(viewFilter = filter)
