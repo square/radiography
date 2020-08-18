@@ -36,7 +36,7 @@ class RadiographyTest {
     view.scan()
         .also {
           assertThat(it).contains("INVISIBLE")
-          assertThat(it).contains("30x30px")
+          assertThat(it).contains("30×30px")
           assertThat(it).contains("disabled")
           assertThat(it).contains("selected")
         }
@@ -156,14 +156,14 @@ class RadiographyTest {
     root.addView(childLayout2)
     assertThat(root.scan()).contains(
         """
-          FrameLayout { 0x0px }
-          $BLANK+-View { 0x0px }
-          $BLANK+-LinearLayout { 0x0px }
-          $BLANK| +-View { 0x0px }
-          $BLANK| `-View { 0x0px }
-          $BLANK`-LinearLayout { 0x0px }
-          $BLANK  +-View { 0x0px }
-          $BLANK  `-View { 0x0px }
+          FrameLayout { 0×0px }
+          $BLANK+-View { 0×0px }
+          $BLANK+-LinearLayout { 0×0px }
+          $BLANK| +-View { 0×0px }
+          $BLANK| `-View { 0×0px }
+          $BLANK`-LinearLayout { 0×0px }
+          $BLANK  +-View { 0×0px }
+          $BLANK  `-View { 0×0px }
         """.trimIndent()
     )
   }

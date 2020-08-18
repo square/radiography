@@ -23,7 +23,7 @@ public object ViewStateRenderers {
       View.INVISIBLE -> append("INVISIBLE")
     }
 
-    append("${view.width}x${view.height}px")
+    append("${view.width}×${view.height}px")
 
     if (view.isFocused) {
       append("focused")
