@@ -1,4 +1,3 @@
-@file:JvmName("ViewFilters")
 package radiography
 
 /**
@@ -9,18 +8,19 @@ public interface ViewFilter {
    * @return true to keep the view in the output of [Radiography.scan], false to filter it out.
    */
   public fun matches(view: Any): Boolean
-
-  public object All : ViewFilter {
-    override fun matches(view: Any): Boolean = true
-  }
 }
 
 /**
- * Creates a new filter that combines this filter with [otherFilter]
+ * Base class for implementations of [ViewFilter] that only want to filter instances of a specific
+ * type. Instances of other types are always "matched" by this filter.
  */
-public infix fun ViewFilter.and(otherFilter: ViewFilter): ViewFilter {
-  val thisFilter = this
-  return object : ViewFilter {
-    override fun matches(view: Any) = thisFilter.matches(view) && otherFilter.matches(view)
+internal abstract class TypedViewFilter<in T : Any>(
+  private val filterClass: Class<T>
+) : ViewFilter {
+  public abstract fun matchesTyped(view: T): Boolean
+
+  final override fun matches(view: Any): Boolean {
+    @Suppress("UNCHECKED_CAST")
+    return !filterClass.isInstance(view) || matchesTyped(view as T)
   }
 }

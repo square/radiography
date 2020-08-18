@@ -9,15 +9,15 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import radiography.FocusedWindowViewFilter
 import radiography.Radiography
-import radiography.SkipIdsViewFilter
 import radiography.ViewFilter
+import radiography.ViewFilters.FocusedWindowViewFilter
+import radiography.ViewFilters.and
+import radiography.ViewFilters.skipIdsViewFilter
 import radiography.ViewStateRenderers
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.viewStateRendererFor
-import radiography.and
 import radiography.scan
 
 class MainActivity : Activity() {
@@ -41,7 +41,7 @@ class MainActivity : Activity() {
           findViewById<View>(R.id.main).scan()
         },
         "Skip R.id.show_dialog" to {
-          Radiography.scan(viewFilter = SkipIdsViewFilter(R.id.show_dialog))
+          Radiography.scan(viewFilter = skipIdsViewFilter(R.id.show_dialog))
         },
         "Focused window and custom filter" to {
           Radiography.scan(viewFilter = FocusedWindowViewFilter and object : ViewFilter {

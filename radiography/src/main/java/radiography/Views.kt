@@ -10,7 +10,7 @@ import radiography.ViewStateRenderers.DefaultsNoPii
 @JvmSynthetic
 public fun View?.scan(
   viewStateRenderers: List<ViewStateRenderer> = DefaultsNoPii,
-  viewFilter: ViewFilter = ViewFilter.All
+  viewFilter: ViewFilter = ViewFilters.NoFilter
 ): String {
   return if (this == null) {
     "null"

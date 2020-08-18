@@ -3,11 +3,6 @@ public final class radiography/AttributeAppendable {
 	public final fun append (Ljava/lang/CharSequence;)V
 }
 
-public final class radiography/FocusedWindowViewFilter : radiography/ViewFilter {
-	public static final field INSTANCE Lradiography/FocusedWindowViewFilter;
-	public fun matches (Ljava/lang/Object;)Z
-}
-
 public final class radiography/Radiography {
 	public static final field INSTANCE Lradiography/Radiography;
 	public static final fun scan ()Ljava/lang/String;
@@ -17,22 +12,17 @@ public final class radiography/Radiography {
 	public static synthetic fun scan$default (Landroid/view/View;Ljava/util/List;Lradiography/ViewFilter;ILjava/lang/Object;)Ljava/lang/String;
 }
 
-public final class radiography/SkipIdsViewFilter : radiography/ViewFilter {
-	public fun <init> ([I)V
-	public fun matches (Ljava/lang/Object;)Z
-}
-
 public abstract interface class radiography/ViewFilter {
 	public abstract fun matches (Ljava/lang/Object;)Z
 }
 
-public final class radiography/ViewFilter$All : radiography/ViewFilter {
-	public static final field INSTANCE Lradiography/ViewFilter$All;
-	public fun matches (Ljava/lang/Object;)Z
-}
-
 public final class radiography/ViewFilters {
+	public static final field FocusedWindowViewFilter Lradiography/ViewFilter;
+	public static final field INSTANCE Lradiography/ViewFilters;
 	public static final fun and (Lradiography/ViewFilter;Lradiography/ViewFilter;)Lradiography/ViewFilter;
+	public static final fun getNoFilter ()Lradiography/ViewFilter;
+	public static final fun skipIdsViewFilter ([I)Lradiography/ViewFilter;
+	public static final fun viewFilterFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lradiography/ViewFilter;
 }
 
 public abstract interface class radiography/ViewStateRenderer {
