@@ -52,14 +52,14 @@ public object ViewStateRenderers {
   public val DefaultsNoPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
       textViewRenderer(includeTextViewText = false, textViewTextMaxLength = 0),
-      CheckableRenderer
+      CheckableRenderer,
   ) + ComposeLayoutRenderers.DefaultsNoPii
 
   @JvmField
   public val DefaultsIncludingPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
       textViewRenderer(includeTextViewText = true),
-      CheckableRenderer
+      CheckableRenderer,
   ) + ComposeLayoutRenderers.DefaultsIncludingPii
 
   /**
