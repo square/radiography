@@ -19,7 +19,7 @@ object ViewFilters {
           .asSequence()
           .map { it.modifier }
           .filterIsInstance<SemanticsModifier>()
-          .flatMap { it.semanticsConfiguration }
+          .flatMap { it.semanticsConfiguration.asSequence() }
           .filter { (key, _) -> key.name == "TestTag" }
 
       return@viewFilterFor testTags.none { it.value in skippedTestTags }
