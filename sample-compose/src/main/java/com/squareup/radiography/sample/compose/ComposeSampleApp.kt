@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.currentComposer
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ContextAmbient
@@ -36,10 +39,11 @@ import radiography.ViewStateRenderers.textViewRenderer
 import radiography.ViewStateRenderers.viewStateRendererFor
 import radiography.compose.ExperimentalRadiographyComposeApi
 import radiography.compose.ViewFilters.skipTestTagsViewFilter
-import radiography.compose.ViewStateRenderers.composeViewRenderer
+import radiography.compose.ViewStateRenderers.composeDetailedRenderer
 
 @Composable fun ComposeSampleApp() {
   val (isChecked, onCheckChanged) = remember { mutableStateOf(false) }
+  var text by remember { mutableStateOf("") }
   val context = ContextAmbient.current
   val composer = currentComposer
 
@@ -49,6 +53,7 @@ import radiography.compose.ViewStateRenderers.composeViewRenderer
       Checkbox(checked = isChecked, onCheckedChange = onCheckChanged)
       Text("Check me, or don't.")
     }
+    TextField(value = text, onValueChange = { text = it }, label = { Text("Text Field") })
     // Include a classic Android view in the composition.
     emitView(::TextView) {
       @SuppressLint("SetTextI18n")
@@ -70,6 +75,11 @@ private fun showSelectionDialog(
   val renderings = listOf(
       "Default" to {
         Radiography.scan()
+      },
+      "Detailed" to {
+        Radiography.scan(
+            viewStateRenderers = DefaultsIncludingPii + composeDetailedRenderer(includeText = true)
+        )
       },
       "Focused window" to {
         Radiography.scan(viewFilter = FocusedWindowViewFilter)
@@ -94,7 +104,7 @@ private fun showSelectionDialog(
                 ViewRenderer,
                 textViewRenderer(includeTextViewText = true, textViewTextMaxLength = 4),
                 CheckableRenderer,
-                composeViewRenderer(includeText = true, maxTextLength = 4)
+                composeDetailedRenderer(includeText = true, maxTextLength = 4)
             )
         )
       },

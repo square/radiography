@@ -19,6 +19,13 @@ internal fun interface RawValueFormatter {
   ): CharSequence?
 }
 
+internal fun Iterable<RawValueFormatter>.format(value: Any?): CharSequence {
+  return asSequence()
+      .mapNotNull { it.format(value, ::format) }
+      .firstOrNull()
+      ?: value.toString()
+}
+
 // TODO unit tests for all of these
 internal object RawValueFormatters {
 

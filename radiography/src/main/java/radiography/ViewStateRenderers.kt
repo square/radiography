@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.Checkable
 import android.widget.TextView
 import radiography.compose.ExperimentalRadiographyComposeApi
-import radiography.compose.ViewStateRenderers.composeViewRenderer
+import radiography.compose.ViewStateRenderers.composeLayoutsRenderer
 
 public object ViewStateRenderers {
 
@@ -53,7 +53,7 @@ public object ViewStateRenderers {
       ViewRenderer,
       textViewRenderer(includeTextViewText = false, textViewTextMaxLength = 0),
       CheckableRenderer,
-      composeViewRenderer(includeText = false, maxTextLength = 0)
+      composeLayoutsRenderer(includeText = false, maxTextLength = 0)
   )
 
   @OptIn(ExperimentalRadiographyComposeApi::class)
@@ -62,7 +62,7 @@ public object ViewStateRenderers {
       ViewRenderer,
       textViewRenderer(includeTextViewText = true),
       CheckableRenderer,
-      composeViewRenderer(includeText = true)
+      composeLayoutsRenderer(includeText = true)
   )
 
   /**

@@ -1,30 +1,18 @@
 package radiography.compose
 
 import android.view.View
-import androidx.ui.tooling.Group
-import radiography.AttributeAppendable
 import radiography.TreeRenderingVisitor
 import radiography.ViewFilter
 import radiography.compose.ComposeTreeNode.EmittedValueNode
 
-/**
- * [TreeRenderingVisitor] for [Group] objects produced by Compose tooling to describe a slot table.
- *
- * @param classicViewVisitor A [TreeRenderingVisitor] to delegate to when a classic view is found
- * inside a composition.
- */
-internal class GroupTreeRenderingVisitor(
+internal class ComposeTreeNodeVisitor(
   private val treeNodeFormatter: ComposeTreeNodeRenderer,
   private val viewFilter: ViewFilter,
   private val classicViewVisitor: TreeRenderingVisitor<View>
 ) : TreeRenderingVisitor<ComposeTreeNode>() {
 
   override fun RenderingScope.visitNode(node: ComposeTreeNode) {
-    AttributeAppendable(description).let { appendable ->
-      with(treeNodeFormatter) {
-        appendable.render(node)
-      }
-    }
+    treeNodeFormatter.appendComposeTreeNode(description, node)
 
     node.children.asSequence()
         .filter(viewFilter::matches)
