@@ -1,12 +1,12 @@
 package radiography
 
-public class AttributeAppendable(
+class AttributeAppendable(
   private val stringBuilder: StringBuilder
 ) {
 
   private var first = true
 
-  public fun append(attribute: CharSequence?) {
+  fun append(attribute: CharSequence?) {
     if (attribute == null) {
       return
     }
