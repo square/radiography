@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
-println("Building with Kotlin version ${Versions.Kotlin}")
+println("Building with Kotlin compiler version ${Versions.KotlinCompiler}")
+println("Building with Kotlin stdlib version ${Versions.KotlinStdlib}")
 
 buildscript {
   repositories {
@@ -72,6 +73,8 @@ subprojects {
       }
 
       jvmTarget = "1.6"
+      // Required to avoid warnings about using older stdlib version.
+      apiVersion = "1.3"
     }
   }
 

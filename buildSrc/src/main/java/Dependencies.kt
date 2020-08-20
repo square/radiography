@@ -1,12 +1,15 @@
 object Versions {
-  val Kotlin = System.getProperty("square.kotlinVersion") ?: "1.4.0"
+  val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.4.0"
+
+  /** Use a lower version of the stdlib so the library can be consumed by lower kotlin versions. */
+  val KotlinStdlib = System.getProperty("square.kotlinStdlibVersion") ?: "1.3.72"
 }
 
 object Dependencies {
   object Build {
     const val Android = "com.android.tools.build:gradle:4.0.0"
     const val MavenPublish = "com.vanniktech:gradle-maven-publish-plugin:0.12.0"
-    val Kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.Kotlin}"
+    val Kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KotlinCompiler}"
     const val Ktlint = "org.jlleitschuh.gradle:ktlint-gradle:9.2.1"
     const val BinaryCompatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.2.3"
   }
