@@ -18,7 +18,7 @@ public object ViewStateRenderers {
     includeText: Boolean = false,
     maxTextLength: Int = Int.MAX_VALUE,
     showStates: Boolean = false,
-    showInnerCalls: Boolean = false,
+    showInnerCalls: Boolean = false
   ): ViewStateRenderer = ComposeSummaryRenderer(
       showInnerCalls,
       showStates,
@@ -38,7 +38,7 @@ public object ViewStateRenderers {
     includeText: Boolean = false,
     maxTextLength: Int = Int.MAX_VALUE,
     omitDefaultArgumentValues: Boolean = true,
-    collapseEmptyNodes: Boolean = true,
+    collapseEmptyNodes: Boolean = true
   ): ViewStateRenderer = ComposeDetailedRenderer(
       omitDefaultArgumentValues, collapseEmptyNodes,
       RawValueFormatters.defaults(includeText, maxTextLength)

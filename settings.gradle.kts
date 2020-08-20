@@ -20,8 +20,8 @@ include(
     ":sample"
 )
 
-if (System.getProperty("square.kotlinVersion")
-        ?.startsWith("1.4") == true
-) {
+//if (System.getProperty("square.kotlinVersion")
+//        ?.startsWith("1.4") == true
+//) {
   include(":sample-compose")
-}
+//}

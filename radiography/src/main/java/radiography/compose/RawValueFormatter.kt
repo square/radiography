@@ -12,7 +12,7 @@ import radiography.ellipsize
 /**
  * TODO write documentation
  */
-internal fun interface RawValueFormatter {
+internal interface RawValueFormatter {
   fun format(
     value: Any?,
     format: (Any?) -> CharSequence?
@@ -43,29 +43,42 @@ internal object RawValueFormatters {
       AnnotatedStringFormatter
   )
 
-  private val FunctionFormatter = RawValueFormatter { value, _ ->
-    (value as? Function<*>)?.let {
+  private val FunctionFormatter = object : RawValueFormatter {
+    override fun format(
+      value: Any?,
+      format: (Any?) -> CharSequence?
+    ): CharSequence? = (value as? Function<*>)?.let {
       "fun{}@${value.hashCode()}"
     }
   }
 
   @OptIn(ComposeCompilerApi::class)
-  private val ComposableLambdaFormatter = RawValueFormatter { value, _ ->
-    (value as? ComposableLambda<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>)?.let {
-      "@Composable fun{}@${value.hashCode()}"
-    }
+  private val ComposableLambdaFormatter = object : RawValueFormatter {
+    override fun format(
+      value: Any?,
+      format: (Any?) -> CharSequence?
+    ): CharSequence? =
+      (value as? ComposableLambda<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>)?.let {
+        "@Composable fun{}@${value.hashCode()}"
+      }
   }
 
-  private val StateFormatter = RawValueFormatter { value, format ->
-    (value as? State<*>)?.let { state ->
+  private val StateFormatter = object : RawValueFormatter {
+    override fun format(
+      value: Any?,
+      format: (Any?) -> CharSequence?
+    ): CharSequence? = (value as? State<*>)?.let { state ->
       val stateTypeString = if (state is MutableState<*>) "MutableState" else "State"
       val stateValueString = format(state.value)
       return@let "$stateTypeString($stateValueString)"
     }
   }
 
-  private val MapFormatter = RawValueFormatter { value, format ->
-    (value as? Map<*, *>)?.let { map ->
+  private val MapFormatter = object : RawValueFormatter {
+    override fun format(
+      value: Any?,
+      format: (Any?) -> CharSequence?
+    ): CharSequence? = (value as? Map<*, *>)?.let { map ->
       when {
         // If a map is too large, don't try to print it.
         // Unless a sample contains only Ambient keys, in which case the whole thing is probably
@@ -84,8 +97,11 @@ internal object RawValueFormatters {
     }
   }
 
-  private val SemanticsModifierFormatter = RawValueFormatter { value, format ->
-    (value as? SemanticsModifier)?.let { modifier ->
+  private val SemanticsModifierFormatter = object : RawValueFormatter {
+    override fun format(
+      value: Any?,
+      format: (Any?) -> CharSequence?
+    ): CharSequence? = (value as? SemanticsModifier)?.let { modifier ->
       buildString {
         append("semantics-modifier: { ")
         modifier.semanticsConfiguration.joinTo(this) { (key, value) ->
@@ -96,16 +112,24 @@ internal object RawValueFormatters {
     }
   }
 
-  private val StaticValueHolderFormatter = RawValueFormatter { _, _ ->
-    // TODO
-    null
+  private val StaticValueHolderFormatter = object : RawValueFormatter {
+    override fun format(
+      value: Any?,
+      format: (Any?) -> CharSequence?
+    ): CharSequence? {
+      // TODO
+      return null
+    }
   }
 
   private fun charSequenceFormatter(
     includeText: Boolean,
     maxTextLength: Int
-  ) = RawValueFormatter { value, _ ->
-    (value as? CharSequence)?.let {
+  ) = object : RawValueFormatter {
+    override fun format(
+      value: Any?,
+      format: (Any?) -> CharSequence?
+    ): CharSequence? = (value as? CharSequence)?.let {
       if (includeText) {
         "\"${value.ellipsize(maxTextLength)}\""
       } else {
@@ -114,8 +138,11 @@ internal object RawValueFormatters {
     }
   }
 
-  private val AnnotatedStringFormatter = RawValueFormatter { value, format ->
-    (value as? AnnotatedString)?.let {
+  private val AnnotatedStringFormatter = object : RawValueFormatter {
+    override fun format(
+      value: Any?,
+      format: (Any?) -> CharSequence?
+    ): CharSequence? = (value as? AnnotatedString)?.let {
       value.copy(text = format(value.text).toString())
           .toString()
     }

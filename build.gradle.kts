@@ -78,7 +78,7 @@ subprojects {
     kotlinOptions {
       // Allow warnings when running from IDE, makes it easier to experiment.
       if (!isRunningFromIde) {
-        allWarningsAsErrors = true
+//        allWarningsAsErrors = true
       }
 
       jvmTarget = "1.6"
