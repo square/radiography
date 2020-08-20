@@ -36,4 +36,5 @@ android {
 
 dependencies {
   implementation(project(":radiography"))
+  implementation(kotlin("stdlib"))
 }
