@@ -28,6 +28,7 @@ object Dependencies {
 
   object Compose {
     const val Material = "androidx.compose.material:material:${Versions.Compose}"
+    const val Testing = "androidx.ui:ui-test:${Versions.Compose}"
     const val Tooling = "androidx.ui:ui-tooling:${Versions.Compose}"
   }
 

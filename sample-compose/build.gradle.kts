@@ -17,6 +17,7 @@ android {
     minSdkVersion(21)
     targetSdkVersion(30)
     applicationId = "com.squareup.radiography.sample.compose"
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
   buildFeatures {
@@ -48,4 +49,8 @@ dependencies {
   implementation(Dependencies.AppCompat)
   implementation(Dependencies.Compose.Material)
   implementation(Dependencies.Compose.Tooling)
+
+  androidTestImplementation(Dependencies.Compose.Testing)
+  androidTestImplementation(Dependencies.InstrumentationTests.Rules)
+  androidTestImplementation(Dependencies.InstrumentationTests.Runner)
 }
