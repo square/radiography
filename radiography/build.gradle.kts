@@ -57,6 +57,8 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
+  implementation(kotlin("stdlib", Versions.KotlinStdlib))
+
   testImplementation(Dependencies.JUnit)
   testImplementation(Dependencies.Mockito)
   testImplementation(Dependencies.Robolectric)

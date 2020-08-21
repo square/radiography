@@ -78,16 +78,19 @@ public object Radiography {
 
     for (view in matchingRootViews) {
       if (length > 0) {
-        appendLine()
+        @Suppress("DEPRECATION")
+        appendln()
       }
       val layoutParams = view.layoutParams
       val title = (layoutParams as? WindowManager.LayoutParams)?.title?.toString()
           ?: view.javaClass.name
-      appendLine("$title:")
+      @Suppress("DEPRECATION")
+      appendln("$title:")
 
       val startPosition = length
       try {
-        appendLine("window-focus:${view.hasWindowFocus()}")
+        @Suppress("DEPRECATION")
+        appendln("window-focus:${view.hasWindowFocus()}")
         renderTreeString(view, viewVisitor)
       } catch (e: Throwable) {
         insert(
