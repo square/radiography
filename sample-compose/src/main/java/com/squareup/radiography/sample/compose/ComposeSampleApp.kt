@@ -44,6 +44,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.squareup.radiography.sample.compose.R.drawable
 import radiography.Radiography
 import radiography.ViewFilter
+import radiography.ViewFilter.FilterResult
+import radiography.ViewFilter.FilterResult.EXCLUDE
+import radiography.ViewFilter.FilterResult.INCLUDE
 import radiography.ViewFilters.FocusedWindowViewFilter
 import radiography.ViewFilters.and
 import radiography.ViewStateRenderers.CheckableRenderer
@@ -53,11 +56,13 @@ import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.textViewRenderer
 import radiography.ViewStateRenderers.viewStateRendererFor
 import radiography.compose.ComposeLayoutFilters.skipTestTagsFilter
+import radiography.compose.ComposeLayoutFilters.startFromTestTag
 import radiography.compose.ComposeLayoutRenderers.LayoutIdRenderer
 import radiography.compose.ComposeLayoutRenderers.StandardSemanticsRenderer
 import radiography.compose.ComposeLayoutRenderers.composeTextRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 
+private const val ROOT_TEST_TAG = "root-composable"
 internal const val TEXT_FIELD_TEST_TAG = "text-field"
 internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
 
@@ -72,7 +77,7 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
 
   MaterialTheme {
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(16.dp).testTag(ROOT_TEST_TAG),
         horizontalGravity = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -126,7 +131,8 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
         liveHierarchy.value = Radiography.scan(
             viewStateRenderers = DefaultsIncludingPii,
             // Don't trigger infinite recursion.
-            viewFilter = skipTestTagsFilter(LIVE_HIERARCHY_TEST_TAG)
+            viewFilter = startFromTestTag(ROOT_TEST_TAG) and
+                skipTestTagsFilter(LIVE_HIERARCHY_TEST_TAG)
         )
       }
     }
@@ -147,7 +153,8 @@ private fun showSelectionDialog(context: Context) {
       },
       "Focused window and custom filter" to {
         Radiography.scan(viewFilter = FocusedWindowViewFilter and object : ViewFilter {
-          override fun matches(view: Any): Boolean = view !is LinearLayout
+          override fun matches(view: Any): FilterResult =
+            if (view !is LinearLayout) INCLUDE else EXCLUDE
         })
       },
       "Include PII" to {

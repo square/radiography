@@ -1,20 +1,32 @@
 package radiography
 
+import radiography.TreeRenderingVisitor.ChildToVisit
 import radiography.TreeRenderingVisitor.RenderingScope
+import java.util.ArrayDeque
 import java.util.BitSet
 
 /**
  * Renders [rootNode] as a [String] by passing it to [visitor]'s [TreeRenderingVisitor.visitNode]
  * method.
+ *
+ * @param skip If true, this node's description will be ignored and its children will be treated
+ * as the roots.
  */
 internal fun <N> StringBuilder.renderTreeString(
   rootNode: N,
-  visitor: TreeRenderingVisitor<N>
+  visitor: TreeRenderingVisitor<N>,
+  skip: Boolean = false
 ) {
-  renderRecursively(rootNode, visitor, depth = 0, lastChildMask = BitSet())
+  renderRecursively(rootNode, visitor, skip = skip, depth = 0, lastChildMask = BitSet())
 }
 
 internal abstract class TreeRenderingVisitor<in N> {
+
+  internal data class ChildToVisit<N>(
+    val node: N,
+    val visitor: TreeRenderingVisitor<N>,
+    val skip: Boolean
+  )
 
   /**
    * Renders nodes of type [N] by rendering them as strings to [RenderingScope.description] and
@@ -24,31 +36,31 @@ internal abstract class TreeRenderingVisitor<in N> {
    */
   abstract fun RenderingScope.visitNode(node: N)
 
-  /**
-   * Convenience overload of [RenderingScope.addChildToVisit] for children of the same type as this
-   * visitor.
-   */
-  protected fun RenderingScope.addChildToVisit(childNode: N) =
-    addChildToVisit(childNode, this@TreeRenderingVisitor)
-
   class RenderingScope(
     /**
      * A [StringBuilder] which should be used to render the current node, and will be included in
      * the final rendering before any of this node's children.
+     *
+     * If null, this node is being skipped, and no description will be rendered.
      */
-    val description: StringBuilder,
-    private val children: MutableList<Pair<Any?, TreeRenderingVisitor<Any?>>>
+    val description: StringBuilder?,
+    private val children: MutableCollection<ChildToVisit<Any?>>
   ) {
 
     /**
      * Recursively visits a child of the current node using [visitor].
+     *
+     * @param skip If true, [childNode]'s description will be ignored, and its children (this node's
+     * grandchildren) will be rendered as direct children of this node.
      */
+    // TODO unit tests for when skip=true
     fun <C> addChildToVisit(
       childNode: C,
-      visitor: TreeRenderingVisitor<C>
+      visitor: TreeRenderingVisitor<C>,
+      skip: Boolean = false
     ) {
       @Suppress("UNCHECKED_CAST")
-      children += Pair(childNode, visitor as TreeRenderingVisitor<Any?>)
+      children += ChildToVisit(childNode, visitor as TreeRenderingVisitor<Any?>, skip)
     }
   }
 }
@@ -57,45 +69,50 @@ private fun <N> StringBuilder.renderRecursively(
   node: N,
   visitor: TreeRenderingVisitor<N>,
   depth: Int,
+  skip: Boolean,
   lastChildMask: BitSet
 ) {
   // Collect the children before actually visiting them. This ensures we know the full list of
   // children before we start iterating, which we need in order to be able to render the correct
   // line prefix for the last child.
-  val children = mutableListOf<Pair<Any?, TreeRenderingVisitor<Any?>>>()
+  val children = ArrayDeque<ChildToVisit<Any?>>()
 
   // Render node into a separate buffer to append a prefix to every line.
   val nodeDescription = StringBuilder()
   val scope = RenderingScope(nodeDescription, children)
   with(visitor) { scope.visitNode(node) }
 
-  nodeDescription.lineSequence().forEachIndexed { index, line ->
-    appendLinePrefix(depth, continuePreviousLine = index > 0, lastChildMask = lastChildMask)
-    @Suppress("DEPRECATION")
-    appendln(line)
-  }
-
-  if (children.isEmpty()) return
-
-  val lastChildIndex = children.size - 1
-  for (index in 0..lastChildIndex) {
-    val isLastChild = (index == lastChildIndex)
-    // Set bit before recursing, will be unset again before returning.
-    if (isLastChild) {
-      lastChildMask.set(depth)
-    }
-
-    val (childNode, childNodeVisitor) = children[index]
-    // Never null on the main thread, but if called from another thread all bets are off.
-    childNode?.let {
-      renderRecursively(childNode, childNodeVisitor, depth + 1, lastChildMask)
-    }
-
-    // Unset the bit we set above before returning.
-    if (isLastChild) {
-      lastChildMask.clear(depth)
+  if (!skip) {
+    nodeDescription.lineSequence().forEachIndexed { index, line ->
+      appendLinePrefix(depth, continuePreviousLine = index > 0, lastChildMask = lastChildMask)
+      @Suppress("DEPRECATION")
+      appendln(line)
     }
   }
+
+  while (children.isNotEmpty()) {
+    val (childNode, childNodeVisitor, skipChild) = children.removeFirst()
+    if (!skipChild) {
+      if (children.isEmpty()) {
+        // No more children can be enqueued for this node, so we can be certain this is the last
+        // child.
+        lastChildMask.set(depth)
+      }
+
+      // Never null on the main thread, but if called from another thread all bets are off.
+      childNode?.let {
+        renderRecursively(childNode, childNodeVisitor, depth + 1, skipChild, lastChildMask)
+      }
+    } else {
+      // Visit the child directly, without generating a description but adding its children to our
+      // queue to be processed by this loop.
+      val childScope = RenderingScope(null, children)
+      with(childNodeVisitor) { childScope.visitNode(childNode) }
+    }
+  }
+
+  // Unset the bit we set above before returning.
+  lastChildMask.clear(depth)
 }
 
 private fun StringBuilder.appendLinePrefix(

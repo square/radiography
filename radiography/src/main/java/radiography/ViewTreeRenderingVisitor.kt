@@ -4,6 +4,8 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION_CODES
 import android.view.View
 import android.view.ViewGroup
+import radiography.ViewFilter.FilterResult.INCLUDE
+import radiography.ViewFilter.FilterResult.INCLUDE_ONLY_CHILDREN
 import radiography.compose.tryVisitComposeView
 
 /**
@@ -16,7 +18,7 @@ internal class ViewTreeRenderingVisitor(
 ) : TreeRenderingVisitor<View>() {
 
   override fun RenderingScope.visitNode(node: View) {
-    description.viewToString(node)
+    description?.viewToString(node)
 
     val isComposeView = tryVisitComposeView(
         this, node, viewStateRenderers, viewFilter, this@ViewTreeRenderingVisitor
@@ -26,17 +28,8 @@ internal class ViewTreeRenderingVisitor(
       return
     }
 
-    if (node !is ViewGroup) return
-
-    // Capture this value, since it might change while we're iterating.
-    val childCount = node.childCount
-    for (index in 0 until childCount) {
-      // Child may be null, if children were removed by another thread after we captured the child
-      // count. getChildAt returns null for invalid indices, it doesn't throw.
-      val child = node.getChildAt(index) ?: continue
-      if (viewFilter.matches(child)) {
-        addChildToVisit(child)
-      }
+    if (node is ViewGroup) {
+      visitChildrenOf(node)
     }
   }
 
@@ -50,5 +43,22 @@ internal class ViewTreeRenderingVisitor(
       }
     }
     append(" }")
+  }
+
+  private fun RenderingScope.visitChildrenOf(view: ViewGroup) {
+    // Capture this value, since it might change while we're iterating.
+    val childCount = view.childCount
+    for (index in 0 until childCount) {
+      // Child may be null, if children were removed by another thread after we captured the child
+      // count. getChildAt returns null for invalid indices, it doesn't throw.
+      val child = view.getChildAt(index) ?: continue
+      when (viewFilter.matches(child)) {
+        INCLUDE -> addChildToVisit(child, this@ViewTreeRenderingVisitor)
+        INCLUDE_ONLY_CHILDREN -> addChildToVisit(child, this@ViewTreeRenderingVisitor, skip = true)
+        else -> {
+          // Noop.
+        }
+      }
+    }
   }
 }

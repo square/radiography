@@ -14,13 +14,16 @@ internal class ComposeLayoutInfo(
   val bounds: IntBounds,
   val modifiers: List<Modifier>,
   val children: Sequence<ComposeLayoutInfo>,
-  val view: View?
+  val view: View?,
+  val parent: ComposeLayoutInfo?
 )
 
-/**
- * A sequence that lazily parses [ComposeLayoutInfo]s from a [Group] tree.
- */
+/** A sequence that lazily parses [ComposeLayoutInfo]s from a [Group] tree. */
 internal val Group.layoutInfos: Sequence<ComposeLayoutInfo> get() = computeLayoutInfos()
+
+///** A sequence consisting of this info, its parent, its parent's parent, etc. */
+//internal val ComposeLayoutInfo.ancestors: Sequence<ComposeLayoutInfo>
+//  get() = generateSequence(this) { it.parent }
 
 /**
  * Recursively parses [ComposeLayoutInfo]s from a [Group]. Groups form a tree and can contain different
@@ -34,24 +37,29 @@ internal val Group.layoutInfos: Sequence<ComposeLayoutInfo> get() = computeLayou
  * to derive the "name" of the [ComposeLayoutInfo]. The other [ComposeLayoutInfo] properties come directly off
  * [NodeGroup] values.
  */
-private fun Group.computeLayoutInfos(parentName: String = ""): Sequence<ComposeLayoutInfo> {
+private fun Group.computeLayoutInfos(
+  parentInfo: ComposeLayoutInfo? = null,
+  parentName: String = ""
+): Sequence<ComposeLayoutInfo> {
   val name = parentName.ifBlank { this.name }.orEmpty()
 
   if (this !is NodeGroup) {
     return children.asSequence()
-        .flatMap { it.computeLayoutInfos(name) }
+        .flatMap { it.computeLayoutInfos(parentInfo, name) }
   }
 
+  lateinit var layoutInfo: ComposeLayoutInfo
   val children = children.asSequence()
-      // This node will "consume" the name, so reset it name to empty for children.
-      .flatMap { it.computeLayoutInfos() }
+      // This node will "consume" the name, so reset its name to empty for children.
+      .flatMap { it.computeLayoutInfos(parentInfo = layoutInfo) }
 
-  val layoutInfo = ComposeLayoutInfo(
+  layoutInfo = ComposeLayoutInfo(
       name = name,
       bounds = box,
       modifiers = modifierInfo.map { it.modifier },
       children = children,
-      view = node as? View
+      view = node as? View,
+      parent = parentInfo
   )
   return sequenceOf(layoutInfo)
 }

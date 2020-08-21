@@ -82,9 +82,9 @@ internal fun tryVisitComposeView(
   if (!visited) {
     // Compose version is unsupported, include a warning but then continue rendering Android
     // views.
-    renderingScope.description.append("\n$COMPOSE_UNSUPPORTED_MESSAGE")
+    renderingScope.description?.append("\n$COMPOSE_UNSUPPORTED_MESSAGE")
     linkageError?.let {
-      renderingScope.description.append("\nError: $linkageError")
+      renderingScope.description?.append("\nError: $linkageError")
     }
   }
 
