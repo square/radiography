@@ -38,6 +38,8 @@ android {
 dependencies {
   implementation(kotlin("stdlib", Versions.KotlinStdlib))
   implementation(project(":radiography"))
+  implementation(Dependencies.AppCompat)
+  implementation(Dependencies.ConstraintLayout)
 
   androidTestImplementation(Dependencies.InstrumentationTests.Core)
   androidTestImplementation(Dependencies.InstrumentationTests.Espresso)
