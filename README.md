@@ -51,7 +51,7 @@ val prettyHierarchy = Radiography.scan(viewFilter = FocusedWindowViewFilter and 
 
 ## Result example
 
-![screenshot](.images/demo_screenshot.png)
+![screenshot](assets/demo_screenshot.png)
 
 ```
 com.squareup.radiography.sample/com.squareup.radiography.sample.MainActivity:
