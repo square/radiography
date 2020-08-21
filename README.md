@@ -73,6 +73,93 @@ window-focus:false
 
 This sample app lives in this repo in the `sample` directory.
 
+## Jetpack Compose support
+
+Radiography will automatically render Composables found in your view tree if the Compose Tooling
+library is on the classpath. If you're using Compose, this is likely already the case (the
+`@Preview` annotation lives in the Tooling library). On the other hand, if you're not using Compose,
+Radiography won't bloat your app with transitive dependencies on any Compose artifacts.
+
+Compose releases frequently. If you are using Radiography with an unsupported version of Compose,
+or you don't depend on the Tooling library, then Radiography will include a message in the result
+asking you to upgrade Radiography or add the Tooling library, but this is optional.
+
+### Compose usage
+
+Compose support is experimental right now, since Compose is still changing a lot on a regular basis.
+
+Composables can be filtered just like views, but instead of using view ID, you can either specify
+a test tag (as in the string passed to `Modifier.testTag()`), or match on any layout ID (as in
+`Modifier.layoutId()`).
+
+```kotlin
+// Filter out views with specific test tags.
+val prettyHierarchy = Radiography.scan(viewFilter = skipTestTagsFilter("debug drawer"))
+
+// Filter out views with specific layout IDs.
+val prettyHierarchy = Radiography.scan(viewFilter = skipLayoutIdsFilter { layoutId ->
+   layoutId == DebugDrawerLayoutId
+})
+```
+
+The `DefaultsNoPii` and `DefaultsIncludingPii` renderers already configure the Compose renderers as
+well. Additional compose-specific renderers can be found in the `ComposeLayoutRenderers` object.
+Custom Compose renderers cannot be created at this time, since we're still figuring out exactly
+what the best public API for that looks like. If you need a custom Compose renderer, please file
+an issue on this repo!
+
+### Compose example output
+
+![screenshot](assets/compose_sample_screenshot.png)
+
+```
+com.squareup.radiography.sample/com.squareup.radiography.sample.MainActivity:
+window-focus:false
+ DecorView { 1080×2160px }
+ +-LinearLayout { 1080×2028px }
+ | +-ViewStub { id:action_mode_bar_stub, GONE, 0×0px }
+ | `-FrameLayout { 1080×1962px }
+ |   `-FitWindowsLinearLayout { id:action_bar_root, 1080×1962px }
+ |     +-ViewStubCompat { id:action_mode_bar_stub, GONE, 0×0px }
+ |     `-ContentFrameLayout { id:content, 1080×1962px }
+ |       `-AndroidComposeView { 1080×1962px, focused }
+ |         `-Providers { 1080×1962px }
+ |           `-ComposeSampleApp { 992×1874px }
+ |             +-Image { 240×352px }
+ |             +-TextField { 770×154px, test-tag:"text-field" }
+ |             | +-Box { 158×44px, layout-id:"Label" }
+ |             | | `-ProvideTextStyle { 158×44px, text-length:8 }
+ |             | `-ProvideTextStyle { 682×59px, layout-id:"TextField" }
+ |             |   `-BaseTextField { 682×59px, text-length:4 }
+ |             |     `-Layout { 682×59px }
+ |             +-TextField { 770×154px }
+ |             | +-Box { 155×44px, layout-id:"Label" }
+ |             | | `-ProvideTextStyle { 155×44px, text-length:8 }
+ |             | `-ProvideTextStyle { 682×59px, layout-id:"TextField" }
+ |             |   `-BaseTextField { 682×59px, text-length:4, FOCUSED }
+ |             |     `-Layout { 682×59px }
+ |             +-Row { 387×67px }
+ |             | +-Checkbox { 55×55px, value:"Unchecked" }
+ |             | +-Spacer { 22×0px }
+ |             | `-Text { 298×59px, text-length:11 }
+ |             +-Button { 226×99px }
+ |             | `-Providers { 138×55px }
+ |             |   `-Text { 138×52px, text-length:7 }
+ |             +-AndroidView {  }
+ |             | `-ViewBlockHolder { 919×53px }
+ |             |   `-TextView { 919×53px, text-length:53 }
+ |             +-ScrollableRow { 1320×588px }
+ |             | `-ScrollableColumn { 1320×821px }
+ |             |   `-Text { 1320×821px, test-tag:"live-hierarchy", text-length:2320 }
+ |             `-TextButton { 615×99px }
+ |               `-Providers { 571×55px }
+ |                 `-Text { 571×52px, text-length:28 }
+ +-View { id:navigationBarBackground, 1080×132px }
+ `-View { id:statusBarBackground, 1080×66px }
+```
+
+This sample can be found in the `sample-compose` directory.
+
 ## FAQ
 
 ### What is Radiography useful for?
@@ -106,8 +193,32 @@ val prettyHierarchy = Radiography.scan(viewStateRenderers = listOf(viewStateRend
 }))
 ```
 
-## License
+### How are compositions rendered?
 
+_Disclaimer: Compose is changing frequently, so many of these details may change without warning,
+and none of this is required to use Radiography!_
+
+The API for configuring how composables are rendered is slightly different than for regular views,
+since composables simply _are not_ `View`s. What might define a UI "component" or "widget" logically
+isn't made up of any single, nicely-encapsulated object. It is likely a few layers of convenience
+`@Composable` functions, with some `Modifier`s applied at various levels, and state is stored in
+the slot table via `remember{}`, not in instance fields.
+
+Radiography uses the Compose Tooling library to parse a composition's slot table into a tree of
+objects which represent "groups" – each group can represent some data stored in the slot table,
+a function call, or an emitted layout node or Android view. Groups may include source locations in
+certain cases, and contain information about modifiers and function parameters. This is a really
+powerful API, but there's a _lot_ of data there, and much of it is not helpful for a description
+that should be easy to read to get a general sense of the state of your UI.
+
+Radiography filters this detailed tree of groups down to only contain the actual `LayoutNode`s and
+Android `View`s emitted by the composition. It identifies each such node by the name of the function
+call that is highest in the subtree below the parent emitted node. The node's modifiers are used to
+extract interesting data about the composable. Most of the interesting data is stored in a single
+modifier, the `SemanticsModifier`. This is the modifier used to store "semantics" information which
+includes accessibility descriptions, actions, and flags, and is also used for writing UI tests.
+
+## License
 
 <pre>
 Copyright 2020 Square Inc.
