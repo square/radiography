@@ -1,5 +1,4 @@
-# Radiography
-
+# ![Radiography logo](assets/icon_32.png) Radiography
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.squareup.radiography/radiography.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.squareup.radiography%22)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
@@ -51,33 +50,28 @@ val prettyHierarchy = Radiography.scan(viewFilter = FocusedWindowViewFilter and 
 
 ## Result example
 
-![screenshot](assets/demo_screenshot.png)
+![screenshot](assets/sample_screenshot.png)
 
 ```
 com.squareup.radiography.sample/com.squareup.radiography.sample.MainActivity:
-window-focus:true
-     DecorView { 1080x2160px }
-     +-LinearLayout { 1080x2028px }
-     | +-ViewStub { id:action_mode_bar_stub, GONE, 0x0px }
-     | `-FrameLayout { 1080x1962px }
-     |   `-ActionBarOverlayLayout { id:decor_content_parent, 1080x1962px }
-     |     +-ContentFrameLayout { id:content, 1080x1808px }
-     |     | `-ConstraintLayout { id:container, 1080x1808px }
-     |     |   +-AppCompatEditText { id:username, 860x124px, text-length:4 }
-     |     |   +-AppCompatEditText { id:password, 860x124px, focused, text-length:8, ime-target }
-     |     |   +-MaterialButton { id:login, 533x132px, text-length:19 }
-     |     |   +-MaterialButton { id:xray, 242x132px, text-length:4 }
-     |     |   `-ProgressBar { id:loading, GONE, 0x0px }
-     |     `-ActionBarContainer { id:action_bar_container, 1080x154px }
-     |       +-Toolbar { id:action_bar, 1080x154px }
-     |       | +-AppCompatTextView { 468x74px, text-length:15 }
-     |       | `-ActionMenuView { 0x154px }
-     |       `-ActionBarContextView { id:action_context_bar, GONE, 0x0px }
-     +-View { id:navigationBarBackground, 1080x132px }
-     `-View { id:statusBarBackground, 1080x66px }
+window-focus:false
+ DecorView { 1080×2160px }
+ +-LinearLayout { 1080×2028px }
+ | +-ViewStub { id:action_mode_bar_stub, GONE, 0×0px }
+ | `-FrameLayout { id:content, 1080×1962px }
+ |   `-ConstraintLayout { id:main, 1080×1962px }
+ |     +-ImageView { id:logo, 1080×352px }
+ |     +-EditText { id:username, 580×124px, text-length:4 }
+ |     +-EditText { id:password, 580×124px, focused, text-length:4, ime-target }
+ |     +-CheckBox { id:remember_me, 343×88px, text-length:11 }
+ |     +-Button { id:signin, 242×132px, text-length:7 }
+ |     +-Group { id:group, 0×0px }
+ |     `-Button { id:show_dialog, 601×132px, text-length:23 }
+ +-View { id:navigationBarBackground, 1080×132px }
+ `-View { id:statusBarBackground, 1080×66px }
 ```
 
-![logo_512.png](assets/logo_512.png)
+This sample app lives in this repo in the `sample` directory.
 
 ## FAQ
 
@@ -100,7 +94,7 @@ Button { VFED..C.. ........ 0,135-652,261 #7f010001 app:id/show_dialog }
 Button { id:show_dialog, 652x126px, text-length:28 }
 ```
 
-If you'd rather rely on View.toString(), you can provide a custom state renderer.
+If you'd rather rely on `View.toString()`, you can provide a custom state renderer.
 
 ```kotlin
 val prettyHierarchy = Radiography.scan(stateRenderers = listOf(viewStateRendererFor<View> {
@@ -130,4 +124,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 </pre>
-
