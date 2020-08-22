@@ -3,8 +3,8 @@ name: Android CI
 on:
   push:
     branches: [ main ]
+  # Build on all pull requests, regardless of target.
   pull_request:
-    branches: [ main ]
 
 jobs:
   build:

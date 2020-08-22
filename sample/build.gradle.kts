@@ -31,10 +31,17 @@ android {
     minSdkVersion(17)
     targetSdkVersion(30)
     applicationId = "com.squareup.radiography.sample"
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 }
 
 dependencies {
   implementation(kotlin("stdlib", Versions.KotlinStdlib))
   implementation(project(":radiography"))
+
+  androidTestImplementation(Dependencies.InstrumentationTests.Core)
+  androidTestImplementation(Dependencies.InstrumentationTests.Espresso)
+  androidTestImplementation(Dependencies.InstrumentationTests.Rules)
+  androidTestImplementation(Dependencies.InstrumentationTests.Runner)
+  androidTestImplementation(Dependencies.Truth)
 }

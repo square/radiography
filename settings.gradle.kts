@@ -15,5 +15,8 @@
  */
 rootProject.name = "radiography"
 
-include(":radiography")
-include(":sample")
+include(
+    ":radiography",
+    ":sample",
+    ":sample-compose"
+)
