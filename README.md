@@ -23,10 +23,10 @@ dependencies {
 val prettyHierarchy = Radiography.scan()
 
 // Include the text content from TextView instances.
-val prettyHierarchy = Radiography.scan(stateRenderers = DefaultsIncludingPii)
+val prettyHierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
 
 // Append custom attribute rendering
-val prettyHierarchy = Radiography.scan(stateRenderers = DefaultsNoPii +
+val prettyHierarchy = Radiography.scan(viewStateRenderers = DefaultsNoPii +
     viewStateRendererFor<LinearLayout> {
       append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
     })
@@ -97,7 +97,7 @@ Button { id:show_dialog, 652x126px, text-length:28 }
 If you'd rather rely on `View.toString()`, you can provide a custom state renderer.
 
 ```kotlin
-val prettyHierarchy = Radiography.scan(stateRenderers = listOf(viewStateRendererFor<View> {
+val prettyHierarchy = Radiography.scan(viewStateRenderers = listOf(viewStateRendererFor<View> {
   append(
       it.toString()
           .substringAfter(' ')
