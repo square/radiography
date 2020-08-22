@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION_CODES
 import android.view.View
 import android.view.ViewGroup
+import radiography.compose.tryVisitComposeView
 
 /**
  * A [TreeRenderingVisitor] that renders [View]s and their children which match [viewFilter] using
@@ -16,6 +17,14 @@ internal class ViewTreeRenderingVisitor(
 
   override fun RenderingScope.visitNode(node: View) {
     description.viewToString(node)
+
+    val isComposeView = tryVisitComposeView(
+        this, node, viewStateRenderers, viewFilter, this@ViewTreeRenderingVisitor
+    )
+    if (isComposeView) {
+      // Don't visit children ourselves, the compose renderer will have done that.
+      return
+    }
 
     if (node !is ViewGroup) return
 

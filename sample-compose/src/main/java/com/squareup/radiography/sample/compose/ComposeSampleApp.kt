@@ -7,7 +7,8 @@ import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog.Builder
-import androidx.compose.foundation.Box
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,12 +19,15 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import radiography.Radiography
 import radiography.ViewFilter
@@ -35,11 +39,21 @@ import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.textViewRenderer
 import radiography.ViewStateRenderers.viewStateRendererFor
+import radiography.compose.ComposeLayoutFilters.skipTestTagsFilter
+import radiography.compose.ComposeLayoutRenderers.LayoutIdRenderer
+import radiography.compose.ComposeLayoutRenderers.StandardSemanticsRenderer
+import radiography.compose.ComposeLayoutRenderers.composeTextRenderer
+import radiography.compose.ExperimentalRadiographyComposeApi
 
+internal const val TEXT_FIELD_TEST_TAG = "text-field"
+internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
+
+@OptIn(ExperimentalRadiographyComposeApi::class, ExperimentalAnimationApi::class)
 @Composable fun ComposeSampleApp() {
   val (isChecked, onCheckChanged) = remember { mutableStateOf(false) }
   var text by remember { mutableStateOf("") }
   val context = ContextAmbient.current
+  val liveHierarchy = remember { mutableStateOf<String?>(null) }
 
   Column {
     Text("The password is Baguette", style = MaterialTheme.typography.body2)
@@ -47,20 +61,38 @@ import radiography.ViewStateRenderers.viewStateRendererFor
       Checkbox(checked = isChecked, onCheckedChange = onCheckChanged)
       Text("Check me, or don't.")
     }
-    TextField(value = text, onValueChange = { text = it }, label = { Text("Text Field") })
+    TextField(
+        value = text,
+        onValueChange = { text = it },
+        label = { Text("Text Field") },
+        modifier = Modifier.testTag(TEXT_FIELD_TEST_TAG)
+    )
     // Include a classic Android view in the composition.
     AndroidView(::TextView) {
       @SuppressLint("SetTextI18n")
       it.text = "inception"
     }
-    Box(Modifier.testTag("show-rendering")) {
-      Button(onClick = { showSelectionDialog(context) }) {
-        Text("Show string rendering dialog")
+    Button(onClick = { showSelectionDialog(context) }) {
+      Text("Show string rendering dialog")
+    }
+
+    liveHierarchy.value?.let {
+      ScrollableRow(modifier = Modifier.testTag(LIVE_HIERARCHY_TEST_TAG)) {
+        Text(liveHierarchy.value.orEmpty(), fontFamily = FontFamily.Monospace, fontSize = 8.sp)
       }
+    }
+
+    onCommit {
+      liveHierarchy.value = Radiography.scan(
+          viewStateRenderers = DefaultsIncludingPii,
+          // Don't trigger infinite recursion.
+          viewFilter = skipTestTagsFilter(LIVE_HIERARCHY_TEST_TAG)
+      )
     }
   }
 }
 
+@OptIn(ExperimentalRadiographyComposeApi::class)
 private fun showSelectionDialog(context: Context) {
   val renderings = listOf(
       "Default" to {
@@ -68,6 +100,9 @@ private fun showSelectionDialog(context: Context) {
       },
       "Focused window" to {
         Radiography.scan(viewFilter = FocusedWindowViewFilter)
+      },
+      "Skip testTag(\"$TEXT_FIELD_TEST_TAG\")" to {
+        Radiography.scan(viewFilter = skipTestTagsFilter(TEXT_FIELD_TEST_TAG))
       },
       "Focused window and custom filter" to {
         Radiography.scan(viewFilter = FocusedWindowViewFilter and object : ViewFilter {
@@ -82,7 +117,10 @@ private fun showSelectionDialog(context: Context) {
             viewStateRenderers = listOf(
                 ViewRenderer,
                 textViewRenderer(includeTextViewText = true, textViewTextMaxLength = 4),
-                CheckableRenderer
+                CheckableRenderer,
+                LayoutIdRenderer,
+                StandardSemanticsRenderer,
+                composeTextRenderer(includeText = true, maxTextLength = 4)
             )
         )
       },

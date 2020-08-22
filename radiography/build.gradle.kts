@@ -56,7 +56,22 @@ tasks.withType<KotlinCompile> {
   }
 }
 
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    freeCompilerArgs = listOf(
+        // allow-jvm-ir-dependencies is required to consume binaries built with the IR backend.
+        // It doesn't change the bytecode that gets generated for this module.
+        "-Xallow-jvm-ir-dependencies",
+        "-Xopt-in=kotlin.RequiresOptIn"
+    )
+  }
+}
+
 dependencies {
+  // We don't want to bring any Compose dependencies in unless the consumer of this library is
+  // bringing them in itself.
+  compileOnly(Dependencies.Compose.Tooling)
+
   implementation(kotlin("stdlib", Versions.KotlinStdlib))
 
   testImplementation(Dependencies.JUnit)
