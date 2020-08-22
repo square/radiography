@@ -14,6 +14,6 @@ class SampleSmokeTest {
   val activityRule = ActivityTestRule(MainActivity::class.java)
 
   @Test fun displaysInitialScreen() {
-    onView(withText("The password is Baguette")).check(matches(isDisplayed()))
+    onView(withText("Remember me")).check(matches(isDisplayed()))
   }
 }
