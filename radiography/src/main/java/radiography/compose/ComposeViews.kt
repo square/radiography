@@ -68,6 +68,8 @@ internal fun tryVisitComposeView(
 
   var linkageError: String? = null
   val visited = try {
+    // This function does some internal checking to avoid throwing exceptions from reflection-based
+    // code, so we can't solely use the try/catch block to know if rendering succeeded.
     visitComposeView(
         renderingScope, maybeComposeView, modifierRenderers, viewFilter, classicViewVisitor
     )
@@ -80,8 +82,8 @@ internal fun tryVisitComposeView(
   }
 
   if (!visited) {
-    // Compose version is unsupported, include a warning but then continue rendering Android
-    // views.
+    // Display a warning but then continue rendering Android views, since the composition may emit
+    // view children and so it's better than nothing.
     renderingScope.description.append("\n$COMPOSE_UNSUPPORTED_MESSAGE")
     linkageError?.let {
       renderingScope.description.append("\nError: $linkageError")
@@ -102,20 +104,37 @@ private fun visitComposeView(
   viewFilter: ViewFilter,
   classicViewVisitor: TreeRenderingVisitor<View>
 ): Boolean {
+  // Any of this reflection code can fail if running with an unsupported version of Compose.
+  // Compose doesn't provide a public API for this (yet) because they don't want it to be used in
+  // production.
+  // See this slack thread: https://kotlinlang.slack.com/archives/CJLTWPH7S/p1596749016388100?thread_ts=1596749016.388100&cid=CJLTWPH7S
   val keyedTags = composeView.getKeyedTags()
   val composition = keyedTags.first { it is Composition } as Composition? ?: return false
   val composer = composition.unwrap()
       .getComposerOrNull() ?: return false
+
+  // Composer and its slot table are finally public API again.
+  // asTree is provided by the Compose Tooling library. It "reads" the slot table and parses it 
+  // into a tree of Group objects. This means we're technically traversing the composable tree
+  // twice, so why not just read the slot table directly? As opaque as the Group API is, the actual
+  // slot table API is quite complicated, and the actual format of the slot table (effectively an
+  // array that stores a flattened version of a composition tree) is super low level. It's likely to
+  // change a lot between compose versions, and keeping up with that with every two-week dev release
+  // would be a lot of work. Additionally, a lot of the objects stored in the slot table are not
+  // public (eg LayoutNode), so we'd need to use even more (brittle) reflection to do that parsing.
+  // That said, once Compose is more stable, it might be worth it to read the slot table directly,
+  // since then we could drop the requirement for the Tooling library to be on the classpath.
   val rootGroup = composer.slotTable.asTree()
   val visitor = LayoutInfoVisitor(modifierRenderers, viewFilter, classicViewVisitor)
 
   rootGroup.layoutInfos.forEach {
     renderingScope.addChildToVisit(it, visitor)
   }
+
   // At this point we will not have actually visited any LayoutInfos (addChildToVisit doesn't
   // immediately visit), but if we were able to successfully construct the LayoutInfos, then we
   // assume the Compose version is supported. LayoutInfoVisitor will also try to detect unsupported
-  // Compose versions.
+  // Compose versions just in case.
   return true
 }
 
