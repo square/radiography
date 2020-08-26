@@ -8,7 +8,7 @@ object Versions {
   /** Use a lower version of the stdlib so the library can be consumed by lower kotlin versions. */
   val KotlinStdlib = System.getProperty("square.kotlinStdlibVersion") ?: "1.3.72"
 
-  const val Compose = "0.1.0-dev17"
+  const val Compose = "1.0.0-alpha01"
 
   // Allows using a different version of Compose to validate that we degrade gracefully on apps
   // built with unsupported Compose versions.
