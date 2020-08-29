@@ -5,6 +5,8 @@ import androidx.compose.ui.unit.IntBounds
 import radiography.AttributeAppendable
 import radiography.TreeRenderingVisitor
 import radiography.ViewFilter
+import radiography.ScannableView.AndroidView
+import radiography.ScannableView.ComposeView
 import radiography.ViewStateRenderer
 import radiography.formatPixelDimensions
 
@@ -12,6 +14,7 @@ import radiography.formatPixelDimensions
  * A [TreeRenderingVisitor] that recursively renders a tree of [ComposeLayoutInfo]s. It is the
  * Compose analog to [radiography.ViewTreeRenderingVisitor].
  */
+@OptIn(ExperimentalRadiographyComposeApi::class)
 internal class LayoutInfoVisitor(
   private val modifierRenderers: List<ViewStateRenderer>,
   private val viewFilter: ViewFilter,
@@ -37,11 +40,10 @@ internal class LayoutInfoVisitor(
       val appendable = AttributeAppendable(description)
       node.bounds.describeSize()?.let(appendable::append)
 
-      node.modifiers.forEach { modifier ->
-        modifierRenderers.forEach { renderer ->
-          with(renderer) {
-            appendable.render(modifier)
-          }
+      val composeView = ComposeView(node.modifiers)
+      modifierRenderers.forEach { renderer ->
+        with(renderer) {
+          appendable.render(composeView)
         }
       }
       append(" }")
@@ -50,13 +52,13 @@ internal class LayoutInfoVisitor(
     // Visit LayoutNode children. View nodes don't seem to have children, but they theoretically
     // could so try to visit them just in case.
     node.children
-        .filter(viewFilter::matches)
+        .filter { viewFilter.matches(ComposeView(it.modifiers)) }
         .forEach {
           addChildToVisit(it)
         }
 
     // This node was an emitted Android View, so trampoline back to the View renderer.
-    node.view?.takeIf(viewFilter::matches)?.let { view ->
+    node.view?.takeIf { viewFilter.matches(AndroidView(it)) }?.let { view ->
       addChildToVisit(view, classicViewVisitor)
     }
   }

@@ -1,6 +1,7 @@
 package radiography
 
 import android.view.View
+import radiography.ScannableView.AndroidView
 
 public object ViewFilters {
 
@@ -13,7 +14,7 @@ public object ViewFilters {
    * [Radiography.scan].
    */
   @JvmField
-  public val FocusedWindowViewFilter: ViewFilter = viewFilterFor<View> { view ->
+  public val FocusedWindowViewFilter: ViewFilter = androidViewFilterFor<View> { view ->
     view.parent?.parent != null || view.hasWindowFocus()
   }
 
@@ -21,10 +22,11 @@ public object ViewFilters {
    * Filters out views with ids matching [skippedIds] from the output of [Radiography.scan].
    */
   @JvmStatic
-  public fun skipIdsViewFilter(vararg skippedIds: Int): ViewFilter = viewFilterFor<View> { view ->
-    val viewId = view.id
-    (viewId == View.NO_ID || skippedIds.isEmpty() || skippedIds.binarySearch(viewId) < 0)
-  }
+  public fun skipIdsViewFilter(vararg skippedIds: Int): ViewFilter =
+    androidViewFilterFor<View> { view ->
+      val viewId = view.id
+      (viewId == View.NO_ID || skippedIds.isEmpty() || skippedIds.binarySearch(viewId) < 0)
+    }
 
   /**
    * Creates a new filter that combines this filter with [otherFilter]
@@ -35,24 +37,31 @@ public object ViewFilters {
   }
 
   /**
-   * Returns a [ViewFilter] that matches any instances of [T] for which [predicate] returns true.
+   * Returns a [ViewFilter] that matches any [AndroidView]s whose views are instances of [T]
+   * for which [predicate] returns true.
    */
   // This function is only visible to Kotlin consumers of this library.
-  public inline fun <reified T : Any> viewFilterFor(noinline predicate: (T) -> Boolean): ViewFilter {
+  public inline fun <reified T : Any> androidViewFilterFor(
+    noinline predicate: (T) -> Boolean
+  ): ViewFilter {
     // Don't create an anonymous instance here, since that would generate a new anonymous class at
     // every call site.
-    return viewFilterFor(T::class.java, predicate)
+    return androidViewFilterFor(T::class.java, predicate)
   }
 
   /**
-   * Returns a [ViewFilter] that matches any instances of [T] for which [predicate] returns true.
+   * Returns a [ViewFilter] that matches any [AndroidView]s whose views are instances of [T]
+   * for which [predicate] returns true.
    */
   // This function is only visible to Java consumers of this library.
   @JvmStatic
-  @PublishedApi internal fun <T : Any> viewFilterFor(
+  @PublishedApi internal fun <T : Any> androidViewFilterFor(
     filterClass: Class<T>,
     predicate: (T) -> Boolean
-  ): ViewFilter = object : TypedViewFilter<T>(filterClass) {
-    override fun matchesTyped(view: T): Boolean = predicate(view)
+  ): ViewFilter = ViewFilter {
+    val view = (it as? AndroidView)?.view ?: return@ViewFilter true
+    if (!filterClass.isInstance(view)) return@ViewFilter true
+    @Suppress("UNCHECKED_CAST")
+    predicate(view as T)
   }
 }

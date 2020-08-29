@@ -27,7 +27,7 @@ val prettyHierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii
 
 // Append custom attribute rendering
 val prettyHierarchy = Radiography.scan(viewStateRenderers = DefaultsNoPii +
-    viewStateRendererFor<LinearLayout> {
+    androidViewStateRendererFor<LinearLayout> {
       append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
     })
 ```
@@ -184,7 +184,7 @@ Button { id:show_dialog, 652x126px, text-length:28 }
 If you'd rather rely on `View.toString()`, you can provide a custom state renderer.
 
 ```kotlin
-val prettyHierarchy = Radiography.scan(viewStateRenderers = listOf(viewStateRendererFor<View> {
+val prettyHierarchy = Radiography.scan(viewStateRenderers = listOf(androidViewStateRendererFor<View> {
   append(
       it.toString()
           .substringAfter(' ')

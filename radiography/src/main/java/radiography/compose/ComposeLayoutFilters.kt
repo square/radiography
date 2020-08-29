@@ -3,8 +3,8 @@ package radiography.compose
 import androidx.compose.ui.layout.LayoutIdParentData
 import androidx.compose.ui.semantics.SemanticsModifier
 import androidx.compose.ui.semantics.SemanticsProperties.TestTag
+import radiography.ScannableView.ComposeView
 import radiography.ViewFilter
-import radiography.ViewFilters.viewFilterFor
 
 @ExperimentalRadiographyComposeApi
 object ComposeLayoutFilters {
@@ -15,16 +15,18 @@ object ComposeLayoutFilters {
    */
   @ExperimentalRadiographyComposeApi
   @JvmStatic
-  fun skipTestTagsFilter(vararg skippedTestTags: String): ViewFilter =
-    viewFilterFor<ComposeLayoutInfo> { layoutInfo ->
-      layoutInfo.modifiers.asSequence()
-          .filterIsInstance<SemanticsModifier>()
-          .flatMap { semantics ->
-            semantics.semanticsConfiguration.asSequence()
-                .filter { it.key == TestTag }
-          }
-          .none { it.value in skippedTestTags }
-    }
+  fun skipTestTagsFilter(vararg skippedTestTags: String): ViewFilter = ViewFilter {
+    (it as? ComposeView)
+        ?.modifiers
+        ?.asSequence()
+        ?.filterIsInstance<SemanticsModifier>()
+        ?.flatMap { semantics ->
+          semantics.semanticsConfiguration.asSequence()
+              .filter { it.key == TestTag }
+        }
+        ?.none { it.value in skippedTestTags }
+        ?: true
+  }
 
   /**
    * Filters out Composables with [`layoutId`][androidx.compose.ui.layout.layoutId] modifiers for
@@ -32,10 +34,12 @@ object ComposeLayoutFilters {
    */
   @ExperimentalRadiographyComposeApi
   @JvmStatic
-  fun skipLayoutIdsFilter(skipLayoutId: (Any) -> Boolean): ViewFilter =
-    viewFilterFor<ComposeLayoutInfo> { layoutInfo ->
-      layoutInfo.modifiers.asSequence()
-          .filterIsInstance<LayoutIdParentData>()
-          .none { skipLayoutId(it.id) }
-    }
+  fun skipLayoutIdsFilter(skipLayoutId: (Any) -> Boolean): ViewFilter = ViewFilter {
+    (it as? ComposeView)
+        ?.modifiers
+        ?.asSequence()
+        ?.filterIsInstance<LayoutIdParentData>()
+        ?.none { layoutId -> skipLayoutId(layoutId.id) }
+        ?: true
+  }
 }

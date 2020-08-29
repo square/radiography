@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
+import androidx.compose.material.TextField
 import androidx.compose.runtime.SlotTable
 import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.Modifier
@@ -140,7 +141,7 @@ class ComposeUiTest {
     assertThat(hierarchy).contains("Checked")
   }
 
-  @Test fun textViewContents() {
+  @Test fun textContents() {
     composeRule.setContent {
       Text("Baguette Avec Fromage")
     }
@@ -153,9 +154,42 @@ class ComposeUiTest {
     assertThat(hierarchy).contains("text:\"Baguette Avec Fromage\"")
   }
 
-  @Test fun textViewContentsEllipsized() {
+  @Test fun textContentsEllipsized() {
     composeRule.setContent {
       Text("Baguette Avec Fromage")
+    }
+
+    val hierarchy = runOnIdle {
+      Radiography.scan(
+          viewStateRenderers = listOf(
+              composeTextRenderer(
+                  includeText = true,
+                  maxTextLength = 11
+              )
+          )
+      )
+    }
+
+    assertThat(hierarchy).contains("text-length:21")
+    assertThat(hierarchy).contains("text:\"Baguette A…\"")
+  }
+
+  @Test fun textFieldContents() {
+    composeRule.setContent {
+      TextField("Baguette Avec Fromage", onValueChange = {}, label = {})
+    }
+
+    val hierarchy = runOnIdle {
+      Radiography.scan(viewStateRenderers = listOf(composeTextRenderer(includeText = true)))
+    }
+
+    assertThat(hierarchy).contains("text-length:21")
+    assertThat(hierarchy).contains("text:\"Baguette Avec Fromage\"")
+  }
+
+  @Test fun textFieldContentsEllipsized() {
+    composeRule.setContent {
+      TextField("Baguette Avec Fromage", onValueChange = {}, label = {})
     }
 
     val hierarchy = runOnIdle {

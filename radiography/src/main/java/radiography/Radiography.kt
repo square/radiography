@@ -5,6 +5,7 @@ import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import radiography.Radiography.scan
+import radiography.ScannableView.AndroidView
 import radiography.ViewStateRenderers.DefaultsNoPii
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit.SECONDS
@@ -73,10 +74,11 @@ public object Radiography {
       listOf(it)
     } ?: WindowScanner.findAllRootViews()
 
-    val matchingRootViews = rootViews.filter(viewFilter::matches)
+    val matchingRootViews = rootViews.map(::AndroidView).filter(viewFilter::matches)
     val viewVisitor = ViewTreeRenderingVisitor(viewStateRenderers, viewFilter)
 
-    for (view in matchingRootViews) {
+    for (scannableView in matchingRootViews) {
+      val view = scannableView.view
       if (length > 0) {
         @Suppress("DEPRECATION")
         appendln()
