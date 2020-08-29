@@ -85,6 +85,9 @@ subprojects {
 
   // Configuration documentation: https://github.com/JLLeitschuh/ktlint-gradle#configuration
   configure<KtlintExtension> {
+    // Enable Kotlin 1.4 support.
+    version.set("0.38.1")
+
     // Prints the name of failed rules.
     verbose.set(true)
     reporters {

@@ -1,4 +1,6 @@
 # Make ktlint respect our style guide's indentation.
-[*.kt]
-indent_size = 2
-continuation_indent_size=4
+[*.{kt,kts}]
+# See https://github.com/square/radiography/issues/67.
+# indent_size = 2
+# continuation_indent_size = 4
+indent_size = unset
