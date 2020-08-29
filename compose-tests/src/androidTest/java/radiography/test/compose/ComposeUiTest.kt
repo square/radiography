@@ -38,7 +38,7 @@ import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.compose.ComposeLayoutFilters.skipLayoutIdsFilter
 import radiography.compose.ComposeLayoutFilters.skipTestTagsFilter
-import radiography.compose.ComposeLayoutRenderers.StandardSemanticsRenderer
+import radiography.compose.ComposeLayoutRenderers.ComposeViewRenderer
 import radiography.compose.ComposeLayoutRenderers.composeTextRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 import radiography.compose.scan
@@ -82,7 +82,7 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      Radiography.scan(viewStateRenderers = emptyList())
+      Radiography.scan(viewStateRenderers = listOf(ComposeViewRenderer))
     }
 
     assertThat(hierarchy).contains("Box { 30×40px }")
@@ -134,7 +134,7 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      Radiography.scan(viewStateRenderers = listOf(StandardSemanticsRenderer))
+      Radiography.scan(viewStateRenderers = listOf(ComposeViewRenderer))
     }
 
     assertThat(hierarchy).contains("Checkbox")

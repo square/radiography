@@ -21,8 +21,10 @@ public final class radiography/ScannableView$AndroidView : radiography/Scannable
 }
 
 public final class radiography/ScannableView$ComposeView : radiography/ScannableView {
-	public fun <init> (Ljava/util/List;)V
+	public fun <init> (IILjava/util/List;)V
+	public final fun getHeight ()I
 	public final fun getModifiers ()Ljava/util/List;
+	public final fun getWidth ()I
 }
 
 public abstract interface class radiography/ViewFilter {
@@ -67,11 +69,11 @@ public final class radiography/compose/ComposeLayoutFilters {
 }
 
 public final class radiography/compose/ComposeLayoutRenderers {
+	public static final field ComposeViewRenderer Lradiography/ViewStateRenderer;
 	public static final field DefaultsIncludingPii Ljava/util/List;
 	public static final field DefaultsNoPii Ljava/util/List;
 	public static final field INSTANCE Lradiography/compose/ComposeLayoutRenderers;
 	public static final field LayoutIdRenderer Lradiography/ViewStateRenderer;
-	public static final field StandardSemanticsRenderer Lradiography/ViewStateRenderer;
 	public static final fun composeTextRenderer ()Lradiography/ViewStateRenderer;
 	public static final fun composeTextRenderer (Z)Lradiography/ViewStateRenderer;
 	public static final fun composeTextRenderer (ZI)Lradiography/ViewStateRenderer;

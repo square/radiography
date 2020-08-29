@@ -54,7 +54,7 @@ import radiography.ViewStateRenderers.androidViewStateRendererFor
 import radiography.ViewStateRenderers.textViewRenderer
 import radiography.compose.ComposeLayoutFilters.skipTestTagsFilter
 import radiography.compose.ComposeLayoutRenderers.LayoutIdRenderer
-import radiography.compose.ComposeLayoutRenderers.StandardSemanticsRenderer
+import radiography.compose.ComposeLayoutRenderers.ComposeViewRenderer
 import radiography.compose.ComposeLayoutRenderers.composeTextRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 
@@ -160,7 +160,7 @@ private fun showSelectionDialog(context: Context) {
                 textViewRenderer(includeTextViewText = true, textViewTextMaxLength = 4),
                 CheckableRenderer,
                 LayoutIdRenderer,
-                StandardSemanticsRenderer,
+                ComposeViewRenderer,
                 composeTextRenderer(includeText = true, maxTextLength = 4)
             )
         )

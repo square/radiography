@@ -10,6 +10,7 @@ import radiography.ScannableView
 import radiography.ScannableView.ComposeView
 import radiography.ViewStateRenderer
 import radiography.ellipsize
+import radiography.formatPixelDimensions
 
 // Note that this class can't use viewStateRendererFor, since that function is defined in the
 // ViewStateRenderers object, whose class initializer may initialize _this_ class, which will cause
@@ -47,16 +48,23 @@ public object ComposeLayoutRenderers {
    */
   @ExperimentalRadiographyComposeApi
   @JvmField
-  val StandardSemanticsRenderer: ViewStateRenderer =
+  val ComposeViewRenderer: ViewStateRenderer =
     if (!isComposeAvailable) NoRenderer else {
       ViewStateRenderer {
-        val semanticsConfiguration = (it as? ComposeView)
-            ?.modifiers
-            ?.filterIsInstance<SemanticsModifier>()
+        val composeView = it as? ComposeView ?: return@ViewStateRenderer
+
+        composeView.apply {
+          if (width != 0 || height != 0) {
+            append(formatPixelDimensions(width, height))
+          }
+        }
+
+        val semanticsConfiguration = composeView
+            .modifiers
+            .filterIsInstance<SemanticsModifier>()
             // Technically there can be multiple semantic modifiers on a single node, so read them
             // all.
-            ?.flatMap { it.semanticsConfiguration }
-            ?: return@ViewStateRenderer
+            .flatMap { semantics -> semantics.semanticsConfiguration }
 
         semanticsConfiguration.forEach { (key, value) ->
           when (key) {
@@ -79,7 +87,7 @@ public object ComposeLayoutRenderers {
     if (!isComposeAvailable) emptyList() else listOf(
         LayoutIdRenderer,
         composeTextRenderer(includeText = false, maxTextLength = 0),
-        StandardSemanticsRenderer
+        ComposeViewRenderer
     )
 
   @ExperimentalRadiographyComposeApi
@@ -88,7 +96,7 @@ public object ComposeLayoutRenderers {
     if (!isComposeAvailable) emptyList() else listOf(
         LayoutIdRenderer,
         composeTextRenderer(includeText = true),
-        StandardSemanticsRenderer
+        ComposeViewRenderer
     )
 
   /**

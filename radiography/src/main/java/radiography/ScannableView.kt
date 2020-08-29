@@ -2,6 +2,7 @@ package radiography
 
 import android.view.View
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntSize
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
 import radiography.compose.ExperimentalRadiographyComposeApi
@@ -22,5 +23,15 @@ public sealed class ScannableView {
    * @param modifiers The list of [Modifier]s that are currently applied to the Composable.
    */
   @ExperimentalRadiographyComposeApi
-  public class ComposeView(val modifiers: List<Modifier>) : ScannableView()
+  public class ComposeView(
+    val width: Int,
+    val height: Int,
+    val modifiers: List<Modifier>
+  ) : ScannableView() {
+
+    internal constructor(
+      size: IntSize,
+      modifiers: List<Modifier>
+    ) : this(size.width, size.height, modifiers)
+  }
 }

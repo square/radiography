@@ -1,14 +1,13 @@
 package radiography.compose
 
 import android.view.View
-import androidx.compose.ui.unit.IntBounds
+import androidx.compose.ui.unit.toSize
 import radiography.AttributeAppendable
-import radiography.TreeRenderingVisitor
-import radiography.ViewFilter
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
+import radiography.TreeRenderingVisitor
+import radiography.ViewFilter
 import radiography.ViewStateRenderer
-import radiography.formatPixelDimensions
 
 /**
  * A [TreeRenderingVisitor] that recursively renders a tree of [ComposeLayoutInfo]s. It is the
@@ -38,9 +37,7 @@ internal class LayoutInfoVisitor(
 
       append(" { ")
       val appendable = AttributeAppendable(description)
-      node.bounds.describeSize()?.let(appendable::append)
-
-      val composeView = ComposeView(node.modifiers)
+      val composeView = ComposeView(node.bounds.toSize(), node.modifiers)
       modifierRenderers.forEach { renderer ->
         with(renderer) {
           appendable.render(composeView)
@@ -52,7 +49,7 @@ internal class LayoutInfoVisitor(
     // Visit LayoutNode children. View nodes don't seem to have children, but they theoretically
     // could so try to visit them just in case.
     node.children
-        .filter { viewFilter.matches(ComposeView(it.modifiers)) }
+        .filter { viewFilter.matches(ComposeView(it.bounds.toSize(), it.modifiers)) }
         .forEach {
           addChildToVisit(it)
         }
@@ -61,13 +58,5 @@ internal class LayoutInfoVisitor(
     node.view?.takeIf { viewFilter.matches(AndroidView(it)) }?.let { view ->
       addChildToVisit(view, classicViewVisitor)
     }
-  }
-}
-
-private fun IntBounds.describeSize(): String? {
-  return if (left != right || top != bottom) {
-    formatPixelDimensions(width = right - left, height = bottom - top)
-  } else {
-    null
   }
 }
