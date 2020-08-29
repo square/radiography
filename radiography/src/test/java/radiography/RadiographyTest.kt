@@ -127,9 +127,7 @@ class RadiographyTest {
     })
     layout.addView(EditText(context))
 
-    val filter = skipIdsViewFilter(42) and object : ViewFilter {
-      override fun matches(view: Any) = view !is EditText
-    }
+    val filter = skipIdsViewFilter(42) and ViewFilter { it !is EditText }
     layout.scan(viewFilter = filter)
         .also {
           assertThat(it).contains("CheckBox")
