@@ -75,31 +75,50 @@ public object Radiography {
     } ?: WindowScanner.findAllRootViews()
 
     val matchingRootViews = rootViews.map(::AndroidView).filter(viewFilter::matches)
-    val viewVisitor = ViewTreeRenderingVisitor(viewStateRenderers, viewFilter)
 
     for (scannableView in matchingRootViews) {
-      val view = scannableView.view
+      val androidView = scannableView.view
       if (length > 0) {
         @Suppress("DEPRECATION")
         appendln()
       }
-      val layoutParams = view.layoutParams
+      val layoutParams = androidView.layoutParams
       val title = (layoutParams as? WindowManager.LayoutParams)?.title?.toString()
-          ?: view.javaClass.name
+          ?: androidView.javaClass.name
       @Suppress("DEPRECATION")
       appendln("$title:")
 
       val startPosition = length
       try {
         @Suppress("DEPRECATION")
-        appendln("window-focus:${view.hasWindowFocus()}")
-        renderTreeString(view, viewVisitor)
+        appendln("window-focus:${androidView.hasWindowFocus()}")
+        renderScannableViewTree(this, scannableView, viewStateRenderers, viewFilter)
       } catch (e: Throwable) {
         insert(
             startPosition,
             "Exception when going through view hierarchy: ${e.message}\n"
         )
       }
+    }
+  }
+
+  internal fun renderScannableViewTree(
+    builder: StringBuilder,
+    rootView: ScannableView,
+    viewStateRenderers: List<ViewStateRenderer>,
+    viewFilter: ViewFilter
+  ) {
+    renderTreeString(builder, rootView) {
+      append("${it.displayName} { ")
+      val appendable = AttributeAppendable(this)
+      for (renderer in viewStateRenderers) {
+        with(renderer) {
+          appendable.render(it)
+        }
+      }
+      append(" }")
+
+      return@renderTreeString it.children.filter(viewFilter::matches).toList()
     }
   }
 }

@@ -5,10 +5,9 @@ import android.view.View
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
 import androidx.ui.tooling.asTree
-import radiography.TreeRenderingVisitor
-import radiography.TreeRenderingVisitor.RenderingScope
-import radiography.ViewFilter
-import radiography.ViewStateRenderer
+import radiography.ScannableView
+import radiography.ScannableView.ComposeView
+import radiography.ScannableView.ChildRenderingError
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 private val VIEW_KEYED_TAGS_FIELD = View::class.java.getDeclaredField("mKeyedTags")
@@ -42,79 +41,62 @@ internal val View.mightBeComposeView: Boolean
   get() = "AndroidComposeView" in this::class.java.name
 
 /**
- * Uses [renderingScope] to visit and render an entire composition. This is the entry point into
- * compose support from [radiography.ViewTreeRenderingVisitor]. This function is a no-op if
- * [maybeComposeView] is not an instance of the special private View that Compose uses to host
- * compositions. The view's [Composer]'s `SlotTable` is parsed using the Compose Tooling library's
- * [asTree] function, and then further distilled into [ComposeLayoutInfo]s.
+ * Tries to extract a list of [ComposeView]s from [composeView], which must be a view for which
+ * [mightBeComposeView] is true. Returns the list of views and a boolean indicating whether the
+ * extraction was successful.
  *
- * @param modifierRenderers A list of [ViewStateRenderer]s which will be passed
- * [Modifier][androidx.compose.ui.Modifier] instances to render.
- * @param viewFilter A [ViewFilter] which will be passed [ComposeLayoutInfo]s to filter.
- * @param classicViewVisitor The [TreeRenderingVisitor] that will be used to render any Android
- * views emitted by the composition.
- * @return True if the Compose view was visited successfully, false if the runtime version of
- * Compose is not supported by this library and we couldn't render the Compose view.
- * @see LayoutInfoVisitor
+ * There is no public API for this, so this function uses reflection. If the reflection fails, or
+ * the right Compose artifacts aren't on the classpath, or the runtime Compose version is
+ * unsupported, this function will return a [ChildRenderingError] and false.
  */
-internal fun tryVisitComposeView(
-  renderingScope: RenderingScope,
-  maybeComposeView: View,
-  modifierRenderers: List<ViewStateRenderer>,
-  viewFilter: ViewFilter,
-  classicViewVisitor: TreeRenderingVisitor<View>
-): Boolean {
-  if (!maybeComposeView.mightBeComposeView) return false
-
-  var linkageError: String? = null
-  val visited = try {
-    // This function does some internal checking to avoid throwing exceptions from reflection-based
-    // code, so we can't solely use the try/catch block to know if rendering succeeded.
-    visitComposeView(
-        renderingScope, maybeComposeView, modifierRenderers, viewFilter, classicViewVisitor
-    )
+@OptIn(ExperimentalRadiographyComposeApi::class)
+internal fun getComposeScannableViews(composeView: View): Pair<List<ScannableView>, Boolean> {
+  var linkageError: Throwable? = null
+  val scannableViews = try {
+    tryGetLayoutInfos(composeView)
+        ?.map(::ComposeView)
+        ?.toList()
   } catch (e: LinkageError) {
     // The view looks like an AndroidComposeView, but the Compose code on the classpath is
     // not what we expected – the app is probably using a newer (or older) version of Compose than
     // we support.
-    linkageError = e.message
-    false
+    linkageError = e
+    null
   }
+  // If we were able to successfully construct the LayoutInfos, then we assume the Compose version
+  // is supported.
 
-  if (!visited) {
+  if (scannableViews == null) {
     // Display a warning but then continue rendering Android views, since the composition may emit
     // view children and so it's better than nothing.
-    renderingScope.description.append("\n$COMPOSE_UNSUPPORTED_MESSAGE")
-    linkageError?.let {
-      renderingScope.description.append("\nError: $linkageError")
+    val message = buildString {
+      append(COMPOSE_UNSUPPORTED_MESSAGE)
+      linkageError?.let {
+        appendln().append("Error: $linkageError")
+      }
     }
+    return Pair(listOf(ChildRenderingError(message)), false)
   }
 
-  return visited
+  return Pair(scannableViews, true)
 }
 
 /**
  * Uses reflection to try to pull a `SlotTable` out of [composeView] and render it. If any of the
  * reflection fails, returns false.
  */
-private fun visitComposeView(
-  renderingScope: RenderingScope,
-  composeView: View,
-  modifierRenderers: List<ViewStateRenderer>,
-  viewFilter: ViewFilter,
-  classicViewVisitor: TreeRenderingVisitor<View>
-): Boolean {
+private fun tryGetLayoutInfos(composeView: View): Sequence<ComposeLayoutInfo>? {
   // Any of this reflection code can fail if running with an unsupported version of Compose.
   // Compose doesn't provide a public API for this (yet) because they don't want it to be used in
   // production.
   // See this slack thread: https://kotlinlang.slack.com/archives/CJLTWPH7S/p1596749016388100?thread_ts=1596749016.388100&cid=CJLTWPH7S
   val keyedTags = composeView.getKeyedTags()
-  val composition = keyedTags.first { it is Composition } as Composition? ?: return false
+  val composition = keyedTags.first { it is Composition } as Composition? ?: return null
   val composer = composition.unwrap()
-      .getComposerOrNull() ?: return false
+      .getComposerOrNull() ?: return null
 
   // Composer and its slot table are finally public API again.
-  // asTree is provided by the Compose Tooling library. It "reads" the slot table and parses it 
+  // asTree is provided by the Compose Tooling library. It "reads" the slot table and parses it
   // into a tree of Group objects. This means we're technically traversing the composable tree
   // twice, so why not just read the slot table directly? As opaque as the Group API is, the actual
   // slot table API is quite complicated, and the actual format of the slot table (effectively an
@@ -125,17 +107,7 @@ private fun visitComposeView(
   // That said, once Compose is more stable, it might be worth it to read the slot table directly,
   // since then we could drop the requirement for the Tooling library to be on the classpath.
   val rootGroup = composer.slotTable.asTree()
-  val visitor = LayoutInfoVisitor(modifierRenderers, viewFilter, classicViewVisitor)
-
-  rootGroup.layoutInfos.forEach {
-    renderingScope.addChildToVisit(it, visitor)
-  }
-
-  // At this point we will not have actually visited any LayoutInfos (addChildToVisit doesn't
-  // immediately visit), but if we were able to successfully construct the LayoutInfos, then we
-  // assume the Compose version is supported. LayoutInfoVisitor will also try to detect unsupported
-  // Compose versions just in case.
-  return true
+  return rootGroup.layoutInfos
 }
 
 private fun View.getKeyedTags(): SparseArray<*> {
