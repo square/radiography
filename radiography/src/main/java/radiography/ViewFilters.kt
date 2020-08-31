@@ -10,15 +10,6 @@ public object ViewFilters {
   public val NoFilter: ViewFilter = ViewFilter { true }
 
   /**
-   * Filters out root views that don't currently have the window focus from the output of
-   * [Radiography.scan].
-   */
-  @JvmField
-  public val FocusedWindowViewFilter: ViewFilter = androidViewFilterFor<View> { view ->
-    view.parent?.parent != null || view.hasWindowFocus()
-  }
-
-  /**
    * Filters out views with ids matching [skippedIds] from the output of [Radiography.scan].
    */
   @JvmStatic

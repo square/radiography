@@ -1,6 +1,7 @@
 package radiography
 
 import android.view.View
+import radiography.ScanScopes.singleViewScope
 import radiography.ViewStateRenderers.DefaultsNoPii
 
 /**
@@ -15,6 +16,6 @@ public fun View?.scan(
   return if (this == null) {
     "null"
   } else {
-    Radiography.scan(this, viewStateRenderers, viewFilter)
+    Radiography.scan(singleViewScope(this), viewStateRenderers, viewFilter)
   }
 }

@@ -10,9 +10,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import radiography.Radiography
-import radiography.ViewFilter
-import radiography.ViewFilters.FocusedWindowViewFilter
-import radiography.ViewFilters.and
+import radiography.ScanScopes.FocusedWindowScope
 import radiography.ViewFilters.skipIdsViewFilter
 import radiography.ViewStateRenderers
 import radiography.ViewStateRenderers.DefaultsIncludingPii
@@ -35,7 +33,7 @@ class MainActivity : Activity() {
           Radiography.scan()
         },
         "Focused window" to {
-          Radiography.scan(viewFilter = FocusedWindowViewFilter)
+          Radiography.scan(scanScope = FocusedWindowScope)
         },
         "Start from R.id.main" to {
           findViewById<View>(R.id.main).scan()
@@ -45,7 +43,9 @@ class MainActivity : Activity() {
         },
         "Focused window and custom filter" to {
           Radiography.scan(
-              viewFilter = FocusedWindowViewFilter and ViewFilter { it !is LinearLayout })
+              scanScope = FocusedWindowScope,
+              viewFilter = { it !is LinearLayout }
+          )
         },
         "Include PII" to {
           Radiography.scan(

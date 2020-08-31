@@ -34,6 +34,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 import radiography.Radiography
+import radiography.ScanScopes.composeTestTagScope
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.compose.ComposeLayoutFilters.skipLayoutIdsFilter
@@ -41,7 +42,6 @@ import radiography.compose.ComposeLayoutFilters.skipTestTagsFilter
 import radiography.compose.ComposeLayoutRenderers.ComposeViewRenderer
 import radiography.compose.ComposeLayoutRenderers.composeTextRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
-import radiography.compose.scan
 
 @OptIn(ExperimentalRadiographyComposeApi::class)
 class ComposeUiTest {
@@ -244,7 +244,7 @@ class ComposeUiTest {
     composeRule.setContent {
       slotTable.value = currentComposer.slotTable
 
-      Stack {
+      Stack(Modifier.testTag("root")) {
         Box()
         Column {
           Box()
@@ -258,19 +258,21 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      slotTable.value!!.scan()
+      Radiography.scan(composeTestTagScope("root"))
     }
 
+    @Suppress("RemoveCurlyBracesFromTemplate")
     assertThat(hierarchy).contains(
         """
-         Stack {  }
-         $BLANK  +-Box {  }
-         $BLANK  +-Column {  }
-         $BLANK  | +-Box {  }
-         $BLANK  | `-Box {  }
-         $BLANK  `-Row {  }
-         $BLANK    +-Box {  }
-         $BLANK    `-Box {  }
+          Stack:
+          ${BLANK}Stack { test-tag:"root" }
+          ${BLANK}+-Box {  }
+          ${BLANK}+-Column {  }
+          ${BLANK}| +-Box {  }
+          ${BLANK}| `-Box {  }
+          ${BLANK}`-Row {  }
+          ${BLANK}  +-Box {  }
+          ${BLANK}  `-Box {  }
         """.trimIndent()
     )
   }
@@ -280,7 +282,7 @@ class ComposeUiTest {
     composeRule.setContent {
       slotTable.value = currentComposer.slotTable
 
-      Box {
+      Box(Modifier.testTag("root")) {
         AndroidView(::TextView) {
           it.layoutParams = LayoutParams(0, 0)
         }
@@ -288,15 +290,17 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      slotTable.value!!.scan()
+      Radiography.scan(composeTestTagScope("root"))
     }
 
     // The stuff below the AndroidView is implementation details, testing it is brittle and
     // pointless.
+    @Suppress("RemoveCurlyBracesFromTemplate")
     assertThat(hierarchy).contains(
         """
-         Box {  }
-         $BLANK  `-AndroidView {  }
+          Box:
+          ${BLANK}Box { test-tag:"root" }
+          ${BLANK}`-AndroidView {  }
         """.trimIndent()
     )
     // But this view description should show up at some point.
