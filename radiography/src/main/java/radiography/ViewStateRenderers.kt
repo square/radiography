@@ -1,9 +1,11 @@
 package radiography
 
+import android.annotation.SuppressLint
 import android.content.res.Resources.NotFoundException
 import android.view.View
 import android.widget.Checkable
 import android.widget.TextView
+import radiography.ScannableView.AndroidView
 import radiography.compose.ComposeLayoutRenderers
 import radiography.compose.ExperimentalRadiographyComposeApi
 
@@ -11,7 +13,7 @@ import radiography.compose.ExperimentalRadiographyComposeApi
 public object ViewStateRenderers {
 
   @JvmField
-  public val ViewRenderer: ViewStateRenderer = viewStateRendererFor<View> { view ->
+  public val ViewRenderer: ViewStateRenderer = androidViewStateRendererFor<View> { view ->
     if (view.id != View.NO_ID && view.resources != null) {
       try {
         val resourceName = view.resources.getResourceEntryName(view.id)
@@ -21,6 +23,7 @@ public object ViewStateRenderers {
       }
     }
 
+    @SuppressLint("SwitchIntDef")
     when (view.visibility) {
       View.GONE -> append("GONE")
       View.INVISIBLE -> append("INVISIBLE")
@@ -42,11 +45,12 @@ public object ViewStateRenderers {
   }
 
   @JvmField
-  public val CheckableRenderer: ViewStateRenderer = viewStateRendererFor<Checkable> { checkable ->
-    if (checkable.isChecked) {
-      append("checked")
+  public val CheckableRenderer: ViewStateRenderer =
+    androidViewStateRendererFor<Checkable> { checkable ->
+      if (checkable.isChecked) {
+        append("checked")
+      }
     }
-  }
 
   @JvmField
   public val DefaultsNoPii: List<ViewStateRenderer> = listOf(
@@ -81,7 +85,7 @@ public object ViewStateRenderers {
         "textFieldMaxLength should be greater than 0, not $textViewTextMaxLength"
       }
     }
-    return viewStateRendererFor<TextView> { textView ->
+    return androidViewStateRendererFor<TextView> { textView ->
       var text = textView.text
       if (text != null) {
         append("text-length:${text.length}")
@@ -97,28 +101,31 @@ public object ViewStateRenderers {
   }
 
   /**
-   * Creates a [ViewStateRenderer] that renders views of type [T].
+   * Creates a [ViewStateRenderer] that renders [AndroidView]s with views of type [T].
    */
   // This function is only visible to Kotlin consumers of this library.
-  public inline fun <reified T : Any> viewStateRendererFor(
+  public inline fun <reified T : Any> androidViewStateRendererFor(
     noinline renderer: AttributeAppendable.(T) -> Unit
   ): ViewStateRenderer {
     // Don't create an anonymous instance of ViewStateRenderer here, since that would generate a new
     // anonymous class at every call site.
-    return viewStateRendererFor(T::class.java, renderer)
+    return androidViewStateRendererFor(T::class.java, renderer)
   }
 
   /**
-   * Creates a [ViewStateRenderer] that renders views of type [T].
+   * Creates a [ViewStateRenderer] that renders [AndroidView]s with views of type [T].
    */
   // This function is only visible to Java consumers of this library.
   @JvmStatic
-  @PublishedApi internal fun <T : Any> viewStateRendererFor(
+  @PublishedApi internal fun <T : Any> androidViewStateRendererFor(
     renderedClass: Class<T>,
     renderer: AttributeAppendable.(T) -> Unit
-  ): ViewStateRenderer = object : TypedViewStateRenderer<T>(renderedClass) {
-    override fun AttributeAppendable.renderTyped(rendered: T) {
-      renderer(rendered)
-    }
+  ): ViewStateRenderer = ViewStateRenderer { scannableView ->
+    val view = (scannableView as? AndroidView)
+        ?.view
+        ?: return@ViewStateRenderer
+    if (!renderedClass.isInstance(view)) return@ViewStateRenderer
+    @Suppress("UNCHECKED_CAST")
+    renderer(view as T)
   }
 }

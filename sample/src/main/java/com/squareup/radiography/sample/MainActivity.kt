@@ -17,7 +17,7 @@ import radiography.ViewFilters.skipIdsViewFilter
 import radiography.ViewStateRenderers
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
-import radiography.ViewStateRenderers.viewStateRendererFor
+import radiography.ViewStateRenderers.androidViewStateRendererFor
 import radiography.scan
 
 class MainActivity : Activity() {
@@ -64,12 +64,13 @@ class MainActivity : Activity() {
           )
         },
         "Custom LinearLayout renderer" to {
-          Radiography.scan(viewStateRenderers = DefaultsNoPii + viewStateRendererFor<LinearLayout> {
-            append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
-          })
+          Radiography.scan(
+              viewStateRenderers = DefaultsNoPii + androidViewStateRendererFor<LinearLayout> {
+                append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
+              })
         },
         "View.toString() renderer" to {
-          Radiography.scan(viewStateRenderers = listOf(viewStateRendererFor<View> {
+          Radiography.scan(viewStateRenderers = listOf(androidViewStateRendererFor<View> {
             append(
                 it.toString()
                     .substringAfter(' ')

@@ -50,11 +50,11 @@ import radiography.ViewStateRenderers.CheckableRenderer
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.ViewRenderer
+import radiography.ViewStateRenderers.androidViewStateRendererFor
 import radiography.ViewStateRenderers.textViewRenderer
-import radiography.ViewStateRenderers.viewStateRendererFor
 import radiography.compose.ComposeLayoutFilters.skipTestTagsFilter
 import radiography.compose.ComposeLayoutRenderers.LayoutIdRenderer
-import radiography.compose.ComposeLayoutRenderers.StandardSemanticsRenderer
+import radiography.compose.ComposeLayoutRenderers.ComposeViewRenderer
 import radiography.compose.ComposeLayoutRenderers.composeTextRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 
@@ -146,8 +146,8 @@ private fun showSelectionDialog(context: Context) {
         Radiography.scan(viewFilter = skipTestTagsFilter(TEXT_FIELD_TEST_TAG))
       },
       "Focused window and custom filter" to {
-        Radiography.scan(viewFilter = FocusedWindowViewFilter and object : ViewFilter {
-          override fun matches(view: Any): Boolean = view !is LinearLayout
+        Radiography.scan(viewFilter = FocusedWindowViewFilter and ViewFilter { view ->
+          view !is LinearLayout
         })
       },
       "Include PII" to {
@@ -160,14 +160,14 @@ private fun showSelectionDialog(context: Context) {
                 textViewRenderer(includeTextViewText = true, textViewTextMaxLength = 4),
                 CheckableRenderer,
                 LayoutIdRenderer,
-                StandardSemanticsRenderer,
+                ComposeViewRenderer,
                 composeTextRenderer(includeText = true, maxTextLength = 4)
             )
         )
       },
       "Custom LinearLayout renderer" to {
         Radiography.scan(
-            viewStateRenderers = DefaultsNoPii + viewStateRendererFor<LinearLayout> {
+            viewStateRenderers = DefaultsNoPii + androidViewStateRendererFor<LinearLayout> {
               append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
             })
       }

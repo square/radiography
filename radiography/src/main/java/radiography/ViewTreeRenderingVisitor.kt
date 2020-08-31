@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.os.Build.VERSION_CODES
 import android.view.View
 import android.view.ViewGroup
+import radiography.ScannableView.AndroidView
 import radiography.compose.tryVisitComposeView
 
 /**
@@ -16,7 +17,7 @@ internal class ViewTreeRenderingVisitor(
 ) : TreeRenderingVisitor<View>() {
 
   override fun RenderingScope.visitNode(node: View) {
-    description.viewToString(node)
+    description.viewToString(AndroidView(node))
 
     val isComposeView = tryVisitComposeView(
         this, node, viewStateRenderers, viewFilter, this@ViewTreeRenderingVisitor
@@ -34,19 +35,19 @@ internal class ViewTreeRenderingVisitor(
       // Child may be null, if children were removed by another thread after we captured the child
       // count. getChildAt returns null for invalid indices, it doesn't throw.
       val child = node.getChildAt(index) ?: continue
-      if (viewFilter.matches(child)) {
+      if (viewFilter.matches(AndroidView(child))) {
         addChildToVisit(child)
       }
     }
   }
 
   @TargetApi(VERSION_CODES.CUPCAKE)
-  private fun StringBuilder.viewToString(view: View) {
-    append("${view.javaClass.simpleName} { ")
+  private fun StringBuilder.viewToString(androidView: AndroidView) {
+    append("${androidView.view.javaClass.simpleName} { ")
     val appendable = AttributeAppendable(this)
     for (renderer in viewStateRenderers) {
       with(renderer) {
-        appendable.render(view)
+        appendable.render(androidView)
       }
     }
     append(" }")

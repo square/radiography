@@ -1,15 +1,16 @@
 package radiography.compose
 
 import androidx.compose.ui.layout.LayoutIdParentData
-import androidx.compose.ui.platform.InspectableParameter
 import androidx.compose.ui.semantics.SemanticsModifier
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.SemanticsProperties.Text
-import androidx.compose.ui.semantics.SemanticsPropertyKey
+import androidx.compose.ui.semantics.getOrNull
 import radiography.AttributeAppendable
-import radiography.TypedViewStateRenderer
+import radiography.ScannableView
+import radiography.ScannableView.ComposeView
 import radiography.ViewStateRenderer
 import radiography.ellipsize
+import radiography.formatPixelDimensions
 
 // Note that this class can't use viewStateRendererFor, since that function is defined in the
 // ViewStateRenderers object, whose class initializer may initialize _this_ class, which will cause
@@ -26,17 +27,19 @@ public object ComposeLayoutRenderers {
   @ExperimentalRadiographyComposeApi
   @JvmField
   val LayoutIdRenderer: ViewStateRenderer = if (!isComposeAvailable) NoRenderer else {
-    object : TypedViewStateRenderer<InspectableParameter>(InspectableParameter::class.java) {
-      override fun AttributeAppendable.renderTyped(rendered: InspectableParameter) {
-        if (rendered is LayoutIdParentData) {
-          val idValue = if (rendered.id is CharSequence) {
-            "\"${rendered.id}\""
-          } else {
-            rendered.id.toString()
-          }
-          append("layout-id:$idValue")
-        }
+    ViewStateRenderer { view ->
+      val layoutId = (view as? ComposeView)
+          ?.modifiers
+          ?.filterIsInstance<LayoutIdParentData>()
+          ?.singleOrNull()
+          ?: return@ViewStateRenderer
+
+      val idValue = if (layoutId.id is CharSequence) {
+        "\"${layoutId.id}\""
+      } else {
+        layoutId.id.toString()
       }
+      append("layout-id:$idValue")
     }
   }
 
@@ -45,21 +48,34 @@ public object ComposeLayoutRenderers {
    */
   @ExperimentalRadiographyComposeApi
   @JvmField
-  val StandardSemanticsRenderer: ViewStateRenderer =
+  val ComposeViewRenderer: ViewStateRenderer =
     if (!isComposeAvailable) NoRenderer else {
-      object : TypedViewStateRenderer<SemanticsModifier>(SemanticsModifier::class.java) {
-        override fun AttributeAppendable.renderTyped(rendered: SemanticsModifier) {
-          rendered.semanticsConfiguration.forEach { (key, value) ->
-            when (key) {
-              SemanticsProperties.TestTag -> append("test-tag:\"$value\"")
-              SemanticsProperties.AccessibilityLabel -> append("label:\"$value\"")
-              SemanticsProperties.AccessibilityValue -> append("value:\"$value\"")
-              SemanticsProperties.Disabled -> append("DISABLED")
-              SemanticsProperties.Focused -> if (value == true) append("FOCUSED")
-              SemanticsProperties.Hidden -> append("HIDDEN")
-              SemanticsProperties.IsDialog -> append("DIALOG")
-              SemanticsProperties.IsPopup -> append("POPUP")
-            }
+      ViewStateRenderer {
+        val composeView = it as? ComposeView ?: return@ViewStateRenderer
+
+        composeView.apply {
+          if (width != 0 || height != 0) {
+            append(formatPixelDimensions(width, height))
+          }
+        }
+
+        val semanticsConfiguration = composeView
+            .modifiers
+            .filterIsInstance<SemanticsModifier>()
+            // Technically there can be multiple semantic modifiers on a single node, so read them
+            // all.
+            .flatMap { semantics -> semantics.semanticsConfiguration }
+
+        semanticsConfiguration.forEach { (key, value) ->
+          when (key) {
+            SemanticsProperties.TestTag -> append("test-tag:\"$value\"")
+            SemanticsProperties.AccessibilityLabel -> append("label:\"$value\"")
+            SemanticsProperties.AccessibilityValue -> append("value:\"$value\"")
+            SemanticsProperties.Disabled -> append("DISABLED")
+            SemanticsProperties.Focused -> if (value == true) append("FOCUSED")
+            SemanticsProperties.Hidden -> append("HIDDEN")
+            SemanticsProperties.IsDialog -> append("DIALOG")
+            SemanticsProperties.IsPopup -> append("POPUP")
           }
         }
       }
@@ -71,7 +87,7 @@ public object ComposeLayoutRenderers {
     if (!isComposeAvailable) emptyList() else listOf(
         LayoutIdRenderer,
         composeTextRenderer(includeText = false, maxTextLength = 0),
-        StandardSemanticsRenderer
+        ComposeViewRenderer
     )
 
   @ExperimentalRadiographyComposeApi
@@ -80,7 +96,7 @@ public object ComposeLayoutRenderers {
     if (!isComposeAvailable) emptyList() else listOf(
         LayoutIdRenderer,
         composeTextRenderer(includeText = true),
-        StandardSemanticsRenderer
+        ComposeViewRenderer
     )
 
   /**
@@ -100,35 +116,23 @@ public object ComposeLayoutRenderers {
     includeText: Boolean = false,
     maxTextLength: Int = Int.MAX_VALUE
   ): ViewStateRenderer =
-    if (!isComposeAvailable) NoRenderer else semanticsRendererFor(Text) { text ->
-      append("text-length:${text.text.length}")
-      if (includeText) {
-        append("text:\"${text.text.ellipsize(maxTextLength)}\"")
-      }
-    }
+    if (!isComposeAvailable) NoRenderer else ViewStateRenderer {
+      val text = (it as? ComposeView)
+          ?.modifiers
+          ?.filterIsInstance<SemanticsModifier>()
+          ?.mapNotNull { it.semanticsConfiguration.getOrNull(Text)?.text }
+          ?.takeUnless { it.isEmpty() }
+          ?.joinToString(separator = " ")
+          ?: return@ViewStateRenderer
 
-  /**
-   * Renders a [SemanticsPropertyKey].
-   */
-  @ExperimentalRadiographyComposeApi
-  @JvmStatic
-  internal fun <T> semanticsRendererFor(
-    key: SemanticsPropertyKey<T>,
-    render: AttributeAppendable.(T) -> Unit
-  ): ViewStateRenderer =
-    object : TypedViewStateRenderer<SemanticsModifier>(SemanticsModifier::class.java) {
-      override fun AttributeAppendable.renderTyped(rendered: SemanticsModifier) {
-        rendered.semanticsConfiguration.forEach { (k, value) ->
-          if (key == k) {
-            @Suppress("UNCHECKED_CAST")
-            render(value as T)
-          }
-        }
+      append("text-length:${text.length}")
+      if (includeText) {
+        append("text:\"${text.ellipsize(maxTextLength)}\"")
       }
     }
 
   private object NoRenderer : ViewStateRenderer {
-    override fun AttributeAppendable.render(rendered: Any) {
+    override fun AttributeAppendable.render(view: ScannableView) {
       // Noop.
     }
   }

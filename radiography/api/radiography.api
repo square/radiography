@@ -12,21 +12,36 @@ public final class radiography/Radiography {
 	public static synthetic fun scan$default (Landroid/view/View;Ljava/util/List;Lradiography/ViewFilter;ILjava/lang/Object;)Ljava/lang/String;
 }
 
+public abstract class radiography/ScannableView {
+}
+
+public final class radiography/ScannableView$AndroidView : radiography/ScannableView {
+	public fun <init> (Landroid/view/View;)V
+	public final fun getView ()Landroid/view/View;
+}
+
+public final class radiography/ScannableView$ComposeView : radiography/ScannableView {
+	public fun <init> (IILjava/util/List;)V
+	public final fun getHeight ()I
+	public final fun getModifiers ()Ljava/util/List;
+	public final fun getWidth ()I
+}
+
 public abstract interface class radiography/ViewFilter {
-	public abstract fun matches (Ljava/lang/Object;)Z
+	public abstract fun matches (Lradiography/ScannableView;)Z
 }
 
 public final class radiography/ViewFilters {
 	public static final field FocusedWindowViewFilter Lradiography/ViewFilter;
 	public static final field INSTANCE Lradiography/ViewFilters;
 	public static final fun and (Lradiography/ViewFilter;Lradiography/ViewFilter;)Lradiography/ViewFilter;
+	public static final fun androidViewFilterFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lradiography/ViewFilter;
 	public static final fun getNoFilter ()Lradiography/ViewFilter;
 	public static final fun skipIdsViewFilter ([I)Lradiography/ViewFilter;
-	public static final fun viewFilterFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lradiography/ViewFilter;
 }
 
 public abstract interface class radiography/ViewStateRenderer {
-	public abstract fun render (Lradiography/AttributeAppendable;Ljava/lang/Object;)V
+	public abstract fun render (Lradiography/AttributeAppendable;Lradiography/ScannableView;)V
 }
 
 public final class radiography/ViewStateRenderers {
@@ -35,11 +50,11 @@ public final class radiography/ViewStateRenderers {
 	public static final field DefaultsNoPii Ljava/util/List;
 	public static final field INSTANCE Lradiography/ViewStateRenderers;
 	public static final field ViewRenderer Lradiography/ViewStateRenderer;
+	public static final fun androidViewStateRendererFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function2;)Lradiography/ViewStateRenderer;
 	public static final fun textViewRenderer ()Lradiography/ViewStateRenderer;
 	public static final fun textViewRenderer (Z)Lradiography/ViewStateRenderer;
 	public static final fun textViewRenderer (ZI)Lradiography/ViewStateRenderer;
 	public static synthetic fun textViewRenderer$default (ZIILjava/lang/Object;)Lradiography/ViewStateRenderer;
-	public static final fun viewStateRendererFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function2;)Lradiography/ViewStateRenderer;
 }
 
 public final class radiography/ViewsKt {
@@ -54,11 +69,11 @@ public final class radiography/compose/ComposeLayoutFilters {
 }
 
 public final class radiography/compose/ComposeLayoutRenderers {
+	public static final field ComposeViewRenderer Lradiography/ViewStateRenderer;
 	public static final field DefaultsIncludingPii Ljava/util/List;
 	public static final field DefaultsNoPii Ljava/util/List;
 	public static final field INSTANCE Lradiography/compose/ComposeLayoutRenderers;
 	public static final field LayoutIdRenderer Lradiography/ViewStateRenderer;
-	public static final field StandardSemanticsRenderer Lradiography/ViewStateRenderer;
 	public static final fun composeTextRenderer ()Lradiography/ViewStateRenderer;
 	public static final fun composeTextRenderer (Z)Lradiography/ViewStateRenderer;
 	public static final fun composeTextRenderer (ZI)Lradiography/ViewStateRenderer;
