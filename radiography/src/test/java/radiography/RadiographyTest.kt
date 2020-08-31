@@ -68,7 +68,7 @@ class RadiographyTest {
   @Test fun textViewContents() {
     val view = TextView(context)
     view.text = "Baguette Avec Fromage"
-    view.scan(viewStateRenderers = listOf(textViewRenderer(includeTextViewText = true)))
+    view.scan(viewStateRenderers = listOf(textViewRenderer(showTextValue = true)))
         .also {
           assertThat(it).contains("text-length:21")
           assertThat(it).contains("text:\"Baguette Avec Fromage\"")
@@ -81,8 +81,8 @@ class RadiographyTest {
     view.scan(
         viewStateRenderers = listOf(
             textViewRenderer(
-                includeTextViewText = true,
-                textViewTextMaxLength = 11
+                showTextValue = true,
+                textValueMaxLength = 11
             )
         )
     )

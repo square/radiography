@@ -37,10 +37,10 @@ import radiography.Radiography
 import radiography.ScanScopes.composeTestTagScope
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
-import radiography.compose.ComposeLayoutFilters.skipLayoutIdsFilter
-import radiography.compose.ComposeLayoutFilters.skipTestTagsFilter
-import radiography.compose.ComposeLayoutRenderers.ComposeViewRenderer
-import radiography.compose.ComposeLayoutRenderers.composeTextRenderer
+import radiography.ViewStateRenderers.textViewRenderer
+import radiography.compose.ComposableFilters.skipLayoutIdsFilter
+import radiography.compose.ComposableFilters.skipTestTagsFilter
+import radiography.compose.ComposableRenderers.ComposeViewRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 
 @OptIn(ExperimentalRadiographyComposeApi::class)
@@ -147,7 +147,7 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      Radiography.scan(viewStateRenderers = listOf(composeTextRenderer(includeText = true)))
+      Radiography.scan(viewStateRenderers = listOf(textViewRenderer(showTextValue = true)))
     }
 
     assertThat(hierarchy).contains("text-length:21")
@@ -162,9 +162,9 @@ class ComposeUiTest {
     val hierarchy = runOnIdle {
       Radiography.scan(
           viewStateRenderers = listOf(
-              composeTextRenderer(
-                  includeText = true,
-                  maxTextLength = 11
+              textViewRenderer(
+                  showTextValue = true,
+                  textValueMaxLength = 11
               )
           )
       )
@@ -180,7 +180,7 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      Radiography.scan(viewStateRenderers = listOf(composeTextRenderer(includeText = true)))
+      Radiography.scan(viewStateRenderers = listOf(textViewRenderer(showTextValue = true)))
     }
 
     assertThat(hierarchy).contains("text-length:21")
@@ -195,9 +195,9 @@ class ComposeUiTest {
     val hierarchy = runOnIdle {
       Radiography.scan(
           viewStateRenderers = listOf(
-              composeTextRenderer(
-                  includeText = true,
-                  maxTextLength = 11
+              textViewRenderer(
+                  showTextValue = true,
+                  textValueMaxLength = 11
               )
           )
       )

@@ -50,10 +50,8 @@ import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.androidViewStateRendererFor
 import radiography.ViewStateRenderers.textViewRenderer
-import radiography.compose.ComposeLayoutFilters.skipTestTagsFilter
-import radiography.compose.ComposeLayoutRenderers.ComposeViewRenderer
-import radiography.compose.ComposeLayoutRenderers.LayoutIdRenderer
-import radiography.compose.ComposeLayoutRenderers.composeTextRenderer
+import radiography.compose.ComposableFilters.skipTestTagsFilter
+import radiography.compose.ComposableRenderers.ComposeViewRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 
 internal const val TEXT_FIELD_TEST_TAG = "text-field"
@@ -156,11 +154,9 @@ private fun showSelectionDialog(context: Context) {
         Radiography.scan(
             viewStateRenderers = listOf(
                 ViewRenderer,
-                textViewRenderer(includeTextViewText = true, textViewTextMaxLength = 4),
-                CheckableRenderer,
-                LayoutIdRenderer,
                 ComposeViewRenderer,
-                composeTextRenderer(includeText = true, maxTextLength = 4)
+                textViewRenderer(showTextValue = true, textValueMaxLength = 4),
+                CheckableRenderer,
             )
         )
       },
