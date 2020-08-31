@@ -8,6 +8,13 @@ import androidx.ui.tooling.NodeGroup
 
 /**
  * Information about a Compose `LayoutNode`, extracted from a [Group] tree via [Group.layoutInfos].
+ *
+ * This is a useful layer of indirection from directly handling Groups because it allows us to
+ * define our own notion of what an atomic unit of "composable" is independently from how Compose
+ * actually represents things under the hood. When this changes in some future dev version, we
+ * only need to update the "parsing" logic in this file.
+ * It's also helpful since we actually gather data from multiple Groups for a single LayoutInfo,
+ * so parsing them ahead of time into these objects means the visitor can be stateless.
  */
 internal class ComposeLayoutInfo(
   val name: String,

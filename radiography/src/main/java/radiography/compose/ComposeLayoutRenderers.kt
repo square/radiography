@@ -14,6 +14,9 @@ import radiography.ellipsize
 // Note that this class can't use viewStateRendererFor, since that function is defined in the
 // ViewStateRenderers object, whose class initializer may initialize _this_ class, which will cause
 // NoClassDefFoundExceptions. This can happen when a debugger is attached.
+//
+// Property initializers in this class must also all be guarded by isComposeAvailable since this
+// class will be loaded even if Compose is not available on the classpath.
 @ExperimentalRadiographyComposeApi
 public object ComposeLayoutRenderers {
 
