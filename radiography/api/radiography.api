@@ -74,7 +74,6 @@ public abstract interface class radiography/ViewStateRenderer {
 
 public final class radiography/ViewStateRenderers {
 	public static final field CheckableRenderer Lradiography/ViewStateRenderer;
-	public static final field ComposeViewRenderer Lradiography/ViewStateRenderer;
 	public static final field DefaultsIncludingPii Ljava/util/List;
 	public static final field DefaultsNoPii Ljava/util/List;
 	public static final field INSTANCE Lradiography/ViewStateRenderers;

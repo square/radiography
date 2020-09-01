@@ -22,8 +22,7 @@ public object ViewStateRenderers {
     // Noop.
   }
 
-  @JvmField
-  public val ViewRenderer: ViewStateRenderer = androidViewStateRendererFor<View> { view ->
+  private val AndroidViewRenderer: ViewStateRenderer = androidViewStateRendererFor<View> { view ->
     if (view.id != View.NO_ID && view.resources != null) {
       try {
         val resourceName = view.resources.getResourceEntryName(view.id)
@@ -54,20 +53,8 @@ public object ViewStateRenderers {
     }
   }
 
-  @JvmField
-  public val CheckableRenderer: ViewStateRenderer =
-    androidViewStateRendererFor<Checkable> { checkable ->
-      if (checkable.isChecked) {
-        append("checked")
-      }
-    }
-
-  /**
-   * Renderer for standard semantics properties defined in [SemanticsProperties].
-   */
   @ExperimentalRadiographyComposeApi
-  @JvmField
-  public val ComposeViewRenderer: ViewStateRenderer = if (!isComposeAvailable) NoRenderer else {
+  private val ComposeViewRenderer: ViewStateRenderer = if (!isComposeAvailable) NoRenderer else {
     ViewStateRenderer {
       val composeView = it as? ComposeView ?: return@ViewStateRenderer
 
@@ -114,9 +101,22 @@ public object ViewStateRenderers {
   }
 
   @JvmField
+  public val ViewRenderer: ViewStateRenderer = ViewStateRenderer { view ->
+    with(AndroidViewRenderer) { render(view) }
+    with(ComposeViewRenderer) { render(view) }
+  }
+
+  @JvmField
+  public val CheckableRenderer: ViewStateRenderer =
+    androidViewStateRendererFor<Checkable> { checkable ->
+      if (checkable.isChecked) {
+        append("checked")
+      }
+    }
+
+  @JvmField
   public val DefaultsNoPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
-      ComposeViewRenderer,
       textViewRenderer(showTextValue = false, textValueMaxLength = 0),
       CheckableRenderer,
   )
@@ -124,7 +124,6 @@ public object ViewStateRenderers {
   @JvmField
   public val DefaultsIncludingPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
-      ComposeViewRenderer,
       textViewRenderer(showTextValue = true),
       CheckableRenderer,
   )

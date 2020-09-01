@@ -35,9 +35,9 @@ import org.junit.Test
 import radiography.Radiography
 import radiography.ScanScopes.composeTestTagScope
 import radiography.ViewFilters.skipComposeTestTagsFilter
-import radiography.ViewStateRenderers.ComposeViewRenderer
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
+import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.textViewRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 
@@ -80,7 +80,7 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      Radiography.scan(viewStateRenderers = listOf(ComposeViewRenderer))
+      Radiography.scan(viewStateRenderers = listOf(ViewRenderer))
     }
 
     assertThat(hierarchy).contains("Box { 30×40px }")
@@ -132,7 +132,7 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      Radiography.scan(viewStateRenderers = listOf(ComposeViewRenderer))
+      Radiography.scan(viewStateRenderers = listOf(ViewRenderer))
     }
 
     assertThat(hierarchy).contains("Checkbox")

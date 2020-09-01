@@ -46,7 +46,6 @@ import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
 import radiography.ViewFilters.skipComposeTestTagsFilter
 import radiography.ViewStateRenderers.CheckableRenderer
-import radiography.ViewStateRenderers.ComposeViewRenderer
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.ViewRenderer
@@ -154,7 +153,6 @@ private fun showSelectionDialog(context: Context) {
         Radiography.scan(
             viewStateRenderers = listOf(
                 ViewRenderer,
-                ComposeViewRenderer,
                 textViewRenderer(showTextValue = true, textValueMaxLength = 4),
                 CheckableRenderer,
             )
