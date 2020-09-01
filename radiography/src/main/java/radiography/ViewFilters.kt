@@ -2,6 +2,9 @@ package radiography
 
 import android.view.View
 import radiography.ScannableView.AndroidView
+import radiography.ScannableView.ComposeView
+import radiography.compose.ExperimentalRadiographyComposeApi
+import radiography.compose.findTestTags
 
 public object ViewFilters {
 
@@ -17,6 +20,20 @@ public object ViewFilters {
     androidViewFilterFor<View> { view ->
       val viewId = view.id
       (viewId == View.NO_ID || skippedIds.isEmpty() || skippedIds.binarySearch(viewId) < 0)
+    }
+
+  /**
+   * Filters out Composables with [`testTag`][androidx.compose.ui.platform.testTag] modifiers
+   * matching [skippedTestTags].
+   */
+  @ExperimentalRadiographyComposeApi
+  @JvmStatic
+  public fun skipComposeTestTagsFilter(vararg skippedTestTags: String): ViewFilter =
+    ViewFilter { view ->
+      (view as? ComposeView)
+          ?.findTestTags()
+          ?.none { it in skippedTestTags }
+          ?: true
     }
 
   /**

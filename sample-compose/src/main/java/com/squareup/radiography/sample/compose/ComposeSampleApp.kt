@@ -44,14 +44,14 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.squareup.radiography.sample.compose.R.drawable
 import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
+import radiography.ViewFilters.skipComposeTestTagsFilter
 import radiography.ViewStateRenderers.CheckableRenderer
+import radiography.ViewStateRenderers.ComposeViewRenderer
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.androidViewStateRendererFor
 import radiography.ViewStateRenderers.textViewRenderer
-import radiography.compose.ComposableFilters.skipTestTagsFilter
-import radiography.compose.ComposableRenderers.ComposeViewRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 
 internal const val TEXT_FIELD_TEST_TAG = "text-field"
@@ -122,7 +122,7 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
         liveHierarchy.value = Radiography.scan(
             viewStateRenderers = DefaultsIncludingPii,
             // Don't trigger infinite recursion.
-            viewFilter = skipTestTagsFilter(LIVE_HIERARCHY_TEST_TAG)
+            viewFilter = skipComposeTestTagsFilter(LIVE_HIERARCHY_TEST_TAG)
         )
       }
     }
@@ -139,7 +139,7 @@ private fun showSelectionDialog(context: Context) {
         Radiography.scan(scanScope = FocusedWindowScope)
       },
       "Skip testTag(\"$TEXT_FIELD_TEST_TAG\")" to {
-        Radiography.scan(viewFilter = skipTestTagsFilter(TEXT_FIELD_TEST_TAG))
+        Radiography.scan(viewFilter = skipComposeTestTagsFilter(TEXT_FIELD_TEST_TAG))
       },
       "Focused window and custom filter" to {
         Radiography.scan(
