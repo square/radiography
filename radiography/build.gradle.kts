@@ -42,6 +42,10 @@ android {
   buildFeatures {
     buildConfig = false
   }
+
+  testOptions {
+    execution = "ANDROIDX_TEST_ORCHESTRATOR"
+  }
 }
 
 tasks.withType<KotlinCompile> {
@@ -84,4 +88,5 @@ dependencies {
   androidTestImplementation(Dependencies.InstrumentationTests.Rules)
   androidTestImplementation(Dependencies.InstrumentationTests.Runner)
   androidTestImplementation(Dependencies.Truth)
+  androidTestUtil(Dependencies.InstrumentationTests.Orchestrator)
 }
