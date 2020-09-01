@@ -43,9 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.squareup.radiography.sample.compose.R.drawable
 import radiography.Radiography
-import radiography.ViewFilter
-import radiography.ViewFilters.FocusedWindowViewFilter
-import radiography.ViewFilters.and
+import radiography.ScanScopes.FocusedWindowScope
 import radiography.ViewStateRenderers.CheckableRenderer
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
@@ -53,8 +51,8 @@ import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.androidViewStateRendererFor
 import radiography.ViewStateRenderers.textViewRenderer
 import radiography.compose.ComposeLayoutFilters.skipTestTagsFilter
-import radiography.compose.ComposeLayoutRenderers.LayoutIdRenderer
 import radiography.compose.ComposeLayoutRenderers.ComposeViewRenderer
+import radiography.compose.ComposeLayoutRenderers.LayoutIdRenderer
 import radiography.compose.ComposeLayoutRenderers.composeTextRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 
@@ -140,15 +138,16 @@ private fun showSelectionDialog(context: Context) {
         Radiography.scan()
       },
       "Focused window" to {
-        Radiography.scan(viewFilter = FocusedWindowViewFilter)
+        Radiography.scan(scanScope = FocusedWindowScope)
       },
       "Skip testTag(\"$TEXT_FIELD_TEST_TAG\")" to {
         Radiography.scan(viewFilter = skipTestTagsFilter(TEXT_FIELD_TEST_TAG))
       },
       "Focused window and custom filter" to {
-        Radiography.scan(viewFilter = FocusedWindowViewFilter and ViewFilter { view ->
-          view !is LinearLayout
-        })
+        Radiography.scan(
+            scanScope = FocusedWindowScope,
+            viewFilter = { view -> view !is LinearLayout }
+        )
       },
       "Include PII" to {
         Radiography.scan(viewStateRenderers = DefaultsIncludingPii)

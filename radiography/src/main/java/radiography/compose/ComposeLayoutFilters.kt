@@ -1,8 +1,6 @@
 package radiography.compose
 
 import androidx.compose.ui.layout.LayoutIdParentData
-import androidx.compose.ui.semantics.SemanticsModifier
-import androidx.compose.ui.semantics.SemanticsProperties.TestTag
 import radiography.ScannableView.ComposeView
 import radiography.ViewFilter
 
@@ -15,16 +13,10 @@ object ComposeLayoutFilters {
    */
   @ExperimentalRadiographyComposeApi
   @JvmStatic
-  fun skipTestTagsFilter(vararg skippedTestTags: String): ViewFilter = ViewFilter {
-    (it as? ComposeView)
-        ?.modifiers
-        ?.asSequence()
-        ?.filterIsInstance<SemanticsModifier>()
-        ?.flatMap { semantics ->
-          semantics.semanticsConfiguration.asSequence()
-              .filter { it.key == TestTag }
-        }
-        ?.none { it.value in skippedTestTags }
+  fun skipTestTagsFilter(vararg skippedTestTags: String): ViewFilter = ViewFilter { view ->
+    (view as? ComposeView)
+        ?.findTestTags()
+        ?.none { it in skippedTestTags }
         ?: true
   }
 

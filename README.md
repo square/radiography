@@ -39,13 +39,15 @@ You can print a subset of the view hierarchies.
 val prettyHierarchy = someView.scan()
 
 // Render only the view hierarchy from the focused window, if any.
-val prettyHierarchy = Radiography.scan(viewFilter = FocusedWindowViewFilter)
+val prettyHierarchy = Radiography.scan(scanScope = FocusedWindowScanScope)
 
 // Filter out views with specific ids.
-val prettyHierarchy = Radiography.scan(viewFilter = SkipIdsViewFilter(R.id.debug_drawer))
+val prettyHierarchy = Radiography.scan(viewFilter = skipIdsViewFilter(R.id.debug_drawer))
 
 // Combine view filters.
-val prettyHierarchy = Radiography.scan(viewFilter = FocusedWindowViewFilter and MyCustomViewFilter())
+val prettyHierarchy = Radiography.scan(
+  viewFilter = skipIdsViewFilter(R.id.debug_drawer) and MyCustomViewFilter()
+)
 ```
 
 ## Result example

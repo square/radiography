@@ -10,7 +10,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 import radiography.Radiography
-import radiography.ViewFilters.FocusedWindowViewFilter
+import radiography.ScanScopes.FocusedWindowScope
 import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.test.utilities.TestActivity
 import radiography.test.utilities.TestActivity.Companion.withTextViewText
@@ -66,8 +66,8 @@ class RadiographyUiTest {
     }
 
     val hierarchy = Radiography.scan(
-        viewStateRenderers = DefaultsIncludingPii,
-        viewFilter = FocusedWindowViewFilter
+        scanScope = FocusedWindowScope,
+        viewStateRenderers = DefaultsIncludingPii
     )
 
     assertThat(hierarchy).contains("window-focus:true")

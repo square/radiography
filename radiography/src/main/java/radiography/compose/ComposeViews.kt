@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
 import androidx.ui.tooling.asTree
 import radiography.ScannableView
-import radiography.ScannableView.ComposeView
 import radiography.ScannableView.ChildRenderingError
+import radiography.ScannableView.ComposeView
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 private val VIEW_KEYED_TAGS_FIELD = View::class.java.getDeclaredField("mKeyedTags")
@@ -51,7 +51,7 @@ internal val View.mightBeComposeView: Boolean
  */
 @OptIn(ExperimentalRadiographyComposeApi::class)
 internal fun getComposeScannableViews(composeView: View): Pair<List<ScannableView>, Boolean> {
-  var linkageError: Throwable? = null
+  var linkageError: LinkageError? = null
   val scannableViews = try {
     tryGetLayoutInfos(composeView)
         ?.map(::ComposeView)
@@ -66,19 +66,24 @@ internal fun getComposeScannableViews(composeView: View): Pair<List<ScannableVie
   // If we were able to successfully construct the LayoutInfos, then we assume the Compose version
   // is supported.
 
-  if (scannableViews == null) {
-    // Display a warning but then continue rendering Android views, since the composition may emit
-    // view children and so it's better than nothing.
-    val message = buildString {
-      append(COMPOSE_UNSUPPORTED_MESSAGE)
-      linkageError?.let {
-        appendln().append("Error: $linkageError")
-      }
-    }
-    return Pair(listOf(ChildRenderingError(message)), false)
-  }
+  return scannableViews?.let { Pair(it, true) }
+  // Display a warning but then continue rendering Android views, since the composition may emit
+  // view children and so it's better than nothing.
+      ?: Pair(listOf(composeRenderingError(linkageError)), false)
+}
 
-  return Pair(scannableViews, true)
+/**
+ * Returns a [ChildRenderingError] that includes a message with instructions for updating
+ * radiography and Compose versions.
+ */
+internal fun composeRenderingError(exception: LinkageError?): ScannableView {
+  val message = buildString {
+    append(COMPOSE_UNSUPPORTED_MESSAGE)
+    exception?.let {
+      appendln().append("Error: $exception")
+    }
+  }
+  return ChildRenderingError(message)
 }
 
 /**

@@ -6,10 +6,24 @@ public final class radiography/AttributeAppendable {
 public final class radiography/Radiography {
 	public static final field INSTANCE Lradiography/Radiography;
 	public static final fun scan ()Ljava/lang/String;
-	public static final fun scan (Landroid/view/View;)Ljava/lang/String;
-	public static final fun scan (Landroid/view/View;Ljava/util/List;)Ljava/lang/String;
-	public static final fun scan (Landroid/view/View;Ljava/util/List;Lradiography/ViewFilter;)Ljava/lang/String;
-	public static synthetic fun scan$default (Landroid/view/View;Ljava/util/List;Lradiography/ViewFilter;ILjava/lang/Object;)Ljava/lang/String;
+	public static final fun scan (Lradiography/ScanScope;)Ljava/lang/String;
+	public static final fun scan (Lradiography/ScanScope;Ljava/util/List;)Ljava/lang/String;
+	public static final fun scan (Lradiography/ScanScope;Ljava/util/List;Lradiography/ViewFilter;)Ljava/lang/String;
+	public static synthetic fun scan$default (Lradiography/ScanScope;Ljava/util/List;Lradiography/ViewFilter;ILjava/lang/Object;)Ljava/lang/String;
+}
+
+public abstract interface class radiography/ScanScope {
+	public abstract fun findRoots ()Ljava/util/List;
+}
+
+public final class radiography/ScanScopes {
+	public static final field AllWindowsScope Lradiography/ScanScope;
+	public static final field FocusedWindowScope Lradiography/ScanScope;
+	public static final field INSTANCE Lradiography/ScanScopes;
+	public static final fun composeTestTagScope (Ljava/lang/String;)Lradiography/ScanScope;
+	public static final fun composeTestTagScope (Ljava/lang/String;Lradiography/ScanScope;)Lradiography/ScanScope;
+	public static synthetic fun composeTestTagScope$default (Ljava/lang/String;Lradiography/ScanScope;ILjava/lang/Object;)Lradiography/ScanScope;
+	public static final fun singleViewScope (Landroid/view/View;)Lradiography/ScanScope;
 }
 
 public abstract class radiography/ScannableView {
@@ -46,7 +60,6 @@ public abstract interface class radiography/ViewFilter {
 }
 
 public final class radiography/ViewFilters {
-	public static final field FocusedWindowViewFilter Lradiography/ViewFilter;
 	public static final field INSTANCE Lradiography/ViewFilters;
 	public static final fun and (Lradiography/ViewFilter;Lradiography/ViewFilter;)Lradiography/ViewFilter;
 	public static final fun androidViewFilterFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lradiography/ViewFilter;
@@ -95,10 +108,5 @@ public final class radiography/compose/ComposeLayoutRenderers {
 }
 
 public abstract interface annotation class radiography/compose/ExperimentalRadiographyComposeApi : java/lang/annotation/Annotation {
-}
-
-public final class radiography/compose/SlotTables {
-	public static final synthetic fun scan (Landroidx/compose/runtime/SlotTable;Ljava/util/List;Lradiography/ViewFilter;)Ljava/lang/String;
-	public static synthetic fun scan$default (Landroidx/compose/runtime/SlotTable;Ljava/util/List;Lradiography/ViewFilter;ILjava/lang/Object;)Ljava/lang/String;
 }
 
