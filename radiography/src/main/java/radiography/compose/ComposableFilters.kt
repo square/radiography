@@ -5,7 +5,7 @@ import radiography.ScannableView.ComposeView
 import radiography.ViewFilter
 
 @ExperimentalRadiographyComposeApi
-object ComposeLayoutFilters {
+public object ComposableFilters {
 
   /**
    * Filters out Composables with [`testTag`][androidx.compose.ui.platform.testTag] modifiers
@@ -13,7 +13,7 @@ object ComposeLayoutFilters {
    */
   @ExperimentalRadiographyComposeApi
   @JvmStatic
-  fun skipTestTagsFilter(vararg skippedTestTags: String): ViewFilter = ViewFilter { view ->
+  public fun skipTestTagsFilter(vararg skippedTestTags: String): ViewFilter = ViewFilter { view ->
     (view as? ComposeView)
         ?.findTestTags()
         ?.none { it in skippedTestTags }
@@ -21,13 +21,16 @@ object ComposeLayoutFilters {
   }
 
   /**
-   * Filters out Composables with [`layoutId`][androidx.compose.ui.layout.layoutId] modifiers for
-   * which [skipLayoutId] returns true.
+   * Filters out Composables with [`Modifier.layoutId`][androidx.compose.ui.layout.layoutId]
+   * modifiers for which [skipLayoutId] returns true.
+   *
+   * @param skipLayoutId A function which takes values that are passed to `Modifier.layoutId` and
+   * returns true if they indicate that the composable should be skipped.
    */
   @ExperimentalRadiographyComposeApi
   @JvmStatic
-  fun skipLayoutIdsFilter(skipLayoutId: (Any) -> Boolean): ViewFilter = ViewFilter {
-    (it as? ComposeView)
+  public fun skipLayoutIdsFilter(skipLayoutId: (Any) -> Boolean): ViewFilter = ViewFilter { view ->
+    (view as? ComposeView)
         ?.modifiers
         ?.asSequence()
         ?.filterIsInstance<LayoutIdParentData>()

@@ -6,7 +6,8 @@ import android.view.View
 import android.widget.Checkable
 import android.widget.TextView
 import radiography.ScannableView.AndroidView
-import radiography.compose.ComposeLayoutRenderers
+import radiography.compose.ComposableRenderers.ComposeViewRenderer
+import radiography.compose.ComposableRenderers.composeTextRenderer
 import radiography.compose.ExperimentalRadiographyComposeApi
 
 @OptIn(ExperimentalRadiographyComposeApi::class)
@@ -55,48 +56,59 @@ public object ViewStateRenderers {
   @JvmField
   public val DefaultsNoPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
-      textViewRenderer(includeTextViewText = false, textViewTextMaxLength = 0),
+      ComposeViewRenderer,
+      textViewRenderer(showTextValue = false, textValueMaxLength = 0),
       CheckableRenderer,
-  ) + ComposeLayoutRenderers.DefaultsNoPii
+  )
 
   @JvmField
   public val DefaultsIncludingPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
-      textViewRenderer(includeTextViewText = true),
+      ComposeViewRenderer,
+      textViewRenderer(showTextValue = true),
       CheckableRenderer,
-  ) + ComposeLayoutRenderers.DefaultsIncludingPii
+  )
 
   /**
-   * @param includeTextViewText whether to include the string content of TextView instances in
+   * Renders information about [TextView]s and text composables.
+   *
+   * @param showTextValue whether to include the string content of TextView instances in
    * the rendered view hierarchy. Defaults to false to avoid including any PII.
    *
-   * @param textViewTextMaxLength the max size of the string content of TextView instances when
-   * [includeTextViewText] is true. When the max size is reached, the text is trimmed to
-   * a [textViewTextMaxLength] - 1 length and ellipsized with a '…' character.
+   * @param textValueMaxLength the max size of the string content of TextView instances when
+   * [showTextValue] is true. When the max size is reached, the text is trimmed to
+   * a [textValueMaxLength] - 1 length and ellipsized with a '…' character.
    */
   @JvmStatic
   @JvmOverloads
   public fun textViewRenderer(
-    includeTextViewText: Boolean = false,
-    textViewTextMaxLength: Int = Int.MAX_VALUE
+    showTextValue: Boolean = false,
+    textValueMaxLength: Int = Int.MAX_VALUE
   ): ViewStateRenderer {
-    if (includeTextViewText) {
-      check(textViewTextMaxLength >= 0) {
-        "textFieldMaxLength should be greater than 0, not $textViewTextMaxLength"
+    if (showTextValue) {
+      check(textValueMaxLength >= 0) {
+        "textFieldMaxLength should be greater than 0, not $textValueMaxLength"
       }
     }
-    return androidViewStateRendererFor<TextView> { textView ->
+
+    val androidTextViewRenderer = androidViewStateRendererFor<TextView> { textView ->
       var text = textView.text
       if (text != null) {
         append("text-length:${text.length}")
-        if (includeTextViewText) {
-          text = text.ellipsize(textViewTextMaxLength)
+        if (showTextValue) {
+          text = text.ellipsize(textValueMaxLength)
           append("text:\"$text\"")
         }
       }
       if (textView.isInputMethodTarget) {
         append("ime-target")
       }
+    }
+    val composeTextRenderer = composeTextRenderer(showTextValue, textValueMaxLength)
+
+    return ViewStateRenderer { view ->
+      with(androidTextViewRenderer) { render(view) }
+      with(composeTextRenderer) { render(view) }
     }
   }
 
