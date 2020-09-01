@@ -8,7 +8,7 @@ class RenderTreeStringTest {
   @Test fun `renderTreeString handles single node`() {
     val tree = Node("root")
 
-    val rendering = buildString { renderTreeString(tree, NodeVisitor) }
+    val rendering = buildString { renderTreeString(this, tree) { renderNode(it) } }
 
     assertThat(rendering).isEqualTo("${BLANK}root\n")
   }
@@ -16,7 +16,7 @@ class RenderTreeStringTest {
   @Test fun `renderTreeString handles deep skinny tree`() {
     val tree = Node("root", Node("1", Node("11")))
 
-    val rendering = buildString { renderTreeString(tree, NodeVisitor) }
+    val rendering = buildString { renderTreeString(this, tree) { renderNode(it) } }
 
     assertThat(rendering).isEqualTo(
         """
@@ -36,7 +36,7 @@ class RenderTreeStringTest {
         Node("3")
     )
 
-    val rendering = buildString { renderTreeString(tree, NodeVisitor) }
+    val rendering = buildString { renderTreeString(this, tree) { renderNode(it) } }
 
     assertThat(rendering).isEqualTo(
         """
@@ -57,7 +57,7 @@ class RenderTreeStringTest {
         Node("3")
     )
 
-    val rendering = buildString { renderTreeString(tree, NodeVisitor) }
+    val rendering = buildString { renderTreeString(this, tree) { renderNode(it) } }
 
     assertThat(rendering).isEqualTo(
         """
@@ -80,7 +80,7 @@ class RenderTreeStringTest {
         Node("3", Node("33", Node("333")))
     )
 
-    val rendering = buildString { renderTreeString(tree, NodeVisitor) }
+    val rendering = buildString { renderTreeString(this, tree) { renderNode(it) } }
 
     assertThat(rendering).isEqualTo(
         """
@@ -102,7 +102,7 @@ class RenderTreeStringTest {
         .take(33)
         .last()
 
-    val rendering = buildString { renderTreeString(tree, NodeVisitor) }
+    val rendering = buildString { renderTreeString(this, tree) { renderNode(it) } }
     val lastTwoLines = rendering.trim()
         .lines()
         .takeLast(2)
@@ -121,7 +121,7 @@ class RenderTreeStringTest {
         .take(300)
         .last()
 
-    val rendering = buildString { renderTreeString(tree, NodeVisitor) }
+    val rendering = buildString { renderTreeString(this, tree) { renderNode(it) } }
     val lastTwoLines = rendering.trim()
         .lines()
         .takeLast(2)
@@ -140,7 +140,7 @@ class RenderTreeStringTest {
         Node("2\n2")
     )
 
-    val rendering = buildString { renderTreeString(tree, NodeVisitor) }
+    val rendering = buildString { renderTreeString(this, tree) { renderNode(it) } }
 
     assertThat(rendering).isEqualTo(
         """
@@ -157,52 +157,9 @@ class RenderTreeStringTest {
     )
   }
 
-  @Test fun `addChildToVisit with different visitor`() {
-    val tree = Node(
-        "root",
-        Node("regular child"),
-        Node("w:parse me")
-    )
-    val wordVisitor = object : TreeRenderingVisitor<Pair<Int, String>>() {
-      override fun RenderingScope.visitNode(node: Pair<Int, String>) {
-        val (index, word) = node
-        description.append("[$index] $word")
-      }
-    }
-    val mainVisitor = object : TreeRenderingVisitor<Node>() {
-      override fun RenderingScope.visitNode(node: Node) {
-        description.append(node.description)
-        if (node.description.startsWith("w:")) {
-          node.description.removePrefix("w:")
-              .split("\\s".toRegex())
-              .forEachIndexed { index, word ->
-                addChildToVisit(Pair(index, word), wordVisitor)
-              }
-        } else {
-          node.children.forEach { addChildToVisit(it) }
-        }
-      }
-    }
-
-    val rendering = buildString { renderTreeString(tree, mainVisitor) }
-
-    assertThat(rendering).isEqualTo(
-        """
-          |${BLANK}root
-          |$BLANK+-regular child
-          |$BLANK`-w:parse me
-          |$BLANK  +-[0] parse
-          |$BLANK  `-[1] me
-          |
-        """.trimMargin()
-    )
-  }
-
-  private object NodeVisitor : TreeRenderingVisitor<Node>() {
-    override fun RenderingScope.visitNode(node: Node) {
-      description.append(node.description)
-      node.children.forEach { addChildToVisit(it) }
-    }
+  private fun StringBuilder.renderNode(node: Node): List<Node> {
+    append(node.description)
+    return node.children.asList()
   }
 
   private class Node(

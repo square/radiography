@@ -13,18 +13,32 @@ public final class radiography/Radiography {
 }
 
 public abstract class radiography/ScannableView {
+	public abstract fun getChildren ()Lkotlin/sequences/Sequence;
+	public abstract fun getDisplayName ()Ljava/lang/String;
 }
 
 public final class radiography/ScannableView$AndroidView : radiography/ScannableView {
 	public fun <init> (Landroid/view/View;)V
+	public fun getChildren ()Lkotlin/sequences/Sequence;
+	public fun getDisplayName ()Ljava/lang/String;
 	public final fun getView ()Landroid/view/View;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class radiography/ScannableView$ChildRenderingError : radiography/ScannableView {
+	public fun <init> (Ljava/lang/String;)V
+	public fun getChildren ()Lkotlin/sequences/Sequence;
+	public fun getDisplayName ()Ljava/lang/String;
 }
 
 public final class radiography/ScannableView$ComposeView : radiography/ScannableView {
-	public fun <init> (IILjava/util/List;)V
+	public fun <init> (Ljava/lang/String;IILjava/util/List;Lkotlin/sequences/Sequence;)V
+	public fun getChildren ()Lkotlin/sequences/Sequence;
+	public fun getDisplayName ()Ljava/lang/String;
 	public final fun getHeight ()I
 	public final fun getModifiers ()Ljava/util/List;
 	public final fun getWidth ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class radiography/ViewFilter {
