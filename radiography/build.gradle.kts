@@ -74,7 +74,7 @@ tasks.withType<KotlinCompile> {
 dependencies {
   // We don't want to bring any Compose dependencies in unless the consumer of this library is
   // bringing them in itself.
-  compileOnly(Dependencies.Compose.Tooling)
+  compileOnly(Dependencies.Compose().Tooling)
 
   implementation(kotlin("stdlib", Versions.KotlinStdlib))
 

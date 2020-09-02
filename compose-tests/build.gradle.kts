@@ -49,9 +49,9 @@ dependencies {
 
   androidTestImplementation(project(":radiography"))
   androidTestImplementation(Dependencies.AppCompat)
-  androidTestImplementation(Dependencies.Compose.Material)
-  androidTestImplementation(Dependencies.Compose.Testing)
-  androidTestImplementation(Dependencies.Compose.Tooling)
+  androidTestImplementation(Dependencies.Compose().Material)
+  androidTestImplementation(Dependencies.Compose().Testing)
+  androidTestImplementation(Dependencies.Compose().Tooling)
   androidTestImplementation(Dependencies.InstrumentationTests.Rules)
   androidTestImplementation(Dependencies.InstrumentationTests.Runner)
   androidTestImplementation(Dependencies.Truth)
