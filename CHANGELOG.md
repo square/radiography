@@ -1,6 +1,21 @@
 Change Log
 ==========
 
+Version 2.0.0-beta.1
+--------------------
+
+_2020-09-02_
+
+* Correctly render nodes whose descriptions are more than one line. (#42)
+* Support rendering trees nested deeper than 64 levels. (#41)
+* Refactor `ViewStateRenderer` and `ViewFilter` API to be subclassable and more accessible from
+  Java. (#44)
+* Use the × character for formatting dimensions instead of the letter x. (#49)
+* Add a sample app that uses Compose. (#53)
+* Introduce support for rendering Compose hierarchies. (#33)
+* Make SAM interfaces fun interfaces so they can be given as lambdas in Kotlin 1.4. (#47)
+* Introduce ScanScope, a more flexible way to define what to scan. (#70)
+
 Version 2.0.0-alpha.2
 ---------------------
 
