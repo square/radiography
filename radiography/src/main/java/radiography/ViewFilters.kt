@@ -23,8 +23,24 @@ public object ViewFilters {
     }
 
   /**
-   * Filters out Composables with [`testTag`][androidx.compose.ui.platform.testTag] modifiers
-   * matching [skippedTestTags].
+   * Filters out composables with [`Modifier.testTag`][androidx.compose.ui.platform.testTag]
+   * modifiers matching [skippedTestTags].
+   *
+   * Example:
+   * ```
+   * @Composable fun App() {
+   *   ModalDrawerLayout(drawerContent = {
+   *     DebugDrawer(Modifier.testTag("debug-drawer"))
+   *   }) {
+   *     Scaffold(…)
+   *   }
+   * }
+   *
+   * Radiography.scan(viewFilter = skipComposeTestTagsFilter("debug-drawer"))
+   * ```
+   *
+   * To use test tags to limit the part of your UI that Radiography scans, use
+   * [radiography.ScanScopes.composeTestTagScope].
    */
   @ExperimentalRadiographyComposeApi
   @JvmStatic
