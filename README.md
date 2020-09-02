@@ -110,6 +110,21 @@ Custom Compose renderers cannot be created at this time, since we're still figur
 what the best public API for that looks like. If you need a custom Compose renderer, please file
 an issue on this repo!
 
+To write a custom filter for Compose, implement a `ViewFilter` to handle values of type
+`ComposeView`. For example, a filter that excludes composables with a particular `Modifier.layoutId`
+might look something like this:
+```kotlin
+fun skipLayoutIdsFilter(skipLayoutId: (Any) -> Boolean) = ViewFilter { view ->
+  (view as? ComposeView)
+      ?.modifiers
+      ?.asSequence()
+      ?.filterIsInstance<LayoutIdParentData>()
+      ?.none { layoutId -> skipLayoutId(layoutId.id) }
+      // Include all views and composables that don't have any layoutId.
+      ?: true
+}
+```
+
 ### Compose example output
 
 ![screenshot](assets/compose_sample_screenshot.png)
