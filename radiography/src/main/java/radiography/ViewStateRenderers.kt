@@ -5,16 +5,24 @@ import android.content.res.Resources.NotFoundException
 import android.view.View
 import android.widget.Checkable
 import android.widget.TextView
+import androidx.compose.ui.layout.LayoutIdParentData
+import androidx.compose.ui.semantics.SemanticsModifier
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.SemanticsProperties.Text
+import androidx.compose.ui.semantics.getOrNull
 import radiography.ScannableView.AndroidView
-import radiography.compose.ComposableRenderers.ComposeViewRenderer
-import radiography.compose.ComposableRenderers.composeTextRenderer
+import radiography.ScannableView.ComposeView
 import radiography.compose.ExperimentalRadiographyComposeApi
+import radiography.compose.isComposeAvailable
 
 @OptIn(ExperimentalRadiographyComposeApi::class)
 public object ViewStateRenderers {
 
-  @JvmField
-  public val ViewRenderer: ViewStateRenderer = androidViewStateRendererFor<View> { view ->
+  private val NoRenderer: ViewStateRenderer = ViewStateRenderer {
+    // Noop.
+  }
+
+  private val AndroidViewRenderer: ViewStateRenderer = androidViewStateRendererFor<View> { view ->
     if (view.id != View.NO_ID && view.resources != null) {
       try {
         val resourceName = view.resources.getResourceEntryName(view.id)
@@ -45,6 +53,59 @@ public object ViewStateRenderers {
     }
   }
 
+  @ExperimentalRadiographyComposeApi
+  private val ComposeViewRenderer: ViewStateRenderer = if (!isComposeAvailable) NoRenderer else {
+    ViewStateRenderer {
+      val composeView = it as? ComposeView ?: return@ViewStateRenderer
+
+      // Dimensions
+      composeView.apply {
+        if (width != 0 || height != 0) {
+          append(formatPixelDimensions(width, height))
+        }
+      }
+
+      // Semantics
+      composeView
+          .modifiers
+          .filterIsInstance<SemanticsModifier>()
+          // Technically there can be multiple semantic modifiers on a single node, so read them
+          // all.
+          .flatMap { semantics -> semantics.semanticsConfiguration }
+          .forEach { (key, value) ->
+            when (key) {
+              SemanticsProperties.TestTag -> append("test-tag:\"$value\"")
+              SemanticsProperties.AccessibilityLabel -> append("label:\"$value\"")
+              SemanticsProperties.AccessibilityValue -> append("value:\"$value\"")
+              SemanticsProperties.Disabled -> append("DISABLED")
+              SemanticsProperties.Focused -> if (value == true) append("FOCUSED")
+              SemanticsProperties.Hidden -> append("HIDDEN")
+              SemanticsProperties.IsDialog -> append("DIALOG")
+              SemanticsProperties.IsPopup -> append("POPUP")
+            }
+          }
+
+      // Layout ID
+      composeView.modifiers
+          .filterIsInstance<LayoutIdParentData>()
+          .singleOrNull()
+          ?.let { layoutId ->
+            val idValue = if (layoutId.id is CharSequence) {
+              "\"${layoutId.id}\""
+            } else {
+              layoutId.id.toString()
+            }
+            append("layout-id:$idValue")
+          }
+    }
+  }
+
+  @JvmField
+  public val ViewRenderer: ViewStateRenderer = ViewStateRenderer { view ->
+    with(AndroidViewRenderer) { render(view) }
+    with(ComposeViewRenderer) { render(view) }
+  }
+
   @JvmField
   public val CheckableRenderer: ViewStateRenderer =
     androidViewStateRendererFor<Checkable> { checkable ->
@@ -56,7 +117,6 @@ public object ViewStateRenderers {
   @JvmField
   public val DefaultsNoPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
-      ComposeViewRenderer,
       textViewRenderer(showTextValue = false, textValueMaxLength = 0),
       CheckableRenderer,
   )
@@ -64,7 +124,6 @@ public object ViewStateRenderers {
   @JvmField
   public val DefaultsIncludingPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
-      ComposeViewRenderer,
       textViewRenderer(showTextValue = true),
       CheckableRenderer,
   )
@@ -109,6 +168,36 @@ public object ViewStateRenderers {
     return ViewStateRenderer { view ->
       with(androidTextViewRenderer) { render(view) }
       with(composeTextRenderer) { render(view) }
+    }
+  }
+
+  /**
+   * Renders composables that expose a text value through the [Text] semantics property.
+   *
+   * @param includeText whether to include the string value of the property in the rendered view
+   * hierarchy. Defaults to false to avoid including any PII.
+   *
+   * @param maxTextLength the max size of the string value of the property when [includeText] is
+   * true. When the max size is reached, the text is trimmed to a [maxTextLength] - 1 length and
+   * ellipsized with a '…' character.
+   */
+  @ExperimentalRadiographyComposeApi
+  @JvmStatic
+  internal fun composeTextRenderer(
+    includeText: Boolean = false,
+    maxTextLength: Int = Int.MAX_VALUE
+  ): ViewStateRenderer = if (!isComposeAvailable) NoRenderer else ViewStateRenderer { view ->
+    val text = (view as? ComposeView)
+        ?.modifiers
+        ?.filterIsInstance<SemanticsModifier>()
+        ?.mapNotNull { it.semanticsConfiguration.getOrNull(Text)?.text }
+        ?.takeUnless { it.isEmpty() }
+        ?.joinToString(separator = " ")
+        ?: return@ViewStateRenderer
+
+    append("text-length:${text.length}")
+    if (includeText) {
+      append("text:\"${text.ellipsize(maxTextLength)}\"")
     }
   }
 
