@@ -8,21 +8,21 @@ import radiography.compose.composeRenderingError
 import radiography.compose.findTestTags
 import radiography.compose.isComposeAvailable
 
-object ScanScopes {
+public object ScanScopes {
 
   @JvmField
   internal val EmptyScope: ScanScope = ScanScope { emptyList() }
 
   /** Scans all the windows owned by the app. */
   @JvmField
-  val AllWindowsScope: ScanScope = ScanScope {
+  public val AllWindowsScope: ScanScope = ScanScope {
     WindowScanner.findAllRootViews()
         .map(::AndroidView)
   }
 
   /** Scans the window that currently has focus. */
   @JvmField
-  val FocusedWindowScope: ScanScope = ScanScope {
+  public val FocusedWindowScope: ScanScope = ScanScope {
     AllWindowsScope.findRoots()
         .filterIsInstance<AndroidView>()
         .filter { it.view.parent?.parent != null || it.view.hasWindowFocus() }
@@ -30,7 +30,7 @@ object ScanScopes {
 
   /** Scans the given [rootView]. */
   @JvmStatic
-  fun singleViewScope(rootView: View): ScanScope = ScanScope {
+  public fun singleViewScope(rootView: View): ScanScope = ScanScope {
     listOf(AndroidView(rootView))
   }
 
@@ -59,7 +59,7 @@ object ScanScopes {
   @ExperimentalRadiographyComposeApi
   @JvmStatic
   @JvmOverloads
-  fun composeTestTagScope(
+  public fun composeTestTagScope(
     testTag: String,
     inScope: ScanScope = AllWindowsScope
   ): ScanScope {

@@ -49,24 +49,20 @@ android {
 }
 
 tasks.withType<KotlinCompile> {
-  // Tests aren't part of the public API, don't turn explicit API mode on for them.
-  if (!name.contains("test", ignoreCase = true)) {
-    kotlinOptions {
-      // Require explicit public modifiers and types.
-      // TODO this should be moved to a top-level `kotlin { explicitApi() }` once that's working
-      //  for android projects, see https://youtrack.jetbrains.com/issue/KT-37652.
-      freeCompilerArgs = listOf("-Xexplicit-api=strict")
-    }
-  }
-}
-
-tasks.withType<KotlinCompile> {
   kotlinOptions {
-    freeCompilerArgs = listOf(
+    freeCompilerArgs = listOfNotNull(
         // allow-jvm-ir-dependencies is required to consume binaries built with the IR backend.
         // It doesn't change the bytecode that gets generated for this module.
         "-Xallow-jvm-ir-dependencies",
-        "-Xopt-in=kotlin.RequiresOptIn"
+        "-Xopt-in=kotlin.RequiresOptIn",
+
+        // Require explicit public modifiers and types.
+        // TODO this should be moved to a top-level `kotlin { explicitApi() }` once that's working
+        //  for android projects, see https://youtrack.jetbrains.com/issue/KT-37652.
+        "-Xexplicit-api=strict".takeUnless {
+          // Tests aren't part of the public API, don't turn explicit API mode on for them.
+          name.contains("test", ignoreCase = true)
+        }
     )
   }
 }
