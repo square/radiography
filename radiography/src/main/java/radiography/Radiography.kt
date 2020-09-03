@@ -8,6 +8,7 @@ import radiography.Radiography.scan
 import radiography.ScanScopes.AllWindowsScope
 import radiography.ScannableView.AndroidView
 import radiography.ViewStateRenderers.DefaultsNoPii
+import radiography.internal.renderTreeString
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit.SECONDS
 

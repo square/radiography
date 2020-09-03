@@ -1,4 +1,4 @@
-package radiography
+package radiography.internal
 
 import java.util.BitSet
 

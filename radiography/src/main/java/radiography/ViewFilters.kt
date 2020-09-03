@@ -3,8 +3,7 @@ package radiography
 import android.view.View
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
-import radiography.compose.ExperimentalRadiographyComposeApi
-import radiography.compose.findTestTags
+import radiography.internal.findTestTags
 
 public object ViewFilters {
 

@@ -39,7 +39,7 @@ import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.textViewRenderer
-import radiography.compose.ExperimentalRadiographyComposeApi
+import radiography.ExperimentalRadiographyComposeApi
 
 @OptIn(ExperimentalRadiographyComposeApi::class)
 class ComposeUiTest {

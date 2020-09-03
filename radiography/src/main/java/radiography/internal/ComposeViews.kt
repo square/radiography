@@ -1,4 +1,4 @@
-package radiography.compose
+package radiography.internal
 
 import android.util.SparseArray
 import android.view.View
@@ -8,6 +8,7 @@ import androidx.ui.tooling.asTree
 import radiography.ScannableView
 import radiography.ScannableView.ChildRenderingError
 import radiography.ScannableView.ComposeView
+import radiography.ExperimentalRadiographyComposeApi
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 private val VIEW_KEYED_TAGS_FIELD = View::class.java.getDeclaredField("mKeyedTags")

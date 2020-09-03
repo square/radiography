@@ -1,4 +1,4 @@
-package radiography
+package radiography.internal
 
 import android.os.Build.VERSION
 import android.view.View

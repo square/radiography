@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.ui.tooling.preview.Preview
 import com.squareup.radiography.sample.compose.R.drawable
+import radiography.ExperimentalRadiographyComposeApi
 import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
 import radiography.ViewFilters.skipComposeTestTagsFilter
@@ -51,7 +52,6 @@ import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.androidViewStateRendererFor
 import radiography.ViewStateRenderers.textViewRenderer
-import radiography.compose.ExperimentalRadiographyComposeApi
 
 internal const val TEXT_FIELD_TEST_TAG = "text-field"
 internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
