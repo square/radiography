@@ -24,7 +24,7 @@ public sealed class ScannableView {
   /** The children of this view. */
   public abstract val children: Sequence<ScannableView>
 
-  public class AndroidView(val view: View) : ScannableView() {
+  public class AndroidView(public val view: View) : ScannableView() {
     override val displayName: String get() = view::class.java.simpleName
     override val children: Sequence<ScannableView> = view.scannableChildren()
 
@@ -39,9 +39,9 @@ public sealed class ScannableView {
   @ExperimentalRadiographyComposeApi
   public class ComposeView(
     override val displayName: String,
-    val width: Int,
-    val height: Int,
-    val modifiers: List<Modifier>,
+    public val width: Int,
+    public val height: Int,
+    public val modifiers: List<Modifier>,
     override val children: Sequence<ScannableView>
   ) : ScannableView() {
 

@@ -9,8 +9,8 @@ package radiography
  *  - [ScanScopes.FocusedWindowScope]
  *  - [ScanScopes.singleViewScope]
  */
-fun interface ScanScope {
+public fun interface ScanScope {
 
   /** Returns the [ScannableView]s that scanning should start from. */
-  fun findRoots(): List<ScannableView>
+  public fun findRoots(): List<ScannableView>
 }
