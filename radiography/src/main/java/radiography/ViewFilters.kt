@@ -9,7 +9,7 @@ import radiography.compose.findTestTags
 public object ViewFilters {
 
   /** A [ViewFilter] that matches everything (does not do any filtering). */
-  @JvmStatic
+  @JvmField
   public val NoFilter: ViewFilter = ViewFilter { true }
 
   /**

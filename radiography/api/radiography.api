@@ -61,9 +61,9 @@ public abstract interface class radiography/ViewFilter {
 
 public final class radiography/ViewFilters {
 	public static final field INSTANCE Lradiography/ViewFilters;
+	public static final field NoFilter Lradiography/ViewFilter;
 	public static final fun and (Lradiography/ViewFilter;Lradiography/ViewFilter;)Lradiography/ViewFilter;
 	public static final fun androidViewFilterFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lradiography/ViewFilter;
-	public static final fun getNoFilter ()Lradiography/ViewFilter;
 	public static final fun skipComposeTestTagsFilter ([Ljava/lang/String;)Lradiography/ViewFilter;
 	public static final fun skipIdsViewFilter ([I)Lradiography/ViewFilter;
 }
