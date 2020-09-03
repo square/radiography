@@ -21,8 +21,8 @@ class RenderTreeStringTest {
     assertThat(rendering).isEqualTo(
         """
           |${BLANK}root
-          |$BLANK`-1
-          |$BLANK  `-11
+          |$BLANK╰─1
+          |$BLANK  ╰─11
           |
         """.trimMargin()
     )
@@ -41,9 +41,9 @@ class RenderTreeStringTest {
     assertThat(rendering).isEqualTo(
         """
           |${BLANK}root
-          |$BLANK+-1
-          |$BLANK+-2
-          |$BLANK`-3
+          |$BLANK├─1
+          |$BLANK├─2
+          |$BLANK╰─3
           |
         """.trimMargin()
     )
@@ -62,11 +62,11 @@ class RenderTreeStringTest {
     assertThat(rendering).isEqualTo(
         """
           |${BLANK}root
-          |$BLANK+-1
-          |$BLANK| `-11
-          |$BLANK|   `-111
-          |$BLANK+-2
-          |$BLANK`-3
+          |$BLANK├─1
+          |$BLANK│ ╰─11
+          |$BLANK│   ╰─111
+          |$BLANK├─2
+          |$BLANK╰─3
           |
         """.trimMargin()
     )
@@ -85,11 +85,11 @@ class RenderTreeStringTest {
     assertThat(rendering).isEqualTo(
         """
           |${BLANK}root
-          |$BLANK+-1
-          |$BLANK+-2
-          |$BLANK`-3
-          |$BLANK  `-33
-          |$BLANK    `-333
+          |$BLANK├─1
+          |$BLANK├─2
+          |$BLANK╰─3
+          |$BLANK  ╰─33
+          |$BLANK    ╰─333
           |
         """.trimMargin()
     )
@@ -109,8 +109,8 @@ class RenderTreeStringTest {
         .map { it.trim() }
 
     assertThat(lastTwoLines).containsExactly(
-        "+-leaf",
-        "`-leaf"
+        "├─leaf",
+        "╰─leaf"
     )
   }
 
@@ -128,8 +128,8 @@ class RenderTreeStringTest {
         .map { it.trim() }
 
     assertThat(lastTwoLines).containsExactly(
-        "+-leaf",
-        "`-leaf"
+        "├─leaf",
+        "╰─leaf"
     )
   }
 
@@ -146,11 +146,11 @@ class RenderTreeStringTest {
         """
           |${BLANK}root1
           |${BLANK}root2
-          |$BLANK+-1
-          |$BLANK| 1
-          |$BLANK| `-11
-          |$BLANK|   11
-          |$BLANK`-2
+          |$BLANK├─1
+          |$BLANK│ 1
+          |$BLANK│ ╰─11
+          |$BLANK│   11
+          |$BLANK╰─2
           |$BLANK  2
           |
         """.trimMargin()

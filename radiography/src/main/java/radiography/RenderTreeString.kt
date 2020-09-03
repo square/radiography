@@ -66,15 +66,15 @@ private fun StringBuilder.appendLinePrefix(
     val lastChild = lastChildMask[parentDepth]
     if (lastChild) {
       if (parentDepth == lastDepth && !continuePreviousLine) {
-        append('`')
+        append('╰')
       } else {
         append(' ')
       }
     } else {
       if (parentDepth == lastDepth && !continuePreviousLine) {
-        append('+')
+        append('├')
       } else {
-        append('|')
+        append('│')
       }
     }
   }
@@ -82,7 +82,7 @@ private fun StringBuilder.appendLinePrefix(
     if (continuePreviousLine) {
       append(" ")
     } else {
-      append("-")
+      append("─")
     }
   }
 }

@@ -59,19 +59,19 @@ val prettyHierarchy = Radiography.scan(
 com.squareup.radiography.sample/com.squareup.radiography.sample.MainActivity:
 window-focus:false
  DecorView { 1080×2160px }
- +-LinearLayout { 1080×2028px }
- | +-ViewStub { id:action_mode_bar_stub, GONE, 0×0px }
- | `-FrameLayout { id:content, 1080×1962px }
- |   `-ConstraintLayout { id:main, 1080×1962px }
- |     +-ImageView { id:logo, 1080×352px }
- |     +-EditText { id:username, 580×124px, text-length:4 }
- |     +-EditText { id:password, 580×124px, focused, text-length:4, ime-target }
- |     +-CheckBox { id:remember_me, 343×88px, text-length:11 }
- |     +-Button { id:signin, 242×132px, text-length:7 }
- |     +-Group { id:group, 0×0px }
- |     `-Button { id:show_dialog, 601×132px, text-length:23 }
- +-View { id:navigationBarBackground, 1080×132px }
- `-View { id:statusBarBackground, 1080×66px }
+ ├─LinearLayout { 1080×2028px }
+ │ ├─ViewStub { id:action_mode_bar_stub, GONE, 0×0px }
+ │ ╰─FrameLayout { id:content, 1080×1962px }
+ │   ╰─ConstraintLayout { id:main, 1080×1962px }
+ │     ├─ImageView { id:logo, 1080×352px }
+ │     ├─EditText { id:username, 580×124px, text-length:4 }
+ │     ├─EditText { id:password, 580×124px, focused, text-length:4, ime─target }
+ │     ├─CheckBox { id:remember_me, 343×88px, text-length:11 }
+ │     ├─Button { id:signin, 242×132px, text-length:7 }
+ │     ├─Group { id:group, 0×0px }
+ │     ╰─Button { id:show_dialog, 601×132px, text-length:23 }
+ ├─View { id:navigationBarBackground, 1080×132px }
+ ╰─View { id:statusBarBackground, 1080×66px }
 ```
 
 This sample app lives in this repo in the `sample` directory.
@@ -206,45 +206,45 @@ fun skipLayoutIdsFilter(skipLayoutId: (Any) -> Boolean) = ViewFilter { view ->
 com.squareup.radiography.sample/com.squareup.radiography.sample.MainActivity:
 window-focus:false
  DecorView { 1080×2160px }
- +-LinearLayout { 1080×2028px }
- | +-ViewStub { id:action_mode_bar_stub, GONE, 0×0px }
- | `-FrameLayout { 1080×1962px }
- |   `-FitWindowsLinearLayout { id:action_bar_root, 1080×1962px }
- |     +-ViewStubCompat { id:action_mode_bar_stub, GONE, 0×0px }
- |     `-ContentFrameLayout { id:content, 1080×1962px }
- |       `-AndroidComposeView { 1080×1962px, focused }
- |         `-Providers { 1080×1962px }
- |           `-ComposeSampleApp { 992×1874px }
- |             +-Image { 240×352px }
- |             +-TextField { 770×154px, test-tag:"text-field" }
- |             | +-Box { 158×44px, layout-id:"Label" }
- |             | | `-ProvideTextStyle { 158×44px, text-length:8 }
- |             | `-ProvideTextStyle { 682×59px, layout-id:"TextField" }
- |             |   `-BaseTextField { 682×59px, text-length:4 }
- |             |     `-Layout { 682×59px }
- |             +-TextField { 770×154px }
- |             | +-Box { 155×44px, layout-id:"Label" }
- |             | | `-ProvideTextStyle { 155×44px, text-length:8 }
- |             | `-ProvideTextStyle { 682×59px, layout-id:"TextField" }
- |             |   `-BaseTextField { 682×59px, text-length:4, FOCUSED }
- |             |     `-Layout { 682×59px }
- |             +-Row { 387×67px }
- |             | +-Checkbox { 55×55px, value:"Unchecked" }
- |             | +-Spacer { 22×0px }
- |             | `-Text { 298×59px, text-length:11 }
- |             +-Button { 226×99px }
- |             | `-Providers { 138×55px }
- |             |   `-Text { 138×52px, text-length:7 }
- |             +-AndroidView {  }
- |             | `-ViewBlockHolder { 919×53px }
- |             |   `-TextView { 919×53px, text-length:53 }
- |             +-ScrollableRow { 1320×588px }
- |             | `-ScrollableColumn { 1320×821px }
- |             |   `-Text { 1320×821px, test-tag:"live-hierarchy", text-length:2320 }
- |             `-TextButton { 615×99px }
- |               `-Providers { 571×55px }
- |                 `-Text { 571×52px, text-length:28 }
- +-View { id:navigationBarBackground, 1080×132px }
+ ├─LinearLayout { 1080×2028px }
+ │ ├─ViewStub { id:action_mode_bar_stub, GONE, 0×0px }
+ │ ╰─FrameLayout { 1080×1962px }
+ │   ╰─FitWindowsLinearLayout { id:action_bar_root, 1080×1962px }
+ │     ├─ViewStubCompat { id:action_mode_bar_stub, GONE, 0×0px }
+ │     ╰─ContentFrameLayout { id:content, 1080×1962px }
+ │       ╰─AndroidComposeView { 1080×1962px, focused }
+ │         ╰─Providers { 1080×1962px }
+ │           ╰─ComposeSampleApp { 992×1874px }
+ │             ├─Image { 240×352px }
+ │             ├─TextField { 770×154px, test-tag:"text-field" }
+ │             │ ├─Box { 158×44px, layout-id:"Label" }
+ │             │ │ ╰─ProvideTextStyle { 158×44px, text-length:8 }
+ │             │ ╰─ProvideTextStyle { 682×59px, layout-id:"TextField" }
+ │             │   ╰─BaseTextField { 682×59px, text-length:4 }
+ │             │     ╰─Layout { 682×59px }
+ │             ├─TextField { 770×154px }
+ │             │ ├─Box { 155×44px, layout-id:"Label" }
+ │             │ │ ╰─ProvideTextStyle { 155×44px, text-length:8 }
+ │             │ ╰─ProvideTextStyle { 682×59px, layout-id:"TextField" }
+ │             │   ╰─BaseTextField { 682×59px, text-length:4, FOCUSED }
+ │             │     ╰─Layout { 682×59px }
+ │             ├─Row { 387×67px }
+ │             │ ├─Checkbox { 55×55px, value:"Unchecked" }
+ │             │ ├─Spacer { 22×0px }
+ │             │ ╰─Text { 298×59px, text-length:11 }
+ │             ├─Button { 226×99px }
+ │             │ ╰─Providers { 138×55px }
+ │             │   ╰─Text { 138×52px, text-length:7 }
+ │             ├─AndroidView {  }
+ │             │ ╰─ViewBlockHolder { 919×53px }
+ │             │   ╰─TextView { 919×53px, text-length:53 }
+ │             ├─ScrollableRow { 1320×588px }
+ │             │ ╰─ScrollableColumn { 1320×821px }
+ │             │   ╰─Text { 1320×821px, test-tag:"live-hierarchy", text-length:2320 }
+ │             ╰─TextButton { 615×99px }
+ │               ╰─Providers { 571×55px }
+ │                 ╰─Text { 571×52px, text-length:28 }
+ ├─View { id:navigationBarBackground, 1080×132px }
  `-View { id:statusBarBackground, 1080×66px }
 ```
 

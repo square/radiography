@@ -155,13 +155,13 @@ class RadiographyTest {
     assertThat(root.scan()).contains(
         """
           FrameLayout { 0×0px }
-          $BLANK+-View { 0×0px }
-          $BLANK+-LinearLayout { 0×0px }
-          $BLANK| +-View { 0×0px }
-          $BLANK| `-View { 0×0px }
-          $BLANK`-LinearLayout { 0×0px }
-          $BLANK  +-View { 0×0px }
-          $BLANK  `-View { 0×0px }
+          $BLANK├─View { 0×0px }
+          $BLANK├─LinearLayout { 0×0px }
+          $BLANK│ ├─View { 0×0px }
+          $BLANK│ ╰─View { 0×0px }
+          $BLANK╰─LinearLayout { 0×0px }
+          $BLANK  ├─View { 0×0px }
+          $BLANK  ╰─View { 0×0px }
         """.trimIndent()
     )
   }
