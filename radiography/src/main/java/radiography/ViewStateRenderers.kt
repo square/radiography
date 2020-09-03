@@ -183,6 +183,7 @@ public object ViewStateRenderers {
    */
   @ExperimentalRadiographyComposeApi
   @JvmStatic
+  @JvmSynthetic
   internal fun composeTextRenderer(
     includeText: Boolean = false,
     maxTextLength: Int = Int.MAX_VALUE
