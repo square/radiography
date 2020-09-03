@@ -23,7 +23,7 @@ plugins {
 
 android {
   // Using 28 for now to get the Robolectric tests working.
-  compileSdkVersion(28)
+  compileSdkVersion(30)
   buildToolsVersion = "29.0.2"
 
   compileOptions {
@@ -33,7 +33,7 @@ android {
 
   defaultConfig {
     minSdkVersion(17)
-    targetSdkVersion(28)
+    targetSdkVersion(30)
     versionCode = 1
     versionName = "1.0"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
