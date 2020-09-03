@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
@@ -41,6 +40,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.ui.tooling.preview.Preview
 import com.squareup.radiography.sample.compose.R.drawable
 import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
@@ -55,6 +55,11 @@ import radiography.compose.ExperimentalRadiographyComposeApi
 
 internal const val TEXT_FIELD_TEST_TAG = "text-field"
 internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
+
+@Preview(showBackground = true, showDecoration = true)
+@Composable fun ComposeSampleAppPreview() {
+  ComposeSampleApp()
+}
 
 @OptIn(ExperimentalRadiographyComposeApi::class, ExperimentalAnimationApi::class)
 @Composable fun ComposeSampleApp() {
@@ -92,9 +97,16 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
         Spacer(Modifier.width(8.dp))
         Text("Remember me")
       }
-      Button(onClick = {}) {
-        Text("Sign In")
+
+      Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        TextButton(onClick = {}) {
+          Text("SIGN IN")
+        }
+        TextButton(onClick = {}) {
+          Text("FORGOT PASSWORD")
+        }
       }
+
       // Include a classic Android view in the composition.
       AndroidView(::TextView) {
         @SuppressLint("SetTextI18n")
@@ -114,7 +126,7 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
         }
       }
       TextButton(onClick = { showSelectionDialog(context) }) {
-        Text("Show string rendering dialog")
+        Text("SHOW STRING RENDERING DIALOG")
       }
 
       onCommit {
