@@ -4,11 +4,29 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 ![Android CI](https://github.com/square/radiography/workflows/Android%20CI/badge.svg)
 
-Radiography provides a utility class to pretty print a view hierarchy.
+Text-ray goggles for your Android views.
+
+```
+DecorView { 1080×2160px }
+├─LinearLayout { id:main, 1080×1962px }
+│ ├─EditText { id:username, 580×124px, focused, text-length:0, ime-target }
+│ ├─EditText { id:password, 580×124px, text-length:0 }
+│ ╰─LinearLayout { 635×154px }
+│   ├─Button { id:signin, 205×132px, text-length:7 }
+│   ╰─Button { id:forgot_password, 430×132px, text-length:15 }
+├─View { id:navigationBarBackground, 1080×132px }
+╰─View { id:statusBarBackground, 1080×66px }
+```
+
+* [Usage](#usage)
+* [Result example](#result-example)
+* [Jetpack Compose support](#jetpack-compose-support)
+* [FAQ](#faq)
+* [License](#license)
 
 ## Usage
 
-Add the `radiography` dependency to your app's build.gradle file:
+Add the `radiography` dependency to your app's `build.gradle` file:
 
 ```gradle
 dependencies {
