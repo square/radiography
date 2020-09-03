@@ -247,13 +247,13 @@ class ComposeUiTest {
         """
           Stack:
           ${BLANK}Stack { test-tag:"root" }
-          ${BLANK}+-Box {  }
-          ${BLANK}+-Column {  }
-          ${BLANK}| +-Box {  }
-          ${BLANK}| `-Box {  }
-          ${BLANK}`-Row {  }
-          ${BLANK}  +-Box {  }
-          ${BLANK}  `-Box {  }
+          ${BLANK}├─Box {  }
+          ${BLANK}├─Column {  }
+          ${BLANK}│ ├─Box {  }
+          ${BLANK}│ ╰─Box {  }
+          ${BLANK}╰─Row {  }
+          ${BLANK}  ├─Box {  }
+          ${BLANK}  ╰─Box {  }
         """.trimIndent()
     )
   }
@@ -281,11 +281,11 @@ class ComposeUiTest {
         """
           Box:
           ${BLANK}Box { test-tag:"root" }
-          ${BLANK}`-AndroidView {  }
+          ${BLANK}╰─AndroidView {  }
         """.trimIndent()
     )
     // But this view description should show up at some point.
-    assertThat(hierarchy).contains("`-TextView { 0×0px, text-length:0 }")
+    assertThat(hierarchy).contains("╰─TextView { 0×0px, text-length:0 }")
   }
 
   companion object {
