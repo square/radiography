@@ -62,13 +62,15 @@ window-focus:false
  ├─LinearLayout { 1080×2028px }
  │ ├─ViewStub { id:action_mode_bar_stub, GONE, 0×0px }
  │ ╰─FrameLayout { id:content, 1080×1962px }
- │   ╰─ConstraintLayout { id:main, 1080×1962px }
+ │   ╰─LinearLayout { id:main, 1080×1962px }
  │     ├─ImageView { id:logo, 1080×352px }
- │     ├─EditText { id:username, 580×124px, text-length:4 }
- │     ├─EditText { id:password, 580×124px, focused, text-length:4, ime─target }
+ │     ├─EditText { id:username, 580×124px, text-length:0 }
+ │     ├─EditText { id:password, 580×124px, text-length:0 }
  │     ├─CheckBox { id:remember_me, 343×88px, text-length:11 }
- │     ├─Button { id:signin, 242×132px, text-length:7 }
- │     ├─Group { id:group, 0×0px }
+ │     ├─LinearLayout { 635×154px }
+ │     │ ├─Button { id:signin, 205×132px, text-length:7 }
+ │     │ ╰─Button { id:forgot_password, 430×132px, text-length:15 }
+ │     ├─View { 1080×812px }
  │     ╰─Button { id:show_dialog, 601×132px, text-length:23 }
  ├─View { id:navigationBarBackground, 1080×132px }
  ╰─View { id:statusBarBackground, 1080×66px }
@@ -203,7 +205,7 @@ fun skipLayoutIdsFilter(skipLayoutId: (Any) -> Boolean) = ViewFilter { view ->
 ![screenshot](assets/compose_sample_screenshot.png)
 
 ```
-com.squareup.radiography.sample/com.squareup.radiography.sample.MainActivity:
+com.squareup.radiography.sample.compose/com.squareup.radiography.sample.compose.MainActivity:
 window-focus:false
  DecorView { 1080×2160px }
  ├─LinearLayout { 1080×2028px }
@@ -217,35 +219,39 @@ window-focus:false
  │           ╰─ComposeSampleApp { 992×1874px }
  │             ├─Image { 240×352px }
  │             ├─TextField { 770×154px, test-tag:"text-field" }
- │             │ ├─Box { 158×44px, layout-id:"Label" }
- │             │ │ ╰─ProvideTextStyle { 158×44px, text-length:8 }
+ │             │ ├─Box { 200×59px, layout-id:"Label" }
+ │             │ │ ╰─ProvideTextStyle { 200×59px, text-length:8 }
  │             │ ╰─ProvideTextStyle { 682×59px, layout-id:"TextField" }
- │             │   ╰─BaseTextField { 682×59px, text-length:4 }
+ │             │   ╰─BaseTextField { 682×59px, text-length:0 }
  │             │     ╰─Layout { 682×59px }
  │             ├─TextField { 770×154px }
- │             │ ├─Box { 155×44px, layout-id:"Label" }
- │             │ │ ╰─ProvideTextStyle { 155×44px, text-length:8 }
+ │             │ ├─Box { 196×59px, layout-id:"Label" }
+ │             │ │ ╰─ProvideTextStyle { 196×59px, text-length:8 }
  │             │ ╰─ProvideTextStyle { 682×59px, layout-id:"TextField" }
- │             │   ╰─BaseTextField { 682×59px, text-length:4, FOCUSED }
+ │             │   ╰─BaseTextField { 682×59px, text-length:0 }
  │             │     ╰─Layout { 682×59px }
  │             ├─Row { 387×67px }
  │             │ ├─Checkbox { 55×55px, value:"Unchecked" }
  │             │ ├─Spacer { 22×0px }
  │             │ ╰─Text { 298×59px, text-length:11 }
- │             ├─Button { 226×99px }
- │             │ ╰─Providers { 138×55px }
- │             │   ╰─Text { 138×52px, text-length:7 }
+ │             ├─Row { 685×99px }
+ │             │ ├─TextButton { 199×99px }
+ │             │ │ ╰─Providers { 155×55px }
+ │             │ │   ╰─Text { 155×52px, text-length:7 }
+ │             │ ╰─TextButton { 442×99px }
+ │             │   ╰─Providers { 398×55px }
+ │             │     ╰─Text { 398×52px, text-length:15 }
  │             ├─AndroidView {  }
  │             │ ╰─ViewBlockHolder { 919×53px }
  │             │   ╰─TextView { 919×53px, text-length:53 }
- │             ├─ScrollableRow { 1320×588px }
- │             │ ╰─ScrollableColumn { 1320×821px }
- │             │   ╰─Text { 1320×821px, test-tag:"live-hierarchy", text-length:2320 }
- │             ╰─TextButton { 615×99px }
- │               ╰─Providers { 571×55px }
- │                 ╰─Text { 571×52px, text-length:28 }
+ │             ├─ScrollableRow { 1324×588px }
+ │             │ ╰─ScrollableColumn { 1324×1026px }
+ │             │   ╰─Text { 1324×1026px, test-tag:"live-hierarchy", text-length:2525 }
+ │             ╰─TextButton { 737×99px }
+ │               ╰─Providers { 693×55px }
+ │                 ╰─Text { 693×52px, text-length:28 }
  ├─View { id:navigationBarBackground, 1080×132px }
- `-View { id:statusBarBackground, 1080×66px }
+ ╰─View { id:statusBarBackground, 1080×66px }
 ```
 
 This sample can be found in the `sample-compose` directory.
