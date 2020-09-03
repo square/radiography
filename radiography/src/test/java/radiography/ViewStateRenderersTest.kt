@@ -12,6 +12,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import radiography.ScannableView.AndroidView
 import radiography.ViewStateRenderers.androidViewStateRendererFor
+import radiography.ViewStateRenderers.appendTextValue
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -43,5 +44,49 @@ class ViewStateRenderersTest {
     }
 
     assertThat(rendered).isTrue()
+  }
+
+  @Test fun `appendTextValue with text over max length`() {
+    val text = "hello world"
+
+    val result = buildString {
+      AttributeAppendable(this)
+          .appendTextValue(text, showTextValue = true, textValueMaxLength = 5)
+    }
+
+    assertThat(result).isEqualTo("""text:"hell…", text-length:11""")
+  }
+
+  @Test fun `appendTextValue with text exactly max length`() {
+    val text = "hello world"
+
+    val result = buildString {
+      AttributeAppendable(this)
+          .appendTextValue(text, showTextValue = true, textValueMaxLength = 11)
+    }
+
+    assertThat(result).isEqualTo("""text:"hello world"""")
+  }
+
+  @Test fun `appendTextValue with text under max length`() {
+    val text = "hello world"
+
+    val result = buildString {
+      AttributeAppendable(this)
+          .appendTextValue(text, showTextValue = true, textValueMaxLength = 100)
+    }
+
+    assertThat(result).isEqualTo("""text:"hello world"""")
+  }
+
+  @Test fun `appendTextValue with no text`() {
+    val text = "hello world"
+
+    val result = buildString {
+      AttributeAppendable(this)
+          .appendTextValue(text, showTextValue = false, textValueMaxLength = 0)
+    }
+
+    assertThat(result).isEqualTo("""text-length:11""")
   }
 }

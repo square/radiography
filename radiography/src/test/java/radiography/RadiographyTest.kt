@@ -70,7 +70,7 @@ class RadiographyTest {
     view.text = "Baguette Avec Fromage"
     view.scan(viewStateRenderers = listOf(textViewRenderer(showTextValue = true)))
         .also {
-          assertThat(it).contains("text-length:21")
+          assertThat(it).doesNotContain("text-length")
           assertThat(it).contains("text:\"Baguette Avec Fromage\"")
         }
   }

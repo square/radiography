@@ -55,7 +55,6 @@ class ComposeUiTest {
     runOnIdle {
       val hierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
       assertThat(hierarchy).contains("FooBar")
-      assertThat(hierarchy).contains("text-length:6")
     }
   }
 
@@ -148,7 +147,7 @@ class ComposeUiTest {
       Radiography.scan(viewStateRenderers = listOf(textViewRenderer(showTextValue = true)))
     }
 
-    assertThat(hierarchy).contains("text-length:21")
+    assertThat(hierarchy).doesNotContain("text-length")
     assertThat(hierarchy).contains("text:\"Baguette Avec Fromage\"")
   }
 
@@ -172,6 +171,19 @@ class ComposeUiTest {
     assertThat(hierarchy).contains("text:\"Baguette A…\"")
   }
 
+  @Test fun textExcludedByDefault() {
+    composeRule.setContent {
+      Text("Baguette Avec Fromage")
+    }
+
+    val hierarchy = runOnIdle {
+      Radiography.scan()
+    }
+
+    assertThat(hierarchy).contains("text-length:21")
+    assertThat(hierarchy).doesNotContain("text:")
+  }
+
   @Test fun textFieldContents() {
     composeRule.setContent {
       TextField("Baguette Avec Fromage", onValueChange = {}, label = {})
@@ -181,7 +193,6 @@ class ComposeUiTest {
       Radiography.scan(viewStateRenderers = listOf(textViewRenderer(showTextValue = true)))
     }
 
-    assertThat(hierarchy).contains("text-length:21")
     assertThat(hierarchy).contains("text:\"Baguette Avec Fromage\"")
   }
 

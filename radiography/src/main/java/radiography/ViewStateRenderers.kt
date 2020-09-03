@@ -151,14 +151,7 @@ public object ViewStateRenderers {
     }
 
     val androidTextViewRenderer = androidViewStateRendererFor<TextView> { textView ->
-      var text = textView.text
-      if (text != null) {
-        append("text-length:${text.length}")
-        if (showTextValue) {
-          text = text.ellipsize(textValueMaxLength)
-          append("text:\"$text\"")
-        }
-      }
+      appendTextValue(textView.text, showTextValue, textValueMaxLength)
       if (textView.isInputMethodTarget) {
         append("ime-target")
       }
@@ -196,10 +189,7 @@ public object ViewStateRenderers {
         ?.joinToString(separator = " ")
         ?: return@ViewStateRenderer
 
-    append("text-length:${text.length}")
-    if (includeText) {
-      append("text:\"${text.ellipsize(maxTextLength)}\"")
-    }
+    appendTextValue(text, includeText, maxTextLength)
   }
 
   /**
@@ -229,5 +219,24 @@ public object ViewStateRenderers {
     if (!renderedClass.isInstance(view)) return@ViewStateRenderer
     @Suppress("UNCHECKED_CAST")
     renderer(view as T)
+  }
+
+  internal fun AttributeAppendable.appendTextValue(
+    text: CharSequence?,
+    showTextValue: Boolean,
+    textValueMaxLength: Int
+  ) {
+    if (text == null) return
+
+    val appendTextLength = if (showTextValue) {
+      val ellipsizedText = text.ellipsize(textValueMaxLength)
+      append("text:\"$ellipsizedText\"")
+      ellipsizedText.length != text.length
+    } else {
+      true
+    }
+    if (appendTextLength) {
+      append("text-length:${text.length}")
+    }
   }
 }
