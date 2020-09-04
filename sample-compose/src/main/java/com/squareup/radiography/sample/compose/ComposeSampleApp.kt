@@ -165,7 +165,7 @@ private fun showSelectionDialog(context: Context) {
         Radiography.scan(
             viewStateRenderers = listOf(
                 ViewRenderer,
-                textViewRenderer(showTextValue = true, textValueMaxLength = 4),
+                textViewRenderer(renderTextValue = true, textValueMaxLength = 4),
                 CheckableRenderer,
             )
         )

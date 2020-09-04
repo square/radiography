@@ -51,7 +51,7 @@ class ViewStateRenderersTest {
 
     val result = buildString {
       AttributeAppendable(this)
-          .appendTextValue(text, showTextValue = true, textValueMaxLength = 5)
+          .appendTextValue(text, renderTextValue = true, textValueMaxLength = 5)
     }
 
     assertThat(result).isEqualTo("""text:"hell…", text-length:11""")
@@ -62,7 +62,7 @@ class ViewStateRenderersTest {
 
     val result = buildString {
       AttributeAppendable(this)
-          .appendTextValue(text, showTextValue = true, textValueMaxLength = 11)
+          .appendTextValue(text, renderTextValue = true, textValueMaxLength = 11)
     }
 
     assertThat(result).isEqualTo("""text:"hello world"""")
@@ -73,7 +73,7 @@ class ViewStateRenderersTest {
 
     val result = buildString {
       AttributeAppendable(this)
-          .appendTextValue(text, showTextValue = true, textValueMaxLength = 100)
+          .appendTextValue(text, renderTextValue = true, textValueMaxLength = 100)
     }
 
     assertThat(result).isEqualTo("""text:"hello world"""")
@@ -84,7 +84,7 @@ class ViewStateRenderersTest {
 
     val result = buildString {
       AttributeAppendable(this)
-          .appendTextValue(text, showTextValue = false, textValueMaxLength = 0)
+          .appendTextValue(text, renderTextValue = false, textValueMaxLength = 0)
     }
 
     assertThat(result).isEqualTo("""text-length:11""")
