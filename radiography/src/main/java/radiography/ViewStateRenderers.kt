@@ -118,46 +118,46 @@ public object ViewStateRenderers {
   @JvmField
   public val DefaultsNoPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
-      textViewRenderer(showTextValue = false, textValueMaxLength = 0),
+      textViewRenderer(renderTextValue = false, textValueMaxLength = 0),
       CheckableRenderer,
   )
 
   @JvmField
   public val DefaultsIncludingPii: List<ViewStateRenderer> = listOf(
       ViewRenderer,
-      textViewRenderer(showTextValue = true),
+      textViewRenderer(renderTextValue = true),
       CheckableRenderer,
   )
 
   /**
    * Renders information about [TextView]s and text composables.
    *
-   * @param showTextValue whether to include the string content of TextView instances in
+   * @param renderTextValue whether to include the string content of TextView instances in
    * the rendered view hierarchy. Defaults to false to avoid including any PII.
    *
    * @param textValueMaxLength the max size of the string content of TextView instances when
-   * [showTextValue] is true. When the max size is reached, the text is trimmed to
+   * [renderTextValue] is true. When the max size is reached, the text is trimmed to
    * a [textValueMaxLength] - 1 length and ellipsized with a '…' character.
    */
   @JvmStatic
   @JvmOverloads
   public fun textViewRenderer(
-    showTextValue: Boolean = false,
+    renderTextValue: Boolean = false,
     textValueMaxLength: Int = Int.MAX_VALUE
   ): ViewStateRenderer {
-    if (showTextValue) {
+    if (renderTextValue) {
       check(textValueMaxLength >= 0) {
         "textFieldMaxLength should be greater than 0, not $textValueMaxLength"
       }
     }
 
     val androidTextViewRenderer = androidViewStateRendererFor<TextView> { textView ->
-      appendTextValue(textView.text, showTextValue, textValueMaxLength)
+      appendTextValue(textView.text, renderTextValue, textValueMaxLength)
       if (textView.isInputMethodTarget) {
         append("ime-target")
       }
     }
-    val composeTextRenderer = composeTextRenderer(showTextValue, textValueMaxLength)
+    val composeTextRenderer = composeTextRenderer(renderTextValue, textValueMaxLength)
 
     return ViewStateRenderer { view ->
       with(androidTextViewRenderer) { render(view) }
@@ -168,19 +168,19 @@ public object ViewStateRenderers {
   /**
    * Renders composables that expose a text value through the [Text] semantics property.
    *
-   * @param includeText whether to include the string value of the property in the rendered view
+   * @param renderTextValue whether to include the string value of the property in the rendered view
    * hierarchy. Defaults to false to avoid including any PII.
    *
-   * @param maxTextLength the max size of the string value of the property when [includeText] is
-   * true. When the max size is reached, the text is trimmed to a [maxTextLength] - 1 length and
+   * @param textValueMaxLength the max size of the string value of the property when [renderTextValue] is
+   * true. When the max size is reached, the text is trimmed to a [textValueMaxLength] - 1 length and
    * ellipsized with a '…' character.
    */
   @ExperimentalRadiographyComposeApi
   @JvmStatic
   @JvmSynthetic
   internal fun composeTextRenderer(
-    includeText: Boolean = false,
-    maxTextLength: Int = Int.MAX_VALUE
+    renderTextValue: Boolean = false,
+    textValueMaxLength: Int = Int.MAX_VALUE
   ): ViewStateRenderer = if (!isComposeAvailable) NoRenderer else ViewStateRenderer { view ->
     val text = (view as? ComposeView)
         ?.modifiers
@@ -190,7 +190,7 @@ public object ViewStateRenderers {
         ?.joinToString(separator = " ")
         ?: return@ViewStateRenderer
 
-    appendTextValue(text, includeText, maxTextLength)
+    appendTextValue(text, renderTextValue, textValueMaxLength)
   }
 
   /**
@@ -224,12 +224,12 @@ public object ViewStateRenderers {
 
   internal fun AttributeAppendable.appendTextValue(
     text: CharSequence?,
-    showTextValue: Boolean,
+    renderTextValue: Boolean,
     textValueMaxLength: Int
   ) {
     if (text == null) return
 
-    val appendTextLength = if (showTextValue) {
+    val appendTextLength = if (renderTextValue) {
       val ellipsizedText = text.ellipsize(textValueMaxLength)
       append("text:\"$ellipsizedText\"")
       ellipsizedText.length != text.length

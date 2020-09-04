@@ -144,7 +144,7 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      Radiography.scan(viewStateRenderers = listOf(textViewRenderer(showTextValue = true)))
+      Radiography.scan(viewStateRenderers = listOf(textViewRenderer(renderTextValue = true)))
     }
 
     assertThat(hierarchy).doesNotContain("text-length")
@@ -160,7 +160,7 @@ class ComposeUiTest {
       Radiography.scan(
           viewStateRenderers = listOf(
               textViewRenderer(
-                  showTextValue = true,
+                  renderTextValue = true,
                   textValueMaxLength = 11
               )
           )
@@ -190,7 +190,7 @@ class ComposeUiTest {
     }
 
     val hierarchy = runOnIdle {
-      Radiography.scan(viewStateRenderers = listOf(textViewRenderer(showTextValue = true)))
+      Radiography.scan(viewStateRenderers = listOf(textViewRenderer(renderTextValue = true)))
     }
 
     assertThat(hierarchy).contains("text:\"Baguette Avec Fromage\"")
@@ -205,7 +205,7 @@ class ComposeUiTest {
       Radiography.scan(
           viewStateRenderers = listOf(
               textViewRenderer(
-                  showTextValue = true,
+                  renderTextValue = true,
                   textValueMaxLength = 11
               )
           )

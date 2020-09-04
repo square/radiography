@@ -57,7 +57,7 @@ class MainActivity : Activity() {
               viewStateRenderers = listOf(
                   ViewStateRenderers.ViewRenderer,
                   ViewStateRenderers.textViewRenderer(
-                      showTextValue = true, textValueMaxLength = 4
+                      renderTextValue = true, textValueMaxLength = 4
                   ),
                   ViewStateRenderers.CheckableRenderer
               )
