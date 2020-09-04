@@ -25,7 +25,7 @@ import org.junit.Test
 import radiography.ScannableView
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
-import radiography.compose.ExperimentalRadiographyComposeApi
+import radiography.ExperimentalRadiographyComposeApi
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 

@@ -1,4 +1,4 @@
-package radiography.compose
+package radiography.internal
 
 import android.view.View
 import androidx.compose.ui.Modifier

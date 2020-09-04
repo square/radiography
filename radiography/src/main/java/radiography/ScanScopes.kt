@@ -3,10 +3,10 @@ package radiography
 import android.view.View
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
-import radiography.compose.ExperimentalRadiographyComposeApi
-import radiography.compose.composeRenderingError
-import radiography.compose.findTestTags
-import radiography.compose.isComposeAvailable
+import radiography.internal.composeRenderingError
+import radiography.internal.findTestTags
+import radiography.internal.isComposeAvailable
+import radiography.internal.WindowScanner
 
 public object ScanScopes {
 

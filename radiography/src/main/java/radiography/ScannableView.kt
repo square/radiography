@@ -5,10 +5,9 @@ import android.view.ViewGroup
 import androidx.compose.ui.Modifier
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
-import radiography.compose.ComposeLayoutInfo
-import radiography.compose.ExperimentalRadiographyComposeApi
-import radiography.compose.getComposeScannableViews
-import radiography.compose.mightBeComposeView
+import radiography.internal.ComposeLayoutInfo
+import radiography.internal.getComposeScannableViews
+import radiography.internal.mightBeComposeView
 
 /**
  * Represents a logic view that can be rendered as a node in the view tree.

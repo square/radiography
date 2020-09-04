@@ -12,8 +12,9 @@ import androidx.compose.ui.semantics.SemanticsProperties.Text
 import androidx.compose.ui.semantics.getOrNull
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
-import radiography.compose.ExperimentalRadiographyComposeApi
-import radiography.compose.isComposeAvailable
+import radiography.internal.isComposeAvailable
+import radiography.internal.ellipsize
+import radiography.internal.formatPixelDimensions
 
 @OptIn(ExperimentalRadiographyComposeApi::class)
 public object ViewStateRenderers {
