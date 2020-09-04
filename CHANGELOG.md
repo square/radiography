@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+Version 2.0.0
+-------------
+
+_2020-09-04_
+
+* Use fancy drawing characters for rendering tree lines. (#83)
+* Don't include "text-length" when full text included. (#82)
+* Move internal code to internal package. (#87)
+* Rename `showTextValue` parameter to `renderTextValue`. (#90)
+* Update Compose to 1.0.0-alpha02. (#79)
+
 Version 2.0.0-beta.1
 --------------------
 
