@@ -15,11 +15,13 @@ public object ViewFilters {
    * Filters out views with ids matching [skippedIds] from the output of [Radiography.scan].
    */
   @JvmStatic
-  public fun skipIdsViewFilter(vararg skippedIds: Int): ViewFilter =
-    androidViewFilterFor<View> { view ->
+  public fun skipIdsViewFilter(vararg skippedIds: Int): ViewFilter {
+    val sortedIds = skippedIds.sortedArray()
+    return androidViewFilterFor<View> { view ->
       val viewId = view.id
-      (viewId == View.NO_ID || skippedIds.isEmpty() || skippedIds.binarySearch(viewId) < 0)
+      (viewId == View.NO_ID || sortedIds.isEmpty() || sortedIds.binarySearch(viewId) < 0)
     }
+  }
 
   /**
    * Filters out composables with [`Modifier.testTag`][androidx.compose.ui.platform.testTag]

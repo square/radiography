@@ -106,7 +106,7 @@ class RadiographyTest {
         }
   }
 
-  @Test fun skipIds() {
+  @Test fun `skipIds with single input`() {
     val layout = FrameLayout(context)
     val view = Button(context).apply {
       id = 42
@@ -117,6 +117,19 @@ class RadiographyTest {
           assertThat(it).contains("FrameLayout")
           assertThat(it).doesNotContain("Button")
         }
+  }
+
+  @Test fun `skipIds with unsorted inputs`() {
+    val layout = FrameLayout(context)
+    val view = Button(context).apply {
+      id = 42
+    }
+    layout.addView(view)
+    layout.scan(viewFilter = skipIdsViewFilter(42, 2, 6))
+            .also {
+              assertThat(it).contains("FrameLayout")
+              assertThat(it).doesNotContain("Button")
+            }
   }
 
   @Test fun combineFilters() {
