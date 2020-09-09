@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntBounds
 import androidx.ui.tooling.Group
 import androidx.ui.tooling.NodeGroup
+import androidx.ui.tooling.asTree
 
 /**
  * Information about a Compose `LayoutNode`, extracted from a [Group] tree via [Group.layoutInfos].
@@ -16,12 +17,13 @@ import androidx.ui.tooling.NodeGroup
  * It's also helpful since we actually gather data from multiple Groups for a single LayoutInfo,
  * so parsing them ahead of time into these objects means the visitor can be stateless.
  */
-internal class ComposeLayoutInfo(
+internal data class ComposeLayoutInfo(
   val name: String,
   val bounds: IntBounds,
   val modifiers: List<Modifier>,
   val children: Sequence<ComposeLayoutInfo>,
-  val view: View?
+  val view: View?,
+  val isSubcomposition: Boolean = false
 )
 
 /**
@@ -41,12 +43,64 @@ internal val Group.layoutInfos: Sequence<ComposeLayoutInfo> get() = computeLayou
  * to derive the "name" of the [ComposeLayoutInfo]. The other [ComposeLayoutInfo] properties come directly off
  * [NodeGroup] values.
  */
-private fun Group.computeLayoutInfos(parentName: String = ""): Sequence<ComposeLayoutInfo> {
+private fun Group.computeLayoutInfos(
+  parentName: String = ""
+): Sequence<ComposeLayoutInfo> {
   val name = parentName.ifBlank { this.name }.orEmpty()
 
+  // Look for any CompositionReferences stored in this group. These will be rolled up into the
+  // SubcomposeLayout if present, otherwise they will just be shown as regular children.
+  val subComposedChildren = getCompositionReferences()
+      .flatMap { it.tryGetComposers().asSequence() }
+      .map { subcomposer ->
+        ComposeLayoutInfo(
+            isSubcomposition = true,
+            name = name,
+            bounds = box,
+            modifiers = emptyList(),
+            children = subcomposer.slotTable.asTree().layoutInfos,
+            view = null
+        )
+      }
+
+  // SubcomposeLayouts need to be handled specially, because all their subcompositions are always
+  // logical children of their single LayoutNode. In order to render them so that the rendering
+  // actually matches that logical structure, we need to reorganize the subtree a bit so
+  // subcompositions are children of the layout node and not siblings of it.
+  //
+  // Note that there's no sure-fire way to actually detect a SubcomposeLayout. The best we can do is
+  // use a heuristic. If any part of the heuristics don't match, then we fall back to treating the
+  // group like any other.
+  //
+  // The heuristic we use is:
+  //  - Name of the group is "SubcomposeLayout".
+  //  - Has one or more subcompositions under it.
+  //  - Has exactly one LayoutNode child.
+  //  - That LayoutNode has no children of its own.
+  if (this.name == "SubcomposeLayout") {
+    val (subcompositions, regularChildren) =
+      (children.asSequence().flatMap { it.computeLayoutInfos(name) } + subComposedChildren)
+          .partition { it.isSubcomposition }
+
+    if (subcompositions.isNotEmpty() && regularChildren.size == 1) {
+      val mainNode = regularChildren.single()
+      if (mainNode.children.isEmpty()) {
+        // We can be pretty confident at this point that this is an actual SubcomposeLayout, so
+        // expose its layout node as the parent of all its subcompositions.
+        val subcompositionName = "<subcomposition of ${mainNode.name}>"
+        return sequenceOf(
+            mainNode.copy(children = subcompositions.asSequence()
+                .map { it.copy(name = subcompositionName) }
+            )
+        )
+      }
+    }
+  }
+
+  // This is an intermediate group that doesn't represent a LayoutNode.
   if (this !is NodeGroup) {
     return children.asSequence()
-        .flatMap { it.computeLayoutInfos(name) }
+        .flatMap { it.computeLayoutInfos(name) } + subComposedChildren
   }
 
   val children = children.asSequence()
@@ -57,8 +111,10 @@ private fun Group.computeLayoutInfos(parentName: String = ""): Sequence<ComposeL
       name = name,
       bounds = box,
       modifiers = modifierInfo.map { it.modifier },
-      children = children,
+      children = children + subComposedChildren,
       view = node as? View
   )
   return sequenceOf(layoutInfo)
 }
+
+private fun Sequence<*>.isEmpty(): Boolean = !iterator().hasNext()

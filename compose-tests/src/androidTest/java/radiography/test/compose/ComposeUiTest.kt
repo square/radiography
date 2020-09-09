@@ -315,6 +315,9 @@ class ComposeUiTest {
         """
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
+        |${BLANK}╰─Dialog {  }
+        |${BLANK}  ╰─Providers { DIALOG }
+        |${BLANK}    ╰─Box { test-tag:"child" }
         |
         """.trimMargin()
     )
@@ -341,6 +344,9 @@ class ComposeUiTest {
         """
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
+        |${BLANK}╰─CustomTestDialog {  }
+        |${BLANK}  ╰─Providers { DIALOG }
+        |${BLANK}    ╰─Box { test-tag:"child" }
         |
         """.trimMargin()
     )
@@ -364,6 +370,8 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
+        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout> {  }
+        |${BLANK}    ╰─Box { test-tag:"child" }
         |
         """.trimMargin()
     )
@@ -388,6 +396,9 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
+        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout> {  }
+        |${BLANK}    ├─Box { test-tag:"child1" }
+        |${BLANK}    ╰─Box { test-tag:"child2" }
         |
         """.trimMargin()
     )
@@ -417,6 +428,12 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─MultipleSubcompositionLayout { test-tag:"subcompose-layout" }
+        |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout> {  }
+        |${BLANK}  │ ├─Box { test-tag:"child1.1" }
+        |${BLANK}  │ ╰─Box { test-tag:"child1.2" }
+        |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout> {  }
+        |${BLANK}    ├─Box { test-tag:"child2.1" }
+        |${BLANK}    ╰─Box { test-tag:"child2.2" }
         |
         """.trimMargin()
     )
@@ -443,7 +460,11 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}├─SingleSubcompositionLayout { test-tag:"subcompose-layout1" }
+        |${BLANK}│ ╰─<subcomposition of SingleSubcompositionLayout> {  }
+        |${BLANK}│   ╰─Box { test-tag:"child1" }
         |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout2" }
+        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout> {  }
+        |${BLANK}    ╰─Box { test-tag:"child2" }
         |
         """.trimMargin()
     )
@@ -467,6 +488,8 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─WithConstraints { test-tag:"with-constraints" }
+        |${BLANK}  ╰─<subcomposition of WithConstraints> {  }
+        |${BLANK}    ╰─Box { test-tag:"child" }
         |
         """.trimMargin()
     )
@@ -493,6 +516,50 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─LazyColumnFor { test-tag:"list" }
+        |${BLANK}  ├─<subcomposition of LazyColumnFor> {  }
+        |${BLANK}  │ ╰─Box { test-tag:"child:1" }
+        |${BLANK}  ├─<subcomposition of LazyColumnFor> {  }
+        |${BLANK}  │ ├─Box { test-tag:"child:2" }
+        |${BLANK}  │ ╰─Box { test-tag:"child:2 (even)" }
+        |${BLANK}  ╰─<subcomposition of LazyColumnFor> {  }
+        |${BLANK}    ╰─Box { test-tag:"child:3" }
+        |
+        """.trimMargin()
+    )
+  }
+
+  @Test fun scanningSubcomposition_includesSize() {
+    composeRule.setContent {
+      // Convert 10 px to DP, since output is always in px.
+      val sizeDp = with(DensityAmbient.current) { 10.toDp() }
+
+      Box(Modifier.testTag("parent")) {
+        MultipleSubcompositionLayout(Modifier.testTag("subcompose-layout"),
+            firstChildren = {
+              Box(Modifier.testTag("child1").size(sizeDp))
+              Box(Modifier.testTag("child2").size(sizeDp))
+            },
+            secondChildren = {
+              Box(Modifier.testTag("child3").size(sizeDp))
+            }
+        )
+      }
+    }
+
+    val hierarchy = composeRule.runOnIdle {
+      Radiography.scan(composeTestTagScope("parent"))
+    }
+
+    assertThat(hierarchy).isEqualTo(
+        """
+        |Providers:
+        |${BLANK}Providers { 10×30px, test-tag:"parent" }
+        |${BLANK}╰─MultipleSubcompositionLayout { 10×30px, test-tag:"subcompose-layout" }
+        |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout> {  }
+        |${BLANK}  │ ├─Box { 10×10px, test-tag:"child1" }
+        |${BLANK}  │ ╰─Box { 10×10px, test-tag:"child2" }
+        |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout> {  }
+        |${BLANK}    ╰─Box { 10×10px, test-tag:"child3" }
         |
         """.trimMargin()
     )
@@ -516,20 +583,29 @@ class ComposeUiTest {
     }
   }
 
+  /**
+   * Like [SingleSubcompositionLayout] but creates two subcompositions, and lays out all children
+   * from both compositions in a column.
+   */
   @Composable private fun MultipleSubcompositionLayout(
     modifier: Modifier,
     firstChildren: @Composable () -> Unit,
     secondChildren: @Composable () -> Unit
   ) {
     SubcomposeLayout<Int>(modifier) { constraints ->
-      val placeables1 = subcompose(0, firstChildren)
-          .map { it.measure(constraints) }
-      val placeables2 = subcompose(1, secondChildren)
-          .map { it.measure(constraints) }
+      val placeables = listOf(
+          subcompose(0, firstChildren),
+          subcompose(1, secondChildren),
+      ).flatten().map { it.measure(constraints) }
 
-      layout(0, 0) {
-        placeables1.forEach { it.placeRelative(0, 0) }
-        placeables2.forEach { it.placeRelative(0, 0) }
+      layout(
+          width = placeables.maxOfOrNull { it.width } ?: 0,
+          height = placeables.sumOf { it.height }
+      ) {
+        placeables.fold(0) { y, placeable ->
+          placeable.placeRelative(0, y)
+          y + placeable.height
+        }
       }
     }
   }

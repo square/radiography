@@ -218,6 +218,52 @@ fun skipLayoutIdsFilter(skipLayoutId: (Any) -> Boolean) = ViewFilter { view ->
 }
 ```
 
+### Subcomposition scanning
+
+In Compose, the term "composition" is often used to refer to a single tree of composables that all
+share some core state (e.g. ambients) and use the same underlying slot table. A subcomposition is a
+distinct composition that has a reference to a particular point in another composition (its parent).
+Subcompositions share the parent's ambients, but can be created at any time and disposed
+independently of the parent composition.
+
+Subcomposition is used for a number of things:
+
+1. Compose children which have a data dependency on a property of the parent composition that is
+   only available after the composition pass, e.g. `WithConstraints` (which can only compose its
+   children during layout).
+2. Lazy composition, where the "current" actual children of a composable depend on some runtime
+   state, and old/uncreated children should be not be composed when not needed, to save resources.
+   `LazyColumn` does this.
+3. Linking compositions that need to be hosted in entirely separate windows together. `Dialog` uses
+   this to make the dialog children act as children of the composable that invokes them, even though
+   they're hosted in a separate window, with a Android view host.
+
+Rendering subcomposition is tricky, because there's no explicit reference from the parent
+`CompositionReference` to where the subcompositions' composables actually appear. Fortunately,
+`SubcomposeLayout` is a helper composable which provides a convenient wrapper around subcomposition
+for common use cases such as 1 and 2 above – basically any time the subcomposition is actually a
+visual child of the parent composable, but can only be created during the layout pass.
+`SubcomposeLayout` shows up as a pattern in the slot tables' groups which Radiography detects and
+renders in a way that makes the subcomposition look like regular children of the parent composable.
+
+Non-`SubcomposeLayout` subcompositions, like the one from `Dialog`, are rendered a bit more
+awkwardly. The subcomposition is shown as a child of the parent layout node. In the case of
+`Dialog`, this is fine, since there's no actual layout node in the parent composition which acts as
+a parent for the subcomposition. More complex use cases may be rendered differently, e.g. if there's
+a layout node which "hosts" the subcomposition, it will appear after the actual
+`CompositionReference` in the slot table, and thus the subcomposition and its subtree will appear
+before the layout node in the rendering.
+
+Subcompositions have their own slot table that is not shared with their parent. For this reason,
+Radiography needs to do some extra work to scan subcompositions, since they won't be processed
+simply by reading the parent's slot table. Subcompositions are detected by looking for instances of
+[`CompositionReference`](https://developer.android.com/reference/kotlin/androidx/compose/runtime/CompositionReference)
+in the parent slot table. `CompositionReference` is an abstract class, but the only concrete
+implementation currently in Compose contains references to all actual compositions that use it as a
+parent. Reflection is used to pull the actual subcompositions out of the parent reference, and then
+those compositions' slot tables are analyzed in turn, and its root composables are rendered as
+childrens of the node that owns the `CompositionReference`.
+
 ### Compose example output
 
 ![screenshot](assets/compose_sample_screenshot.png)
