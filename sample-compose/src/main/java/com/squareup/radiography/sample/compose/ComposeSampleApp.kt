@@ -70,7 +70,7 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
   MaterialTheme {
     Column(
         modifier = Modifier.padding(16.dp),
-        horizontalGravity = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
       RadiographyLogo(Modifier.height(128.dp))
@@ -89,7 +89,7 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
           backgroundColor = Color.Transparent,
           visualTransformation = PasswordVisualTransformation()
       )
-      Row(verticalGravity = Alignment.CenterVertically) {
+      Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = rememberMe, onCheckedChange = { rememberMe = it })
         Spacer(Modifier.width(8.dp))
         Text("Remember me")
