@@ -1,8 +1,7 @@
 package radiography.test.compose
 
-import androidx.ui.foundation.Text
+import androidx.compose.foundation.Text
 import androidx.ui.test.createComposeRule
-import androidx.ui.test.runOnIdleCompose
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -19,7 +18,7 @@ class ComposeUnsupportedTest {
       Text("FooBar")
     }
 
-    runOnIdleCompose {
+    composeRule.runOnIdle {
       val hierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
       assertThat(hierarchy).doesNotContain("FooBar")
       assertThat(hierarchy).contains(

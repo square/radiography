@@ -2,15 +2,16 @@ package radiography.test.compose
 
 import android.view.ViewGroup.LayoutParams
 import android.widget.TextView
-import androidx.compose.foundation.Box
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.TextField
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SlotTable
 import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.Modifier
@@ -28,10 +29,10 @@ import androidx.compose.ui.semantics.SemanticsProperties.TestTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.ui.test.createComposeRule
-import androidx.ui.test.runOnIdle
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
+import radiography.ExperimentalRadiographyComposeApi
 import radiography.Radiography
 import radiography.ScanScopes.composeTestTagScope
 import radiography.ViewFilters.skipComposeTestTagsFilter
@@ -39,7 +40,6 @@ import radiography.ViewStateRenderers.DefaultsIncludingPii
 import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.ViewStateRenderers.ViewRenderer
 import radiography.ViewStateRenderers.textViewRenderer
-import radiography.ExperimentalRadiographyComposeApi
 
 @OptIn(ExperimentalRadiographyComposeApi::class)
 class ComposeUiTest {
@@ -48,22 +48,22 @@ class ComposeUiTest {
   val composeRule = createComposeRule()
 
   @Test fun when_includingPii_then_hierarchyContainsText() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Text("FooBar")
     }
 
-    runOnIdle {
+    composeRule.runOnIdle {
       val hierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
       assertThat(hierarchy).contains("FooBar")
     }
   }
 
   @Test fun when_noPii_then_hierarchyExcludesText() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Text("FooBar")
     }
 
-    runOnIdle {
+    composeRule.runOnIdle {
       val hierarchy = Radiography.scan(viewStateRenderers = DefaultsNoPii)
       assertThat(hierarchy).doesNotContain("FooBar")
       assertThat(hierarchy).contains("text-length:6")
@@ -71,14 +71,14 @@ class ComposeUiTest {
   }
 
   @Test fun viewSizeReported() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       val (width, height) = with(DensityAmbient.current) {
         Pair(30.toDp(), 40.toDp())
       }
       Box(modifier = Modifier.size(width, height))
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(viewStateRenderers = listOf(ViewRenderer))
     }
 
@@ -86,11 +86,11 @@ class ComposeUiTest {
   }
 
   @Test fun zeroSizeViewReported() {
-    composeRule.setContent {
-      Box()
+    composeRule.setContentWithExplicitRoot {
+      Box(Modifier)
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(viewStateRenderers = emptyList())
     }
 
@@ -98,7 +98,7 @@ class ComposeUiTest {
   }
 
   @Test fun semanticsAreReported() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Box(Modifier.semantics { set(TestTag, "test tag") })
       Box(Modifier.semantics { set(AccessibilityLabel, "acc label") })
       Box(Modifier.semantics { set(AccessibilityValue, "acc value") })
@@ -110,7 +110,7 @@ class ComposeUiTest {
       Box(Modifier.semantics { set(IsPopup, Unit) })
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan()
     }
 
@@ -126,11 +126,11 @@ class ComposeUiTest {
   }
 
   @Test fun checkableChecked() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Checkbox(checked = true, onCheckedChange = {})
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(viewStateRenderers = listOf(ViewRenderer))
     }
 
@@ -139,11 +139,11 @@ class ComposeUiTest {
   }
 
   @Test fun textContents() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Text("Baguette Avec Fromage")
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(viewStateRenderers = listOf(textViewRenderer(renderTextValue = true)))
     }
 
@@ -152,11 +152,11 @@ class ComposeUiTest {
   }
 
   @Test fun textContentsEllipsized() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Text("Baguette Avec Fromage")
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(
           viewStateRenderers = listOf(
               textViewRenderer(
@@ -172,11 +172,11 @@ class ComposeUiTest {
   }
 
   @Test fun textExcludedByDefault() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Text("Baguette Avec Fromage")
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan()
     }
 
@@ -185,11 +185,11 @@ class ComposeUiTest {
   }
 
   @Test fun textFieldContents() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       TextField("Baguette Avec Fromage", onValueChange = {}, label = {})
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(viewStateRenderers = listOf(textViewRenderer(renderTextValue = true)))
     }
 
@@ -197,11 +197,11 @@ class ComposeUiTest {
   }
 
   @Test fun textFieldContentsEllipsized() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       TextField("Baguette Avec Fromage", onValueChange = {}, label = {})
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(
           viewStateRenderers = listOf(
               textViewRenderer(
@@ -217,13 +217,13 @@ class ComposeUiTest {
   }
 
   @Test fun skipTestTags() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Box {
         Button(modifier = Modifier.testTag("42"), onClick = {}, content = {})
       }
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(viewFilter = skipComposeTestTagsFilter("42"))
     }
 
@@ -233,31 +233,31 @@ class ComposeUiTest {
 
   @Test fun nestedLayouts() {
     val slotTable = Ref<SlotTable>()
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       slotTable.value = currentComposer.slotTable
 
-      Stack(Modifier.testTag("root")) {
-        Box()
+      Box(Modifier.testTag("root")) {
+        Box(Modifier)
         Column {
-          Box()
-          Box()
+          Box(Modifier)
+          Box(Modifier)
         }
         Row {
-          Box()
-          Box()
+          Box(Modifier)
+          Box(Modifier)
         }
       }
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(composeTestTagScope("root"))
     }
 
     @Suppress("RemoveCurlyBracesFromTemplate")
     assertThat(hierarchy).contains(
         """
-          Stack:
-          ${BLANK}Stack { test-tag:"root" }
+          Box:
+          ${BLANK}Box { test-tag:"root" }
           ${BLANK}├─Box {  }
           ${BLANK}├─Column {  }
           ${BLANK}│ ├─Box {  }
@@ -271,7 +271,7 @@ class ComposeUiTest {
 
   @Test fun nestedViewsInsideLayouts() {
     val slotTable = Ref<SlotTable>()
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       slotTable.value = currentComposer.slotTable
 
       Box(Modifier.testTag("root")) {
@@ -281,7 +281,7 @@ class ComposeUiTest {
       }
     }
 
-    val hierarchy = runOnIdle {
+    val hierarchy = composeRule.runOnIdle {
       Radiography.scan(composeTestTagScope("root"))
     }
 
@@ -297,6 +297,20 @@ class ComposeUiTest {
     )
     // But this view description should show up at some point.
     assertThat(hierarchy).contains("╰─TextView { 0×0px, text-length:0 }")
+  }
+
+  /**
+   * Wrapper around [Box] that is intentionally not inline, so it shows up in the slot table.
+   */
+  @Composable private fun ParentBox(
+    modifier: Modifier = Modifier,
+    children: (@Composable BoxScope.() -> Unit)? = null
+  ) {
+    if (children == null) {
+      Box(modifier)
+    } else {
+      Box(modifier, children = children)
+    }
   }
 
   companion object {

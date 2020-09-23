@@ -6,7 +6,7 @@ plugins {
 }
 
 /** Use a separate property for the sample so we can test with different versions easily. */
-val sampleComposeVersion = "1.0.0-alpha03"
+val sampleComposeVersion = "1.0.0-alpha04"
 
 android {
   compileSdkVersion(30)
@@ -30,6 +30,11 @@ android {
   composeOptions {
     kotlinCompilerVersion = Versions.KotlinCompiler
     kotlinCompilerExtensionVersion = sampleComposeVersion
+  }
+
+  lintOptions {
+    // Workaround lint bug.
+    disable("InvalidFragmentVersionForActivityResult")
   }
 }
 
