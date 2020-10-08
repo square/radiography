@@ -3,8 +3,8 @@ package radiography.test.compose
 import android.view.View
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.Box
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
@@ -17,8 +17,7 @@ import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.ui.test.android.createAndroidComposeRule
-import androidx.ui.test.runOnIdle
+import androidx.ui.test.createAndroidComposeRule
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -36,7 +35,7 @@ class ComposeViewTest {
   val composeRule = createAndroidComposeRule<ComponentActivity>()
 
   @Test fun androidView_children_includes_ComposeViews() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Text("hello")
     }
 
@@ -46,7 +45,7 @@ class ComposeViewTest {
   }
 
   @Test fun composeView_children_includes_AndroidView() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Column {
         androidx.compose.ui.viewinterop.AndroidView(::TextView)
       }
@@ -61,11 +60,11 @@ class ComposeViewTest {
   }
 
   @Test fun composeView_reports_children() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Column {
         Text("hello")
         Button(onClick = {}) {
-          Box()
+          Box(Modifier)
         }
       }
     }
@@ -82,7 +81,7 @@ class ComposeViewTest {
   }
 
   @Test fun composeView_reports_LayoutModifiers() {
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       Box(TestModifier)
     }
 
@@ -93,12 +92,12 @@ class ComposeViewTest {
 
   @Test fun composeView_reports_size() {
     var density: Density? = null
-    composeRule.setContent {
+    composeRule.setContentWithExplicitRoot {
       density = DensityAmbient.current
       Box(Modifier.size(30.dp, 40.dp))
     }
 
-    val (widthPx, heightPx) = runOnIdle {
+    val (widthPx, heightPx) = composeRule.runOnIdle {
       with(density!!) {
         Pair(30.dp.toIntPx(), 40.dp.toIntPx())
       }

@@ -1,7 +1,7 @@
 package com.squareup.radiography.sample.compose
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
@@ -32,7 +32,7 @@ import kotlin.math.roundToInt
   val innerImage = imageResource(R.drawable.logo_inner)
   val aspectRatio = outerImage.width.toFloat() / outerImage.height.toFloat()
 
-  Stack(modifier.aspectRatio(aspectRatio)) {
+  Box(modifier.aspectRatio(aspectRatio)) {
     Image(outerImage)
     InfiniteMirror(
         centerOffsetFraction = Offset(.5f, .59f),
@@ -71,7 +71,7 @@ import kotlin.math.roundToInt
 
     // Draw the content and recurse at the next scale. Note that the centering is being performed by
     // wrapContentSize above, this modifier just needs to scale.
-    Stack(Modifier.fillMaxSize(scaleFactor)) {
+    Box(Modifier.fillMaxSize(scaleFactor)) {
       content()
       InfiniteMirror(centerOffsetFraction, scaleFactor, minimumSizeThreshold, content)
     }

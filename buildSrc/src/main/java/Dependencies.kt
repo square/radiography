@@ -8,12 +8,12 @@ object Versions {
   /** Use a lower version of the stdlib so the library can be consumed by lower kotlin versions. */
   val KotlinStdlib = System.getProperty("square.kotlinStdlibVersion") ?: "1.3.72"
 
-  const val Compose = "1.0.0-alpha02"
+  const val Compose = "1.0.0-alpha04"
 }
 
 object Dependencies {
   object Build {
-    const val Android = "com.android.tools.build:gradle:4.2.0-alpha11"
+    const val Android = "com.android.tools.build:gradle:4.2.0-alpha13"
     const val MavenPublish = "com.vanniktech:gradle-maven-publish-plugin:0.12.0"
     val Kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KotlinCompiler}"
     const val Ktlint = "org.jlleitschuh.gradle:ktlint-gradle:9.2.1"
