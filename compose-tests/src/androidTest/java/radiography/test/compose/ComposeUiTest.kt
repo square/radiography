@@ -4,14 +4,12 @@ import android.view.ViewGroup.LayoutParams
 import android.widget.TextView
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SlotTable
 import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.Modifier
@@ -297,20 +295,6 @@ class ComposeUiTest {
     )
     // But this view description should show up at some point.
     assertThat(hierarchy).contains("╰─TextView { 0×0px, text-length:0 }")
-  }
-
-  /**
-   * Wrapper around [Box] that is intentionally not inline, so it shows up in the slot table.
-   */
-  @Composable private fun ParentBox(
-    modifier: Modifier = Modifier,
-    children: (@Composable BoxScope.() -> Unit)? = null
-  ) {
-    if (children == null) {
-      Box(modifier)
-    } else {
-      Box(modifier, children = children)
-    }
   }
 
   companion object {
