@@ -135,7 +135,7 @@ don't need to do anything special. Additional Compose-specific renderers can be 
 
 To create a custom renderer for Compose, implement a `ViewStateRenderer` to handle values of type
 `ComposeView`. However, since Radiography gets most of its information about composables from their
-semantics properties, in most cases you shouldn't need to define any custom rendering logic. The
+semantics properties, in most cases you shouldn't need to define any custom rendering logic. 
 `ComposeView` has a list of all the `Modifier`s that have been applied to the composable, including
 its [semantics](https://developer.android.com/reference/kotlin/androidx/compose/ui/semantics/SemanticsModifier?hl=en#semanticsConfiguration:androidx.compose.ui.semantics.SemanticsConfiguration).
 
