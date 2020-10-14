@@ -325,7 +325,7 @@ class ComposeUiTest {
 
   @Test fun scanningHandlesWrappedDialog() {
     @Composable fun CustomTestDialog(children: @Composable () -> Unit) {
-      Dialog(onDismissRequest = {}, children = children)
+      Dialog(onDismissRequest = {}, content = children)
     }
 
     composeRule.setContent {

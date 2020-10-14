@@ -8,7 +8,7 @@ object Versions {
   /** Use a lower version of the stdlib so the library can be consumed by lower kotlin versions. */
   val KotlinStdlib = System.getProperty("square.kotlinStdlibVersion") ?: "1.3.72"
 
-  const val Compose = "1.0.0-alpha04"
+  const val Compose = "1.0.0-alpha05"
 }
 
 object Dependencies {
