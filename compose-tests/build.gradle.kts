@@ -35,6 +35,9 @@ android {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     jvmTarget = "1.8"
+    // Override lower API version from root build.gradle.kts since this module is using the new
+    // stdlib.
+    apiVersion = "1.4"
     freeCompilerArgs = listOf(
         "-Xallow-jvm-ir-dependencies",
         "-Xskip-prerelease-check",
