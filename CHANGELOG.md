@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+Version 2.1.0
+-------------
+
+_2020-10-14_
+
+* Introduce support for rendering across subcompositions. (#104)
+* Fix for bug where layout IDs to skip were queried incorrectly. (#94 – thanks @samruston!)
+* Fix grammatical errors in documentation. (#92 – thanks @androiddevnotesfork!)
+* Upgrade Compose to 1.0.0-alpha05. (#106)
+
 Version 2.0.0
 -------------
 
