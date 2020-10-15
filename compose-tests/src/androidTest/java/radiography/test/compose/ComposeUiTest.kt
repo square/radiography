@@ -99,7 +99,7 @@ class ComposeUiTest {
       Radiography.scan(viewStateRenderers = emptyList())
     }
 
-    assertThat(hierarchy).contains("Box {  }")
+    assertThat(hierarchy).contains("Box")
   }
 
   @Test fun semanticsAreReported() {
@@ -124,7 +124,7 @@ class ComposeUiTest {
     assertThat(hierarchy).contains("Box { value:\"acc value\" }")
     assertThat(hierarchy).contains("Box { DISABLED }")
     assertThat(hierarchy).contains("Box { FOCUSED }")
-    assertThat(hierarchy).contains("Box {  }")
+    assertThat(hierarchy).contains("Box")
     assertThat(hierarchy).contains("Box { HIDDEN }")
     assertThat(hierarchy).contains("Box { DIALOG }")
     assertThat(hierarchy).contains("Box { POPUP }")
@@ -259,14 +259,14 @@ class ComposeUiTest {
     assertThat(hierarchy).contains(
         """
           Box:
-          ${BLANK}Box { test-tag:"root" }
-          ${BLANK}├─Box {  }
-          ${BLANK}├─Column {  }
-          ${BLANK}│ ├─Box {  }
-          ${BLANK}│ ╰─Box {  }
-          ${BLANK}╰─Row {  }
-          ${BLANK}  ├─Box {  }
-          ${BLANK}  ╰─Box {  }
+        $BLANK ${BLANK}Box { test-tag:"root" }
+        $BLANK ${BLANK}├─Box
+        $BLANK ${BLANK}├─Column
+        $BLANK ${BLANK}│ ├─Box
+        $BLANK ${BLANK}│ ╰─Box
+        $BLANK ${BLANK}╰─Row
+        $BLANK ${BLANK}  ├─Box
+        $BLANK ${BLANK}  ╰─Box
         """.trimIndent()
     )
   }
@@ -291,7 +291,7 @@ class ComposeUiTest {
         """
         ${BLANK} Box:
           ${BLANK}Box { test-tag:"root" }
-        ${BLANK} ${BLANK}╰─AndroidView {  }
+        ${BLANK} ${BLANK}╰─AndroidView
         """.trimIndent()
     )
     // But this view description should show up at some point.
@@ -315,7 +315,7 @@ class ComposeUiTest {
         """
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─Dialog {  }
+        |${BLANK}╰─Dialog
         |${BLANK}  ╰─Providers { DIALOG }
         |${BLANK}    ╰─Box { test-tag:"child" }
         |
@@ -344,7 +344,7 @@ class ComposeUiTest {
         """
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─CustomTestDialog {  }
+        |${BLANK}╰─CustomTestDialog
         |${BLANK}  ╰─Providers { DIALOG }
         |${BLANK}    ╰─Box { test-tag:"child" }
         |
@@ -370,7 +370,7 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
-        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout> {  }
+        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
         |${BLANK}    ╰─Box { test-tag:"child" }
         |
         """.trimMargin()
@@ -396,7 +396,7 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
-        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout> {  }
+        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
         |${BLANK}    ├─Box { test-tag:"child1" }
         |${BLANK}    ╰─Box { test-tag:"child2" }
         |
@@ -428,10 +428,10 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─MultipleSubcompositionLayout { test-tag:"subcompose-layout" }
-        |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout> {  }
+        |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
         |${BLANK}  │ ├─Box { test-tag:"child1.1" }
         |${BLANK}  │ ╰─Box { test-tag:"child1.2" }
-        |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout> {  }
+        |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout>
         |${BLANK}    ├─Box { test-tag:"child2.1" }
         |${BLANK}    ╰─Box { test-tag:"child2.2" }
         |
@@ -460,10 +460,10 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}├─SingleSubcompositionLayout { test-tag:"subcompose-layout1" }
-        |${BLANK}│ ╰─<subcomposition of SingleSubcompositionLayout> {  }
+        |${BLANK}│ ╰─<subcomposition of SingleSubcompositionLayout>
         |${BLANK}│   ╰─Box { test-tag:"child1" }
         |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout2" }
-        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout> {  }
+        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
         |${BLANK}    ╰─Box { test-tag:"child2" }
         |
         """.trimMargin()
@@ -488,7 +488,7 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─WithConstraints { test-tag:"with-constraints" }
-        |${BLANK}  ╰─<subcomposition of WithConstraints> {  }
+        |${BLANK}  ╰─<subcomposition of WithConstraints>
         |${BLANK}    ╰─Box { test-tag:"child" }
         |
         """.trimMargin()
@@ -516,12 +516,12 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
         |${BLANK}╰─LazyColumnFor { test-tag:"list" }
-        |${BLANK}  ├─<subcomposition of LazyColumnFor> {  }
+        |${BLANK}  ├─<subcomposition of LazyColumnFor>
         |${BLANK}  │ ╰─Box { test-tag:"child:1" }
-        |${BLANK}  ├─<subcomposition of LazyColumnFor> {  }
+        |${BLANK}  ├─<subcomposition of LazyColumnFor>
         |${BLANK}  │ ├─Box { test-tag:"child:2" }
         |${BLANK}  │ ╰─Box { test-tag:"child:2 (even)" }
-        |${BLANK}  ╰─<subcomposition of LazyColumnFor> {  }
+        |${BLANK}  ╰─<subcomposition of LazyColumnFor>
         |${BLANK}    ╰─Box { test-tag:"child:3" }
         |
         """.trimMargin()
@@ -555,10 +555,10 @@ class ComposeUiTest {
         |Providers:
         |${BLANK}Providers { 10×30px, test-tag:"parent" }
         |${BLANK}╰─MultipleSubcompositionLayout { 10×30px, test-tag:"subcompose-layout" }
-        |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout> {  }
+        |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
         |${BLANK}  │ ├─Box { 10×10px, test-tag:"child1" }
         |${BLANK}  │ ╰─Box { 10×10px, test-tag:"child2" }
-        |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout> {  }
+        |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout>
         |${BLANK}    ╰─Box { 10×10px, test-tag:"child3" }
         |
         """.trimMargin()

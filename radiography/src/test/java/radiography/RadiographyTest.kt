@@ -14,6 +14,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import radiography.ScannableView.AndroidView
 import radiography.ViewFilters.and
 import radiography.ViewFilters.skipIdsViewFilter
 import radiography.ViewStateRenderers.textViewRenderer
@@ -177,6 +178,34 @@ class RadiographyTest {
           $BLANK  ╰─View { 0×0px }
         """.trimIndent()
     )
+  }
+
+  @Test fun `renderScannableViewTree includes output from renderers`() {
+    val builder = StringBuilder()
+    val rootView = View(context)
+    val scannableRoot = AndroidView(rootView)
+    val renderers = listOf(
+        ViewStateRenderer { append("render1") },
+        ViewStateRenderer { append("render2") },
+    )
+
+    Radiography.renderScannableViewTree(
+        builder, scannableRoot, renderers, ViewFilters.NoFilter
+    )
+
+    assertThat(builder.toString()).isEqualTo("${BLANK}View { render1, render2 }\n")
+  }
+
+  @Test fun `renderScannableViewTree doesn't render empty curly braces`() {
+    val builder = StringBuilder()
+    val rootView = View(context)
+    val scannableRoot = AndroidView(rootView)
+
+    Radiography.renderScannableViewTree(
+        builder, scannableRoot, viewStateRenderers = emptyList(), ViewFilters.NoFilter
+    )
+
+    assertThat(builder.toString()).isEqualTo("${BLANK}View\n")
   }
 
   companion object {
