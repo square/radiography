@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.WindowManager
+import androidx.annotation.VisibleForTesting
 import radiography.Radiography.scan
 import radiography.ScanScopes.AllWindowsScope
 import radiography.ScannableView.AndroidView
@@ -102,21 +103,39 @@ public object Radiography {
     }
   }
 
-  private fun renderScannableViewTree(
+  @VisibleForTesting
+  @JvmSynthetic
+  internal fun renderScannableViewTree(
     builder: StringBuilder,
     rootView: ScannableView,
     viewStateRenderers: List<ViewStateRenderer>,
     viewFilter: ViewFilter
   ) {
     renderTreeString(builder, rootView) {
-      append("${it.displayName} { ")
+      append(it.displayName)
+
+      // Surround attributes in curly braces.
+      // If no attributes get written (the length doesn't change), we'll remove the curly
+      // brace. We append the opening brace before attempting to write, and then delete it later if
+      // nothing was written, because most views have at least one attribute, so in most cases we
+      // need the prefix anyway.
+      append(" { ")
+      val attributesStartIndex = length
+
       val appendable = AttributeAppendable(this)
       for (renderer in viewStateRenderers) {
         with(renderer) {
           appendable.render(it)
         }
       }
-      append(" }")
+
+      if (length == attributesStartIndex) {
+        // No attributes were written, remove the opening curly brace.
+        delete(attributesStartIndex - 3, length)
+      } else {
+        // At least one attribute was written, so close the braces.
+        append(" }")
+      }
 
       return@renderTreeString it.children.filter(viewFilter::matches).toList()
     }
