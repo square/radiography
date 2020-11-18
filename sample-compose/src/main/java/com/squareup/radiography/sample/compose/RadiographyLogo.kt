@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.WithConstraints
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.Dp

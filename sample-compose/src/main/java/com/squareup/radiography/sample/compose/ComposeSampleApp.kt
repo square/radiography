@@ -10,7 +10,6 @@ import androidx.appcompat.app.AlertDialog.Builder
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.ScrollableRow
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable

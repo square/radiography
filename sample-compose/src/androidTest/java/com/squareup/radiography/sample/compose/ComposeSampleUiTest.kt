@@ -1,12 +1,12 @@
 package com.squareup.radiography.sample.compose
 
-import androidx.ui.test.assert
-import androidx.ui.test.assertIsDisplayed
-import androidx.ui.test.createAndroidComposeRule
-import androidx.ui.test.hasSubstring
-import androidx.ui.test.onNodeWithTag
-import androidx.ui.test.onNodeWithText
-import androidx.ui.test.performTextReplacement
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasSubstring
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performTextReplacement
 import org.junit.Rule
 import org.junit.Test
 
