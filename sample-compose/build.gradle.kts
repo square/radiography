@@ -6,7 +6,7 @@ plugins {
 }
 
 /** Use a separate property for the sample so we can test with different versions easily. */
-val sampleComposeVersion = "1.0.0-alpha05"
+val sampleComposeVersion = "1.0.0-alpha07"
 
 android {
   compileSdkVersion(30)
@@ -35,6 +35,11 @@ android {
   lintOptions {
     // Workaround lint bug.
     disable("InvalidFragmentVersionForActivityResult")
+  }
+
+  packagingOptions {
+    exclude("META-INF/AL2.0")
+    exclude("META-INF/LGPL2.1")
   }
 }
 
