@@ -72,8 +72,6 @@ dependencies {
   // bringing them in itself.
   compileOnly(Dependencies.Compose().Tooling)
 
-  implementation(kotlin("stdlib", Versions.KotlinStdlib))
-
   testImplementation(Dependencies.JUnit)
   testImplementation(Dependencies.Mockito)
   testImplementation(Dependencies.Robolectric)
