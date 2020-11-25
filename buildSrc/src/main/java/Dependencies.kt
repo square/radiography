@@ -3,7 +3,7 @@ object Versions {
    * To change this in the IDE, use `systemProp.square.kotlinVersion=x.y.z` in your
    * `~/.gradle/gradle.properties` file.
    */
-  val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.4.10"
+  val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.4.20"
 
   const val Compose = "1.0.0-alpha05"
 }
