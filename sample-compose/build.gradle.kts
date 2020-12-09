@@ -55,9 +55,6 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-  // Don't use Versions.KotlinStdlib for Kotlin stdlib, since this module actually uses the Compose
-  // compiler and needs the latest stdlib.
-
   implementation(project(":radiography"))
   implementation(Dependencies.AppCompat)
   implementation(Dependencies.Compose(sampleComposeVersion).Material)

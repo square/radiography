@@ -80,19 +80,19 @@ public object Radiography {
     if (!viewFilter.matches(rootView)) return
 
     if (length > 0) {
-      appendln()
+      appendLine()
     }
 
     val androidView = (rootView as? AndroidView)?.view
     val layoutParams = androidView?.layoutParams
     val title = (layoutParams as? WindowManager.LayoutParams)?.title?.toString()
         ?: rootView.displayName
-    appendln("$title:")
+    appendLine("$title:")
 
     val startPosition = length
     try {
       androidView?.let {
-        appendln("window-focus:${it.hasWindowFocus()}")
+        appendLine("window-focus:${it.hasWindowFocus()}")
       }
       renderScannableViewTree(this, rootView, viewStateRenderers, viewFilter)
     } catch (e: Throwable) {

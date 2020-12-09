@@ -81,7 +81,7 @@ internal fun composeRenderingError(exception: LinkageError?): ScannableView {
   val message = buildString {
     append(COMPOSE_UNSUPPORTED_MESSAGE)
     exception?.let {
-      appendln().append("Error: $exception")
+      appendLine().append("Error: $exception")
     }
   }
   return ChildRenderingError(message)

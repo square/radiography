@@ -5,9 +5,6 @@ object Versions {
    */
   val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.4.10"
 
-  /** Use a lower version of the stdlib so the library can be consumed by lower kotlin versions. */
-  val KotlinStdlib = System.getProperty("square.kotlinStdlibVersion") ?: "1.3.72"
-
   const val Compose = "1.0.0-alpha05"
 }
 
