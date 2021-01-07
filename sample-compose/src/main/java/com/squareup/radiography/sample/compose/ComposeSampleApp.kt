@@ -31,14 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import radiography.ExperimentalRadiographyComposeApi
 import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
@@ -53,14 +53,14 @@ import radiography.ViewStateRenderers.textViewRenderer
 internal const val TEXT_FIELD_TEST_TAG = "text-field"
 internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
 
-@Preview(showBackground = true, showDecoration = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable fun ComposeSampleAppPreview() {
   ComposeSampleApp()
 }
 
 @OptIn(ExperimentalRadiographyComposeApi::class, ExperimentalAnimationApi::class)
 @Composable fun ComposeSampleApp() {
-  val context = ContextAmbient.current
+  val context = AmbientContext.current
   val liveHierarchy = remember { mutableStateOf<String?>(null) }
 
   var username by remember { mutableStateOf("") }
@@ -69,25 +69,25 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
 
   MaterialTheme {
     Column(
-        modifier = Modifier.padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+      modifier = Modifier.padding(16.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
       RadiographyLogo(Modifier.height(128.dp))
 
       TextField(
-          value = username,
-          onValueChange = { username = it },
-          label = { Text("Username") },
-          backgroundColor = Color.Transparent,
-          modifier = Modifier.testTag(TEXT_FIELD_TEST_TAG)
+        value = username,
+        onValueChange = { username = it },
+        label = { Text("Username") },
+        backgroundColor = Color.Transparent,
+        modifier = Modifier.testTag(TEXT_FIELD_TEST_TAG)
       )
       TextField(
-          value = password,
-          onValueChange = { password = it },
-          label = { Text("Password") },
-          backgroundColor = Color.Transparent,
-          visualTransformation = PasswordVisualTransformation()
+        value = password,
+        onValueChange = { password = it },
+        label = { Text("Password") },
+        backgroundColor = Color.Transparent,
+        visualTransformation = PasswordVisualTransformation()
       )
       Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(checked = rememberMe, onCheckedChange = { rememberMe = it })
@@ -114,10 +114,10 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
         ScrollableRow(modifier = Modifier.weight(1f)) {
           ScrollableColumn {
             Text(
-                liveHierarchy.value.orEmpty(),
-                fontFamily = FontFamily.Monospace,
-                fontSize = 6.sp,
-                modifier = Modifier.testTag(LIVE_HIERARCHY_TEST_TAG)
+              liveHierarchy.value.orEmpty(),
+              fontFamily = FontFamily.Monospace,
+              fontSize = 6.sp,
+              modifier = Modifier.testTag(LIVE_HIERARCHY_TEST_TAG)
             )
           }
         }
@@ -128,9 +128,9 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
 
       onCommit {
         liveHierarchy.value = Radiography.scan(
-            viewStateRenderers = DefaultsIncludingPii,
-            // Don't trigger infinite recursion.
-            viewFilter = skipComposeTestTagsFilter(LIVE_HIERARCHY_TEST_TAG)
+          viewStateRenderers = DefaultsIncludingPii,
+          // Don't trigger infinite recursion.
+          viewFilter = skipComposeTestTagsFilter(LIVE_HIERARCHY_TEST_TAG)
         )
       }
     }

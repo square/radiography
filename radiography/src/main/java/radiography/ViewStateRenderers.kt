@@ -76,8 +76,8 @@ public object ViewStateRenderers {
           .forEach { (key, value) ->
             when (key) {
               SemanticsProperties.TestTag -> append("test-tag:\"$value\"")
-              SemanticsProperties.AccessibilityLabel -> append("label:\"$value\"")
-              SemanticsProperties.AccessibilityValue -> append("value:\"$value\"")
+              SemanticsProperties.ContentDescription -> append("content-description:\"$value\"")
+              SemanticsProperties.StateDescription -> append("state-description:\"$value\"")
               SemanticsProperties.Disabled -> append("DISABLED")
               SemanticsProperties.Focused -> if (value == true) append("FOCUSED")
               SemanticsProperties.Hidden -> append("HIDDEN")
@@ -91,10 +91,10 @@ public object ViewStateRenderers {
           .filterIsInstance<LayoutIdParentData>()
           .singleOrNull()
           ?.let { layoutId ->
-            val idValue = if (layoutId.id is CharSequence) {
-              "\"${layoutId.id}\""
+            val idValue = if (layoutId.layoutId is CharSequence) {
+              "\"${layoutId.layoutId}\""
             } else {
-              layoutId.id.toString()
+              layoutId.layoutId.toString()
             }
             append("layout-id:$idValue")
           }

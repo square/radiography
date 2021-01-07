@@ -30,6 +30,11 @@ android {
     kotlinCompilerVersion = Versions.KotlinCompiler
     kotlinCompilerExtensionVersion = Versions.Compose
   }
+
+  packagingOptions {
+    exclude("META-INF/AL2.0")
+    exclude("META-INF/LGPL2.1")
+  }
 }
 
 tasks.withType<KotlinCompile> {
