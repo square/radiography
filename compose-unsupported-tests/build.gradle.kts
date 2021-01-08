@@ -10,7 +10,8 @@ plugins {
  * built with unsupported Compose versions.
  */
 val oldComposeVersion = "1.0.0-alpha04"
-val oldComposeCompiler = Versions.KotlinCompiler
+// Older version of Compose requires an older version of Kotlin.
+val oldComposeCompiler = "1.4.0"
 
 android {
   compileSdkVersion(30)
@@ -54,7 +55,9 @@ dependencies {
   androidTestImplementation(project(":radiography"))
   androidTestImplementation(Dependencies.AppCompat)
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Material)
-  androidTestImplementation(Dependencies.Compose(oldComposeVersion).Testing)
+  // This artifact's maven coordinates are different in newer versions so we can't use the one from
+  // Dependencies.kt.
+  androidTestImplementation("androidx.ui:ui-test:$oldComposeVersion")
   androidTestImplementation(Dependencies.InstrumentationTests.Rules)
   androidTestImplementation(Dependencies.InstrumentationTests.Runner)
   androidTestImplementation(Dependencies.Truth)

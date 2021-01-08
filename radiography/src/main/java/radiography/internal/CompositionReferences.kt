@@ -2,7 +2,7 @@ package radiography.internal
 
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.CompositionReference
-import androidx.ui.tooling.Group
+import androidx.compose.ui.tooling.Group
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 private val REFLECTION_CONSTANTS by lazy(PUBLICATION) {

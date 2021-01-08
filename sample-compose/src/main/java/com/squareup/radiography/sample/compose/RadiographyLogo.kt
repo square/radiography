@@ -10,14 +10,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.WithConstraints
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import kotlin.math.roundToInt
 
 @Preview @Composable private fun RadiographyLogoPreview() {
@@ -64,7 +64,7 @@ import kotlin.math.roundToInt
           .wrapContentSize(FractionalAlignment(centerOffsetFraction))
   ) {
     // Don't draw the content if it's going to be too small to see, and stop recursing.
-    val minSize = with(DensityAmbient.current) { minimumSizeThreshold.toIntPx() }
+    val minSize = with(AmbientDensity.current) { minimumSizeThreshold.toIntPx() }
     if (constraints.maxHeight < minSize && constraints.maxWidth < minSize) {
       return@WithConstraints
     }
@@ -84,6 +84,7 @@ private class FractionalAlignment(
 ) : Alignment {
   override fun align(
     size: IntSize,
+    space: IntSize,
     layoutDirection: LayoutDirection
   ): IntOffset = IntOffset(
       x = (size.width * offsetFraction.x).roundToInt(),

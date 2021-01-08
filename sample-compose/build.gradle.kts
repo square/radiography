@@ -6,7 +6,7 @@ plugins {
 }
 
 /** Use a separate property for the sample so we can test with different versions easily. */
-val sampleComposeVersion = "1.0.0-alpha07"
+val sampleComposeVersion = "1.0.0-alpha09"
 
 android {
   compileSdkVersion(30)

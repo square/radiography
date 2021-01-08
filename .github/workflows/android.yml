@@ -10,9 +10,6 @@ jobs:
   build:
     strategy:
       fail-fast: false
-      matrix:
-        kotlin-version:
-          - 1.4.0
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -21,7 +18,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Gradle
-      run: ./gradlew build -Dsquare.kotlinVersion=${{ matrix.kotlin-version }}
+      run: ./gradlew build
 
   instrumentation-tests:
     name: Instrumentation tests

@@ -1,11 +1,12 @@
 package radiography.internal
 
 import android.view.View
+import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntBounds
-import androidx.ui.tooling.Group
-import androidx.ui.tooling.NodeGroup
-import androidx.ui.tooling.asTree
+import androidx.compose.ui.tooling.Group
+import androidx.compose.ui.tooling.NodeGroup
+import androidx.compose.ui.tooling.asTree
 
 /**
  * Information about a Compose `LayoutNode`, extracted from a [Group] tree via [Group.layoutInfos].
@@ -50,18 +51,20 @@ private fun Group.computeLayoutInfos(
 
   // Look for any CompositionReferences stored in this group. These will be rolled up into the
   // SubcomposeLayout if present, otherwise they will just be shown as regular children.
+  @OptIn(InternalComposeApi::class)
   val subComposedChildren = getCompositionReferences()
-      .flatMap { it.tryGetComposers().asSequence() }
-      .map { subcomposer ->
-        ComposeLayoutInfo(
-            isSubcomposition = true,
-            name = name,
-            bounds = box,
-            modifiers = emptyList(),
-            children = subcomposer.slotTable.asTree().layoutInfos,
-            view = null
-        )
-      }
+    .flatMap { it.tryGetComposers().asSequence() }
+    .map { subcomposer ->
+      ComposeLayoutInfo(
+        isSubcomposition = true,
+        name = name,
+        bounds = box,
+        modifiers = emptyList(),
+        // The compositionData val is marked as internal, and not intended for public consumption.
+        children = subcomposer.compositionData.asTree().layoutInfos,
+        view = null
+      )
+    }
 
   // SubcomposeLayouts need to be handled specially, because all their subcompositions are always
   // logical children of their single LayoutNode. In order to render them so that the rendering

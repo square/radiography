@@ -2,34 +2,33 @@ package radiography.test.compose
 
 import android.view.ViewGroup.LayoutParams
 import android.widget.TextView
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.WithConstraints
-import androidx.compose.ui.layout.ExperimentalSubcomposeLayoutApi
 import androidx.compose.ui.layout.SubcomposeLayout
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.layout.WithConstraints
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.SemanticsProperties.AccessibilityLabel
-import androidx.compose.ui.semantics.SemanticsProperties.AccessibilityValue
+import androidx.compose.ui.semantics.SemanticsProperties.ContentDescription
 import androidx.compose.ui.semantics.SemanticsProperties.Disabled
 import androidx.compose.ui.semantics.SemanticsProperties.Focused
 import androidx.compose.ui.semantics.SemanticsProperties.Hidden
 import androidx.compose.ui.semantics.SemanticsProperties.IsDialog
 import androidx.compose.ui.semantics.SemanticsProperties.IsPopup
+import androidx.compose.ui.semantics.SemanticsProperties.StateDescription
 import androidx.compose.ui.semantics.SemanticsProperties.TestTag
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
-import androidx.ui.test.createComposeRule
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -46,7 +45,7 @@ import radiography.ViewStateRenderers.textViewRenderer
 // so keeping them everywhere helps keep multiline strings aligned.
 /* ktlint-disable string-template */
 @Suppress("TestFunctionName")
-@OptIn(ExperimentalRadiographyComposeApi::class, ExperimentalSubcomposeLayoutApi::class)
+@OptIn(ExperimentalRadiographyComposeApi::class)
 class ComposeUiTest {
 
   @get:Rule
@@ -54,7 +53,7 @@ class ComposeUiTest {
 
   @Test fun when_includingPii_then_hierarchyContainsText() {
     composeRule.setContentWithExplicitRoot {
-      Text("FooBar")
+      BasicText("FooBar")
     }
 
     composeRule.runOnIdle {
@@ -65,7 +64,7 @@ class ComposeUiTest {
 
   @Test fun when_noPii_then_hierarchyExcludesText() {
     composeRule.setContentWithExplicitRoot {
-      Text("FooBar")
+      BasicText("FooBar")
     }
 
     composeRule.runOnIdle {
@@ -77,7 +76,7 @@ class ComposeUiTest {
 
   @Test fun viewSizeReported() {
     composeRule.setContentWithExplicitRoot {
-      val (width, height) = with(DensityAmbient.current) {
+      val (width, height) = with(AmbientDensity.current) {
         Pair(30.toDp(), 40.toDp())
       }
       Box(modifier = Modifier.size(width, height))
@@ -105,8 +104,8 @@ class ComposeUiTest {
   @Test fun semanticsAreReported() {
     composeRule.setContentWithExplicitRoot {
       Box(Modifier.semantics { set(TestTag, "test tag") })
-      Box(Modifier.semantics { set(AccessibilityLabel, "acc label") })
-      Box(Modifier.semantics { set(AccessibilityValue, "acc value") })
+      Box(Modifier.semantics { set(ContentDescription, "content description") })
+      Box(Modifier.semantics { set(StateDescription, "state description") })
       Box(Modifier.semantics { set(Disabled, Unit) })
       Box(Modifier.semantics { set(Focused, true) })
       Box(Modifier.semantics { set(Focused, false) })
@@ -120,8 +119,8 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).contains("Box { test-tag:\"test tag\" }")
-    assertThat(hierarchy).contains("Box { label:\"acc label\" }")
-    assertThat(hierarchy).contains("Box { value:\"acc value\" }")
+    assertThat(hierarchy).contains("Box { content-description:\"content description\" }")
+    assertThat(hierarchy).contains("Box { state-description:\"state description\" }")
     assertThat(hierarchy).contains("Box { DISABLED }")
     assertThat(hierarchy).contains("Box { FOCUSED }")
     assertThat(hierarchy).contains("Box")
@@ -145,7 +144,7 @@ class ComposeUiTest {
 
   @Test fun textContents() {
     composeRule.setContentWithExplicitRoot {
-      Text("Baguette Avec Fromage")
+      BasicText("Baguette Avec Fromage")
     }
 
     val hierarchy = composeRule.runOnIdle {
@@ -158,7 +157,7 @@ class ComposeUiTest {
 
   @Test fun textContentsEllipsized() {
     composeRule.setContentWithExplicitRoot {
-      Text("Baguette Avec Fromage")
+      BasicText("Baguette Avec Fromage")
     }
 
     val hierarchy = composeRule.runOnIdle {
@@ -178,7 +177,7 @@ class ComposeUiTest {
 
   @Test fun textExcludedByDefault() {
     composeRule.setContentWithExplicitRoot {
-      Text("Baguette Avec Fromage")
+      BasicText("Baguette Avec Fromage")
     }
 
     val hierarchy = composeRule.runOnIdle {
@@ -498,10 +497,12 @@ class ComposeUiTest {
   @Test fun scanningHandlesLazyLists() {
     composeRule.setContent {
       Box(Modifier.testTag("parent")) {
-        LazyColumnFor(items = listOf(1, 2, 3), modifier = Modifier.testTag("list")) {
-          Box(Modifier.testTag("child:$it"))
-          if (it % 2 == 0) {
-            Box(Modifier.testTag("child:$it (even)"))
+        LazyColumn(Modifier.testTag("list")) {
+          items(listOf(1, 2, 3)) {
+            Box(Modifier.testTag("child:$it"))
+            if (it % 2 == 0) {
+              Box(Modifier.testTag("child:$it (even)"))
+            }
           }
         }
       }
@@ -515,14 +516,14 @@ class ComposeUiTest {
         """
         |Providers:
         |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─LazyColumnFor { test-tag:"list" }
-        |${BLANK}  ├─<subcomposition of LazyColumnFor>
-        |${BLANK}  │ ╰─Box { test-tag:"child:1" }
-        |${BLANK}  ├─<subcomposition of LazyColumnFor>
-        |${BLANK}  │ ├─Box { test-tag:"child:2" }
-        |${BLANK}  │ ╰─Box { test-tag:"child:2 (even)" }
-        |${BLANK}  ╰─<subcomposition of LazyColumnFor>
-        |${BLANK}    ╰─Box { test-tag:"child:3" }
+        |${BLANK}╰─LazyColumn { test-tag:"list" }
+        |${BLANK}  ├─<subcomposition of LazyColumn>
+        |${BLANK}  │ ╰─RestorableStateProvider { test-tag:"child:1" }
+        |${BLANK}  ├─<subcomposition of LazyColumn>
+        |${BLANK}  │ ├─RestorableStateProvider { test-tag:"child:2" }
+        |${BLANK}  │ ╰─RestorableStateProvider { test-tag:"child:2 (even)" }
+        |${BLANK}  ╰─<subcomposition of LazyColumn>
+        |${BLANK}    ╰─RestorableStateProvider { test-tag:"child:3" }
         |
         """.trimMargin()
     )
@@ -531,7 +532,7 @@ class ComposeUiTest {
   @Test fun scanningSubcomposition_includesSize() {
     composeRule.setContent {
       // Convert 10 px to DP, since output is always in px.
-      val sizeDp = with(DensityAmbient.current) { 10.toDp() }
+      val sizeDp = with(AmbientDensity.current) { 10.toDp() }
 
       Box(Modifier.testTag("parent")) {
         MultipleSubcompositionLayout(Modifier.testTag("subcompose-layout"),
@@ -573,9 +574,9 @@ class ComposeUiTest {
     modifier: Modifier,
     children: @Composable () -> Unit
   ) {
-    SubcomposeLayout<Unit>(modifier) { constraints ->
+    SubcomposeLayout(modifier) { constraints ->
       val placeables = subcompose(Unit, children)
-          .map { it.measure(constraints) }
+        .map { it.measure(constraints) }
 
       layout(0, 0) {
         placeables.forEach { it.placeRelative(0, 0) }
@@ -592,15 +593,15 @@ class ComposeUiTest {
     firstChildren: @Composable () -> Unit,
     secondChildren: @Composable () -> Unit
   ) {
-    SubcomposeLayout<Int>(modifier) { constraints ->
+    SubcomposeLayout(modifier) { constraints ->
       val placeables = listOf(
-          subcompose(0, firstChildren),
-          subcompose(1, secondChildren),
+        subcompose(0, firstChildren),
+        subcompose(1, secondChildren),
       ).flatten().map { it.measure(constraints) }
 
       layout(
-          width = placeables.maxOfOrNull { it.width } ?: 0,
-          height = placeables.sumOf { it.height }
+        width = placeables.maxOfOrNull { it.width } ?: 0,
+        height = placeables.sumOf { it.height }
       ) {
         placeables.fold(0) { y, placeable ->
           placeable.placeRelative(0, y)
