@@ -14,10 +14,10 @@ private val REFLECTION_CONSTANTS by lazy(PUBLICATION) {
         Class.forName("androidx.compose.runtime.Composer\$CompositionReferenceImpl")
       val compositionReferenceHolderRefField =
         compositionReferenceHolderClass.getDeclaredField("ref")
-            .apply { isAccessible = true }
+          .apply { isAccessible = true }
       val compositionReferenceImplComposersField =
         compositionReferenceImplClass.getDeclaredField("composers")
-            .apply { isAccessible = true }
+          .apply { isAccessible = true }
     }
   } catch (e: Throwable) {
     null
@@ -27,8 +27,8 @@ private val REFLECTION_CONSTANTS by lazy(PUBLICATION) {
 internal fun Group.getCompositionReferences(): Sequence<CompositionReference> {
   return REFLECTION_CONSTANTS?.run {
     data.asSequence()
-        .filter { it != null && it::class.java == compositionReferenceHolderClass }
-        .mapNotNull { holder -> holder.tryGetCompositionReference() }
+      .filter { it != null && it::class.java == compositionReferenceHolderClass }
+      .mapNotNull { holder -> holder.tryGetCompositionReference() }
   } ?: emptySequence()
 }
 

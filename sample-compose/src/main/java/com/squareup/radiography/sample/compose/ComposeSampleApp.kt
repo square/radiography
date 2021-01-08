@@ -140,54 +140,54 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
 @OptIn(ExperimentalRadiographyComposeApi::class)
 private fun showSelectionDialog(context: Context) {
   val renderings = listOf(
-      "Default" to {
-        Radiography.scan()
-      },
-      "Focused window" to {
-        Radiography.scan(scanScope = FocusedWindowScope)
-      },
-      "Skip testTag(\"$TEXT_FIELD_TEST_TAG\")" to {
-        Radiography.scan(viewFilter = skipComposeTestTagsFilter(TEXT_FIELD_TEST_TAG))
-      },
-      "Focused window and custom filter" to {
-        Radiography.scan(
-            scanScope = FocusedWindowScope,
-            viewFilter = { view -> view !is LinearLayout }
+    "Default" to {
+      Radiography.scan()
+    },
+    "Focused window" to {
+      Radiography.scan(scanScope = FocusedWindowScope)
+    },
+    "Skip testTag(\"$TEXT_FIELD_TEST_TAG\")" to {
+      Radiography.scan(viewFilter = skipComposeTestTagsFilter(TEXT_FIELD_TEST_TAG))
+    },
+    "Focused window and custom filter" to {
+      Radiography.scan(
+        scanScope = FocusedWindowScope,
+        viewFilter = { view -> view !is LinearLayout }
+      )
+    },
+    "Include PII" to {
+      Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
+    },
+    "Include PII ellipsized" to {
+      Radiography.scan(
+        viewStateRenderers = listOf(
+          ViewRenderer,
+          textViewRenderer(renderTextValue = true, textValueMaxLength = 4),
+          CheckableRenderer,
         )
-      },
-      "Include PII" to {
-        Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
-      },
-      "Include PII ellipsized" to {
-        Radiography.scan(
-            viewStateRenderers = listOf(
-                ViewRenderer,
-                textViewRenderer(renderTextValue = true, textValueMaxLength = 4),
-                CheckableRenderer,
-            )
-        )
-      },
-      "Custom LinearLayout renderer" to {
-        Radiography.scan(
-            viewStateRenderers = DefaultsNoPii + androidViewStateRendererFor<LinearLayout> {
-              append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
-            })
-      }
+      )
+    },
+    "Custom LinearLayout renderer" to {
+      Radiography.scan(
+        viewStateRenderers = DefaultsNoPii + androidViewStateRendererFor<LinearLayout> {
+          append(if (it.orientation == LinearLayout.HORIZONTAL) "horizontal" else "vertical")
+        })
+    }
   )
 
   val items = renderings.map { it.first }
-      .toTypedArray()
+    .toTypedArray()
   Builder(context)
-      .setTitle("Choose rendering")
-      .setItems(items) { _, index ->
-        val rendering = renderings[index].second()
-        // Print each line as a separate logcat entry so the total output doesn't get truncated.
-        rendering.lineSequence().forEach {
-          Log.d("MainActivity", it)
-        }
-        showResult(context, rendering)
+    .setTitle("Choose rendering")
+    .setItems(items) { _, index ->
+      val rendering = renderings[index].second()
+      // Print each line as a separate logcat entry so the total output doesn't get truncated.
+      rendering.lineSequence().forEach {
+        Log.d("MainActivity", it)
       }
-      .show()
+      showResult(context, rendering)
+    }
+    .show()
 }
 
 private fun showResult(
@@ -195,12 +195,12 @@ private fun showResult(
   rendering: String
 ) {
   val renderingDialog = Builder(context)
-      .setTitle("Rendering (also printed to Logcat)")
-      .setMessage(rendering)
-      .setPositiveButton("Ok") { _, _ ->
-        showSelectionDialog(context)
-      }
-      .show()
+    .setTitle("Rendering (also printed to Logcat)")
+    .setMessage(rendering)
+    .setPositiveButton("Ok") { _, _ ->
+      showSelectionDialog(context)
+    }
+    .show()
   val messageView = renderingDialog.findViewById<TextView>(android.R.id.message)!!
   messageView.textSize = 9f
   messageView.typeface = Typeface.MONOSPACE

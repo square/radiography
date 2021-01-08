@@ -27,70 +27,70 @@ class RadiographyTest {
 
   @Test fun viewDetailsReported() {
     val view = View(context)
-        .apply {
-          visibility = View.INVISIBLE
-          right = 30
-          bottom = 30
-          isEnabled = false
-          isSelected = true
-        }
+      .apply {
+        visibility = View.INVISIBLE
+        right = 30
+        bottom = 30
+        isEnabled = false
+        isSelected = true
+      }
     view.scan()
-        .also {
-          assertThat(it).contains("INVISIBLE")
-          assertThat(it).contains("30×30px")
-          assertThat(it).contains("disabled")
-          assertThat(it).contains("selected")
-        }
+      .also {
+        assertThat(it).contains("INVISIBLE")
+        assertThat(it).contains("30×30px")
+        assertThat(it).contains("disabled")
+        assertThat(it).contains("selected")
+      }
   }
 
   @Test fun nullView() {
     val view: View? = null
     assertThat(view.scan())
-        .contains("null")
+      .contains("null")
   }
 
   @Test fun checkableChecked() {
     val view = CheckBox(context)
     view.isChecked = true
     assertThat(view.scan())
-        .contains("checked")
+      .contains("checked")
   }
 
   @Test fun textView() {
     val view = TextView(context)
     view.text = "Baguette"
     view.scan()
-        .also {
-          assertThat(it).contains("text-length:8")
-          assertThat(it).doesNotContain("text:")
-        }
+      .also {
+        assertThat(it).contains("text-length:8")
+        assertThat(it).doesNotContain("text:")
+      }
   }
 
   @Test fun textViewContents() {
     val view = TextView(context)
     view.text = "Baguette Avec Fromage"
     view.scan(viewStateRenderers = listOf(textViewRenderer(renderTextValue = true)))
-        .also {
-          assertThat(it).doesNotContain("text-length")
-          assertThat(it).contains("text:\"Baguette Avec Fromage\"")
-        }
+      .also {
+        assertThat(it).doesNotContain("text-length")
+        assertThat(it).contains("text:\"Baguette Avec Fromage\"")
+      }
   }
 
   @Test fun textViewContentsEllipsized() {
     val view = TextView(context)
     view.text = "Baguette Avec Fromage"
     view.scan(
-        viewStateRenderers = listOf(
-            textViewRenderer(
-                renderTextValue = true,
-                textValueMaxLength = 11
-            )
+      viewStateRenderers = listOf(
+        textViewRenderer(
+          renderTextValue = true,
+          textValueMaxLength = 11
         )
+      )
     )
-        .also {
-          assertThat(it).contains("text-length:21")
-          assertThat(it).contains("text:\"Baguette A…\"")
-        }
+      .also {
+        assertThat(it).contains("text-length:21")
+        assertThat(it).contains("text:\"Baguette A…\"")
+      }
   }
 
   @Test fun recoversFromException() {
@@ -101,10 +101,10 @@ class RadiographyTest {
       }
     })
     layout.scan()
-        .also {
-          assertThat(it).contains("FrameLayout")
-          assertThat(it).contains("Leave me alone")
-        }
+      .also {
+        assertThat(it).contains("FrameLayout")
+        assertThat(it).contains("Leave me alone")
+      }
   }
 
   @Test fun `skipIds with single input`() {
@@ -114,10 +114,10 @@ class RadiographyTest {
     }
     layout.addView(view)
     layout.scan(viewFilter = skipIdsViewFilter(42))
-        .also {
-          assertThat(it).contains("FrameLayout")
-          assertThat(it).doesNotContain("Button")
-        }
+      .also {
+        assertThat(it).contains("FrameLayout")
+        assertThat(it).doesNotContain("Button")
+      }
   }
 
   @Test fun `skipIds with unsorted inputs`() {
@@ -127,10 +127,10 @@ class RadiographyTest {
     }
     layout.addView(view)
     layout.scan(viewFilter = skipIdsViewFilter(42, 2, 6))
-            .also {
-              assertThat(it).contains("FrameLayout")
-              assertThat(it).doesNotContain("Button")
-            }
+      .also {
+        assertThat(it).contains("FrameLayout")
+        assertThat(it).doesNotContain("Button")
+      }
   }
 
   @Test fun combineFilters() {
@@ -143,11 +143,11 @@ class RadiographyTest {
 
     val filter = skipIdsViewFilter(42) and ViewFilter { it !is EditText }
     layout.scan(viewFilter = filter)
-        .also {
-          assertThat(it).contains("CheckBox")
-          assertThat(it).doesNotContain("Button")
-          assertThat(it).doesNotContain("TextView")
-        }
+      .also {
+        assertThat(it).contains("CheckBox")
+        assertThat(it).doesNotContain("Button")
+        assertThat(it).doesNotContain("TextView")
+      }
   }
 
   @Test fun nestedViews() {
@@ -155,19 +155,19 @@ class RadiographyTest {
       addView(View(context))
     }
     val childLayout1 = LinearLayout(context)
-        .apply {
-          addView(View(context))
-          addView(View(context))
-        }
+      .apply {
+        addView(View(context))
+        addView(View(context))
+      }
     root.addView(childLayout1)
     val childLayout2 = LinearLayout(context)
-        .apply {
-          addView(View(context))
-          addView(View(context))
-        }
+      .apply {
+        addView(View(context))
+        addView(View(context))
+      }
     root.addView(childLayout2)
     assertThat(root.scan()).contains(
-        """
+      """
           FrameLayout { 0×0px }
           $BLANK├─View { 0×0px }
           $BLANK├─LinearLayout { 0×0px }
@@ -185,12 +185,12 @@ class RadiographyTest {
     val rootView = View(context)
     val scannableRoot = AndroidView(rootView)
     val renderers = listOf(
-        ViewStateRenderer { append("render1") },
-        ViewStateRenderer { append("render2") },
+      ViewStateRenderer { append("render1") },
+      ViewStateRenderer { append("render2") },
     )
 
     Radiography.renderScannableViewTree(
-        builder, scannableRoot, renderers, ViewFilters.NoFilter
+      builder, scannableRoot, renderers, ViewFilters.NoFilter
     )
 
     assertThat(builder.toString()).isEqualTo("${BLANK}View { render1, render2 }\n")
@@ -202,7 +202,7 @@ class RadiographyTest {
     val scannableRoot = AndroidView(rootView)
 
     Radiography.renderScannableViewTree(
-        builder, scannableRoot, viewStateRenderers = emptyList(), ViewFilters.NoFilter
+      builder, scannableRoot, viewStateRenderers = emptyList(), ViewFilters.NoFilter
     )
 
     assertThat(builder.toString()).isEqualTo("${BLANK}View\n")

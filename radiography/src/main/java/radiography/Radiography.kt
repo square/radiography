@@ -55,7 +55,7 @@ public object Radiography {
       // The entire view tree is single threaded, and that's typically the main thread, but
       // it doesn't have to be, and we don't know where the passed in view is coming from.
       val viewLooper = (scanRoot as? AndroidView)?.view?.handler?.looper
-          ?: Looper.getMainLooper()!!
+        ?: Looper.getMainLooper()!!
 
       if (viewLooper.thread == Thread.currentThread()) {
         scanFromLooperThread(scanRoot, viewStateRenderers, viewFilter)
@@ -86,7 +86,7 @@ public object Radiography {
     val androidView = (rootView as? AndroidView)?.view
     val layoutParams = androidView?.layoutParams
     val title = (layoutParams as? WindowManager.LayoutParams)?.title?.toString()
-        ?: rootView.displayName
+      ?: rootView.displayName
     appendLine("$title:")
 
     val startPosition = length
@@ -97,8 +97,8 @@ public object Radiography {
       renderScannableViewTree(this, rootView, viewStateRenderers, viewFilter)
     } catch (e: Throwable) {
       insert(
-          startPosition,
-          "Exception when going through view hierarchy: ${e.message}\n"
+        startPosition,
+        "Exception when going through view hierarchy: ${e.message}\n"
       )
     }
   }

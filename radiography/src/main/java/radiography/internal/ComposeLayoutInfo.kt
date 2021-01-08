@@ -83,7 +83,7 @@ private fun Group.computeLayoutInfos(
   if (this.name == "SubcomposeLayout") {
     val (subcompositions, regularChildren) =
       (children.asSequence().flatMap { it.computeLayoutInfos(name) } + subComposedChildren)
-          .partition { it.isSubcomposition }
+        .partition { it.isSubcomposition }
 
     if (subcompositions.isNotEmpty() && regularChildren.size == 1) {
       val mainNode = regularChildren.single()
@@ -92,9 +92,9 @@ private fun Group.computeLayoutInfos(
         // expose its layout node as the parent of all its subcompositions.
         val subcompositionName = "<subcomposition of ${mainNode.name}>"
         return sequenceOf(
-            mainNode.copy(children = subcompositions.asSequence()
-                .map { it.copy(name = subcompositionName) }
-            )
+          mainNode.copy(children = subcompositions.asSequence()
+            .map { it.copy(name = subcompositionName) }
+          )
         )
       }
     }
@@ -103,19 +103,19 @@ private fun Group.computeLayoutInfos(
   // This is an intermediate group that doesn't represent a LayoutNode.
   if (this !is NodeGroup) {
     return children.asSequence()
-        .flatMap { it.computeLayoutInfos(name) } + subComposedChildren
+      .flatMap { it.computeLayoutInfos(name) } + subComposedChildren
   }
 
   val children = children.asSequence()
-      // This node will "consume" the name, so reset it name to empty for children.
-      .flatMap { it.computeLayoutInfos() }
+    // This node will "consume" the name, so reset it name to empty for children.
+    .flatMap { it.computeLayoutInfos() }
 
   val layoutInfo = ComposeLayoutInfo(
-      name = name,
-      bounds = box,
-      modifiers = modifierInfo.map { it.modifier },
-      children = children + subComposedChildren,
-      view = node as? View
+    name = name,
+    bounds = box,
+    modifiers = modifierInfo.map { it.modifier },
+    children = children + subComposedChildren,
+    view = node as? View
   )
   return sequenceOf(layoutInfo)
 }

@@ -68,36 +68,36 @@ public object ViewStateRenderers {
 
       // Semantics
       composeView
-          .modifiers
-          .filterIsInstance<SemanticsModifier>()
-          // Technically there can be multiple semantic modifiers on a single node, so read them
-          // all.
-          .flatMap { semantics -> semantics.semanticsConfiguration }
-          .forEach { (key, value) ->
-            when (key) {
-              SemanticsProperties.TestTag -> append("test-tag:\"$value\"")
-              SemanticsProperties.ContentDescription -> append("content-description:\"$value\"")
-              SemanticsProperties.StateDescription -> append("state-description:\"$value\"")
-              SemanticsProperties.Disabled -> append("DISABLED")
-              SemanticsProperties.Focused -> if (value == true) append("FOCUSED")
-              SemanticsProperties.Hidden -> append("HIDDEN")
-              SemanticsProperties.IsDialog -> append("DIALOG")
-              SemanticsProperties.IsPopup -> append("POPUP")
-            }
+        .modifiers
+        .filterIsInstance<SemanticsModifier>()
+        // Technically there can be multiple semantic modifiers on a single node, so read them
+        // all.
+        .flatMap { semantics -> semantics.semanticsConfiguration }
+        .forEach { (key, value) ->
+          when (key) {
+            SemanticsProperties.TestTag -> append("test-tag:\"$value\"")
+            SemanticsProperties.ContentDescription -> append("content-description:\"$value\"")
+            SemanticsProperties.StateDescription -> append("state-description:\"$value\"")
+            SemanticsProperties.Disabled -> append("DISABLED")
+            SemanticsProperties.Focused -> if (value == true) append("FOCUSED")
+            SemanticsProperties.Hidden -> append("HIDDEN")
+            SemanticsProperties.IsDialog -> append("DIALOG")
+            SemanticsProperties.IsPopup -> append("POPUP")
           }
+        }
 
       // Layout ID
       composeView.modifiers
-          .filterIsInstance<LayoutIdParentData>()
-          .singleOrNull()
-          ?.let { layoutId ->
-            val idValue = if (layoutId.layoutId is CharSequence) {
-              "\"${layoutId.layoutId}\""
-            } else {
-              layoutId.layoutId.toString()
-            }
-            append("layout-id:$idValue")
+        .filterIsInstance<LayoutIdParentData>()
+        .singleOrNull()
+        ?.let { layoutId ->
+          val idValue = if (layoutId.layoutId is CharSequence) {
+            "\"${layoutId.layoutId}\""
+          } else {
+            layoutId.layoutId.toString()
           }
+          append("layout-id:$idValue")
+        }
     }
   }
 
@@ -117,16 +117,16 @@ public object ViewStateRenderers {
 
   @JvmField
   public val DefaultsNoPii: List<ViewStateRenderer> = listOf(
-      ViewRenderer,
-      textViewRenderer(renderTextValue = false, textValueMaxLength = 0),
-      CheckableRenderer,
+    ViewRenderer,
+    textViewRenderer(renderTextValue = false, textValueMaxLength = 0),
+    CheckableRenderer,
   )
 
   @JvmField
   public val DefaultsIncludingPii: List<ViewStateRenderer> = listOf(
-      ViewRenderer,
-      textViewRenderer(renderTextValue = true),
-      CheckableRenderer,
+    ViewRenderer,
+    textViewRenderer(renderTextValue = true),
+    CheckableRenderer,
   )
 
   /**
@@ -183,12 +183,12 @@ public object ViewStateRenderers {
     textValueMaxLength: Int = Int.MAX_VALUE
   ): ViewStateRenderer = if (!isComposeAvailable) NoRenderer else ViewStateRenderer { view ->
     val text = (view as? ComposeView)
-        ?.modifiers
-        ?.filterIsInstance<SemanticsModifier>()
-        ?.mapNotNull { it.semanticsConfiguration.getOrNull(Text)?.text }
-        ?.takeUnless { it.isEmpty() }
-        ?.joinToString(separator = " ")
-        ?: return@ViewStateRenderer
+      ?.modifiers
+      ?.filterIsInstance<SemanticsModifier>()
+      ?.mapNotNull { it.semanticsConfiguration.getOrNull(Text)?.text }
+      ?.takeUnless { it.isEmpty() }
+      ?.joinToString(separator = " ")
+      ?: return@ViewStateRenderer
 
     appendTextValue(text, renderTextValue, textValueMaxLength)
   }
@@ -215,8 +215,8 @@ public object ViewStateRenderers {
     renderer: AttributeAppendable.(T) -> Unit
   ): ViewStateRenderer = ViewStateRenderer { scannableView ->
     val view = (scannableView as? AndroidView)
-        ?.view
-        ?: return@ViewStateRenderer
+      ?.view
+      ?: return@ViewStateRenderer
     if (!renderedClass.isInstance(view)) return@ViewStateRenderer
     @Suppress("UNCHECKED_CAST")
     renderer(view as T)

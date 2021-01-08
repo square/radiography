@@ -16,9 +16,9 @@
 rootProject.name = "radiography"
 
 include(
-    ":compose-tests",
-    ":compose-unsupported-tests",
-    ":radiography",
-    ":sample",
-    ":sample-compose"
+  ":compose-tests",
+  ":compose-unsupported-tests",
+  ":radiography",
+  ":sample",
+  ":sample-compose"
 )

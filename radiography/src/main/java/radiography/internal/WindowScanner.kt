@@ -51,11 +51,11 @@ internal object WindowScanner {
       val getMethod = clazz.getMethod(instanceMethod)
       windowManager = getMethod.invoke(null)
       viewsField = clazz.getDeclaredField(
-          VIEWS_FIELD
+        VIEWS_FIELD
       )
-          .apply {
-            isAccessible = true
-          }
+        .apply {
+          isAccessible = true
+        }
     } catch (ignored: Exception) {
     }
   }

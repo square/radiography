@@ -162,12 +162,12 @@ class ComposeUiTest {
 
     val hierarchy = composeRule.runOnIdle {
       Radiography.scan(
-          viewStateRenderers = listOf(
-              textViewRenderer(
-                  renderTextValue = true,
-                  textValueMaxLength = 11
-              )
+        viewStateRenderers = listOf(
+          textViewRenderer(
+            renderTextValue = true,
+            textValueMaxLength = 11
           )
+        )
       )
     }
 
@@ -207,12 +207,12 @@ class ComposeUiTest {
 
     val hierarchy = composeRule.runOnIdle {
       Radiography.scan(
-          viewStateRenderers = listOf(
-              textViewRenderer(
-                  renderTextValue = true,
-                  textValueMaxLength = 11
-              )
+        viewStateRenderers = listOf(
+          textViewRenderer(
+            renderTextValue = true,
+            textValueMaxLength = 11
           )
+        )
       )
     }
 
@@ -256,17 +256,17 @@ class ComposeUiTest {
 
     @Suppress("RemoveCurlyBracesFromTemplate")
     assertThat(hierarchy).contains(
-        """
-          Box:
-        $BLANK ${BLANK}Box { test-tag:"root" }
-        $BLANK ${BLANK}├─Box
-        $BLANK ${BLANK}├─Column
-        $BLANK ${BLANK}│ ├─Box
-        $BLANK ${BLANK}│ ╰─Box
-        $BLANK ${BLANK}╰─Row
-        $BLANK ${BLANK}  ├─Box
-        $BLANK ${BLANK}  ╰─Box
-        """.trimIndent()
+      """
+        Box:
+      $BLANK ${BLANK}Box { test-tag:"root" }
+      $BLANK ${BLANK}├─Box
+      $BLANK ${BLANK}├─Column
+      $BLANK ${BLANK}│ ├─Box
+      $BLANK ${BLANK}│ ╰─Box
+      $BLANK ${BLANK}╰─Row
+      $BLANK ${BLANK}  ├─Box
+      $BLANK ${BLANK}  ╰─Box
+      """.trimIndent()
     )
   }
 
@@ -287,11 +287,11 @@ class ComposeUiTest {
     // pointless.
     @Suppress("RemoveCurlyBracesFromTemplate")
     assertThat(hierarchy).contains(
-        """
-        ${BLANK} Box:
-          ${BLANK}Box { test-tag:"root" }
-        ${BLANK} ${BLANK}╰─AndroidView
-        """.trimIndent()
+      """
+      ${BLANK} Box:
+        ${BLANK}Box { test-tag:"root" }
+      ${BLANK} ${BLANK}╰─AndroidView
+      """.trimIndent()
     )
     // But this view description should show up at some point.
     assertThat(hierarchy).contains("╰─TextView { 0×0px, text-length:0 }")
@@ -311,14 +311,14 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).isEqualTo(
-        """
-        |Providers:
-        |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─Dialog
-        |${BLANK}  ╰─Providers { DIALOG }
-        |${BLANK}    ╰─Box { test-tag:"child" }
-        |
-        """.trimMargin()
+      """
+      |Providers:
+      |${BLANK}Providers { test-tag:"parent" }
+      |${BLANK}╰─Dialog
+      |${BLANK}  ╰─Providers { DIALOG }
+      |${BLANK}    ╰─Box { test-tag:"child" }
+      |
+      """.trimMargin()
     )
   }
 
@@ -340,14 +340,14 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).isEqualTo(
-        """
-        |Providers:
-        |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─CustomTestDialog
-        |${BLANK}  ╰─Providers { DIALOG }
-        |${BLANK}    ╰─Box { test-tag:"child" }
-        |
-        """.trimMargin()
+      """
+      |Providers:
+      |${BLANK}Providers { test-tag:"parent" }
+      |${BLANK}╰─CustomTestDialog
+      |${BLANK}  ╰─Providers { DIALOG }
+      |${BLANK}    ╰─Box { test-tag:"child" }
+      |
+      """.trimMargin()
     )
   }
 
@@ -365,14 +365,14 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).isEqualTo(
-        """
-        |Providers:
-        |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
-        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
-        |${BLANK}    ╰─Box { test-tag:"child" }
-        |
-        """.trimMargin()
+      """
+      |Providers:
+      |${BLANK}Providers { test-tag:"parent" }
+      |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
+      |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
+      |${BLANK}    ╰─Box { test-tag:"child" }
+      |
+      """.trimMargin()
     )
   }
 
@@ -391,15 +391,15 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).isEqualTo(
-        """
-        |Providers:
-        |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
-        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
-        |${BLANK}    ├─Box { test-tag:"child1" }
-        |${BLANK}    ╰─Box { test-tag:"child2" }
-        |
-        """.trimMargin()
+      """
+      |Providers:
+      |${BLANK}Providers { test-tag:"parent" }
+      |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
+      |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
+      |${BLANK}    ├─Box { test-tag:"child1" }
+      |${BLANK}    ╰─Box { test-tag:"child2" }
+      |
+      """.trimMargin()
     )
   }
 
@@ -407,14 +407,14 @@ class ComposeUiTest {
     composeRule.setContent {
       Box(Modifier.testTag("parent")) {
         MultipleSubcompositionLayout(Modifier.testTag("subcompose-layout"),
-            firstChildren = {
-              Box(Modifier.testTag("child1.1"))
-              Box(Modifier.testTag("child1.2"))
-            },
-            secondChildren = {
-              Box(Modifier.testTag("child2.1"))
-              Box(Modifier.testTag("child2.2"))
-            })
+          firstChildren = {
+            Box(Modifier.testTag("child1.1"))
+            Box(Modifier.testTag("child1.2"))
+          },
+          secondChildren = {
+            Box(Modifier.testTag("child2.1"))
+            Box(Modifier.testTag("child2.2"))
+          })
       }
     }
 
@@ -423,18 +423,18 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).isEqualTo(
-        """
-        |Providers:
-        |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─MultipleSubcompositionLayout { test-tag:"subcompose-layout" }
-        |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
-        |${BLANK}  │ ├─Box { test-tag:"child1.1" }
-        |${BLANK}  │ ╰─Box { test-tag:"child1.2" }
-        |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout>
-        |${BLANK}    ├─Box { test-tag:"child2.1" }
-        |${BLANK}    ╰─Box { test-tag:"child2.2" }
-        |
-        """.trimMargin()
+      """
+      |Providers:
+      |${BLANK}Providers { test-tag:"parent" }
+      |${BLANK}╰─MultipleSubcompositionLayout { test-tag:"subcompose-layout" }
+      |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
+      |${BLANK}  │ ├─Box { test-tag:"child1.1" }
+      |${BLANK}  │ ╰─Box { test-tag:"child1.2" }
+      |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout>
+      |${BLANK}    ├─Box { test-tag:"child2.1" }
+      |${BLANK}    ╰─Box { test-tag:"child2.2" }
+      |
+      """.trimMargin()
     )
   }
 
@@ -455,17 +455,17 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).isEqualTo(
-        """
-        |Providers:
-        |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}├─SingleSubcompositionLayout { test-tag:"subcompose-layout1" }
-        |${BLANK}│ ╰─<subcomposition of SingleSubcompositionLayout>
-        |${BLANK}│   ╰─Box { test-tag:"child1" }
-        |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout2" }
-        |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
-        |${BLANK}    ╰─Box { test-tag:"child2" }
-        |
-        """.trimMargin()
+      """
+      |Providers:
+      |${BLANK}Providers { test-tag:"parent" }
+      |${BLANK}├─SingleSubcompositionLayout { test-tag:"subcompose-layout1" }
+      |${BLANK}│ ╰─<subcomposition of SingleSubcompositionLayout>
+      |${BLANK}│   ╰─Box { test-tag:"child1" }
+      |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout2" }
+      |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
+      |${BLANK}    ╰─Box { test-tag:"child2" }
+      |
+      """.trimMargin()
     )
   }
 
@@ -483,14 +483,14 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).isEqualTo(
-        """
-        |Providers:
-        |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─WithConstraints { test-tag:"with-constraints" }
-        |${BLANK}  ╰─<subcomposition of WithConstraints>
-        |${BLANK}    ╰─Box { test-tag:"child" }
-        |
-        """.trimMargin()
+      """
+      |Providers:
+      |${BLANK}Providers { test-tag:"parent" }
+      |${BLANK}╰─WithConstraints { test-tag:"with-constraints" }
+      |${BLANK}  ╰─<subcomposition of WithConstraints>
+      |${BLANK}    ╰─Box { test-tag:"child" }
+      |
+      """.trimMargin()
     )
   }
 
@@ -513,19 +513,19 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).isEqualTo(
-        """
-        |Providers:
-        |${BLANK}Providers { test-tag:"parent" }
-        |${BLANK}╰─LazyColumn { test-tag:"list" }
-        |${BLANK}  ├─<subcomposition of LazyColumn>
-        |${BLANK}  │ ╰─RestorableStateProvider { test-tag:"child:1" }
-        |${BLANK}  ├─<subcomposition of LazyColumn>
-        |${BLANK}  │ ├─RestorableStateProvider { test-tag:"child:2" }
-        |${BLANK}  │ ╰─RestorableStateProvider { test-tag:"child:2 (even)" }
-        |${BLANK}  ╰─<subcomposition of LazyColumn>
-        |${BLANK}    ╰─RestorableStateProvider { test-tag:"child:3" }
-        |
-        """.trimMargin()
+      """
+      |Providers:
+      |${BLANK}Providers { test-tag:"parent" }
+      |${BLANK}╰─LazyColumn { test-tag:"list" }
+      |${BLANK}  ├─<subcomposition of LazyColumn>
+      |${BLANK}  │ ╰─RestorableStateProvider { test-tag:"child:1" }
+      |${BLANK}  ├─<subcomposition of LazyColumn>
+      |${BLANK}  │ ├─RestorableStateProvider { test-tag:"child:2" }
+      |${BLANK}  │ ╰─RestorableStateProvider { test-tag:"child:2 (even)" }
+      |${BLANK}  ╰─<subcomposition of LazyColumn>
+      |${BLANK}    ╰─RestorableStateProvider { test-tag:"child:3" }
+      |
+      """.trimMargin()
     )
   }
 
@@ -536,13 +536,13 @@ class ComposeUiTest {
 
       Box(Modifier.testTag("parent")) {
         MultipleSubcompositionLayout(Modifier.testTag("subcompose-layout"),
-            firstChildren = {
-              Box(Modifier.testTag("child1").size(sizeDp))
-              Box(Modifier.testTag("child2").size(sizeDp))
-            },
-            secondChildren = {
-              Box(Modifier.testTag("child3").size(sizeDp))
-            }
+          firstChildren = {
+            Box(Modifier.testTag("child1").size(sizeDp))
+            Box(Modifier.testTag("child2").size(sizeDp))
+          },
+          secondChildren = {
+            Box(Modifier.testTag("child3").size(sizeDp))
+          }
         )
       }
     }
@@ -552,17 +552,17 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).isEqualTo(
-        """
-        |Providers:
-        |${BLANK}Providers { 10×30px, test-tag:"parent" }
-        |${BLANK}╰─MultipleSubcompositionLayout { 10×30px, test-tag:"subcompose-layout" }
-        |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
-        |${BLANK}  │ ├─Box { 10×10px, test-tag:"child1" }
-        |${BLANK}  │ ╰─Box { 10×10px, test-tag:"child2" }
-        |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout>
-        |${BLANK}    ╰─Box { 10×10px, test-tag:"child3" }
-        |
-        """.trimMargin()
+      """
+      |Providers:
+      |${BLANK}Providers { 10×30px, test-tag:"parent" }
+      |${BLANK}╰─MultipleSubcompositionLayout { 10×30px, test-tag:"subcompose-layout" }
+      |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
+      |${BLANK}  │ ├─Box { 10×10px, test-tag:"child1" }
+      |${BLANK}  │ ╰─Box { 10×10px, test-tag:"child2" }
+      |${BLANK}  ╰─<subcomposition of MultipleSubcompositionLayout>
+      |${BLANK}    ╰─Box { 10×10px, test-tag:"child3" }
+      |
+      """.trimMargin()
     )
   }
 
