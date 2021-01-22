@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import androidx.test.platform.app.InstrumentationRegistry
 import com.squareup.radiography.test.R
 
 class TestActivity : Activity() {
@@ -18,6 +19,11 @@ class TestActivity : Activity() {
   }
 
   companion object {
+    val intent = Intent(
+      InstrumentationRegistry.getInstrumentation().targetContext,
+      TestActivity::class.java
+    )
+
     fun Intent.withTextViewText(text: String): Intent = apply {
       putExtra("textViewText", text)
     }

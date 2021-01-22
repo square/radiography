@@ -1,13 +1,12 @@
 package radiography.test
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Intent
 import android.view.Window.Callback
+import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.rule.ActivityTestRule
 import com.google.common.truth.Truth.assertThat
-import org.junit.Rule
 import org.junit.Test
 import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
@@ -19,9 +18,6 @@ import java.util.concurrent.TimeUnit.SECONDS
 
 class RadiographyUiTest {
 
-  @get:Rule
-  val activityRule = ActivityTestRule(TestActivity::class.java, false, false)
-
   @Test fun when_noActivity_then_emptyHierarchy() {
     val hierarchy = Radiography.scan()
 
@@ -29,26 +25,29 @@ class RadiographyUiTest {
   }
 
   @Test fun when_launchedActivity_then_hierarchyContainsActivity() {
-    activityRule.launchActivity(Intent())
+    val scenario = ActivityScenario.launch<TestActivity>(TestActivity.intent)
 
-    val hierarchy = Radiography.scan()
+    val hierarchy = scenario.runOnActivity { Radiography.scan() }
 
     assertThat(hierarchy).contains(TestActivity::class.java.name)
   }
 
   @Test fun when_includingPii_then_hierarchyContainsText() {
-    activityRule.launchActivity(Intent().withTextViewText("Yo"))
+    val scenario = ActivityScenario.launch<TestActivity>(TestActivity.intent.withTextViewText("Yo"))
 
-    val hierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
+    val hierarchy = scenario.runOnActivity {
+      Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
+    }
     assertThat(hierarchy).contains("Yo")
   }
 
   @Test fun when_showDialog_then_hierarchyHasTwoWindows() {
-    activityRule.launchActivity(Intent())
+    val scenario = ActivityScenario.launch<TestActivity>(TestActivity.intent)
+    val activity = scenario.activity
 
-    showDialog {
-      AlertDialog.Builder(activityRule.activity)
-          .create()
+    activity.showDialog {
+      AlertDialog.Builder(activity)
+        .create()
     }
 
     val hierarchy = Radiography.scan()
@@ -57,18 +56,21 @@ class RadiographyUiTest {
   }
 
   @Test fun when_onlyFocusedWindow_then_hierarchyHasOnlyDialog() {
-    activityRule.launchActivity(Intent())
+    val scenario = ActivityScenario.launch<TestActivity>(TestActivity.intent)
+    val activity = scenario.activity
 
-    showDialog {
-      AlertDialog.Builder(activityRule.activity)
-          .setTitle("Dialog title")
-          .create()
+    activity.showDialog {
+      AlertDialog.Builder(activity)
+        .setTitle("Dialog title")
+        .create()
     }
 
-    val hierarchy = Radiography.scan(
+    val hierarchy = scenario.runOnActivity {
+      Radiography.scan(
         scanScope = FocusedWindowScope,
         viewStateRenderers = DefaultsIncludingPii
-    )
+      )
+    }
 
     assertThat(hierarchy).contains("window-focus:true")
     assertThat(hierarchy).contains("Dialog title")
@@ -76,32 +78,42 @@ class RadiographyUiTest {
     assertThat(hierarchy.countSubstring("window-focus")).isEqualTo(1)
   }
 
-  private fun String.countSubstring(substring: String) = windowed(substring.length)
-      .filter { it == substring }
-      .count()
+  private val ActivityScenario<*>.activity: Activity
+    get() = runOnActivity { it }
 
-  private fun showDialog(block: () -> Dialog) {
+  private fun <A : Activity, R> ActivityScenario<A>.runOnActivity(block: (A) -> R): R {
+    var result: R? = null
+    onActivity { result = block(it) }
+    @Suppress("UNCHECKED_CAST")
+    return result as R
+  }
+
+  private fun String.countSubstring(substring: String) = windowed(substring.length)
+    .filter { it == substring }
+    .count()
+
+  private fun Activity.showDialog(block: () -> Dialog) {
     lateinit var dialog: Dialog
     getInstrumentation().runOnMainSync {
       dialog = block()
       dialog.show()
     }
-    dialog.waitForFocus()
+    waitForFocus(dialog, this)
   }
 
   /**
    * Waits for the activity to lose focus and the dialog to gain focus.
    */
-  private fun Dialog.waitForFocus() {
+  private fun waitForFocus(dialog: Dialog, activity: Activity) {
     val dialogFocused = CountDownLatch(2)
     getInstrumentation().runOnMainSync {
-      val activityHasWindowFocus = activityRule.activity.hasWindowFocus()
-      val dialogHasWindowFocus = window!!.peekDecorView()?.hasWindowFocus() ?: false
+      val activityHasWindowFocus = activity.hasWindowFocus()
+      val dialogHasWindowFocus = dialog.window!!.peekDecorView()?.hasWindowFocus() ?: false
 
       if (!activityHasWindowFocus) {
         dialogFocused.countDown()
       } else {
-        val activityWindow = activityRule.activity.window
+        val activityWindow = activity.window
         val delegateCallback = activityWindow.callback
         activityWindow.callback = object : Callback by delegateCallback {
           override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -116,8 +128,8 @@ class RadiographyUiTest {
       if (dialogHasWindowFocus) {
         dialogFocused.countDown()
       } else {
-        val delegateCallback = window!!.callback
-        window!!.callback = object : Callback by delegateCallback {
+        val delegateCallback = dialog.window!!.callback
+        dialog.window!!.callback = object : Callback by delegateCallback {
           override fun onWindowFocusChanged(hasFocus: Boolean) {
             delegateCallback.onWindowFocusChanged(hasFocus)
             if (hasFocus) {

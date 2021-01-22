@@ -5,6 +5,7 @@ object Versions {
    */
   val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.4.21"
 
+  const val AndroidXTest = "1.3.0"
   const val Compose = "1.0.0-alpha09"
 }
 
@@ -31,10 +32,11 @@ object Dependencies {
   }
 
   object InstrumentationTests {
-    const val Core = "androidx.test:core:1.0.0"
-    const val Espresso = "androidx.test.espresso:espresso-core:3.1.0"
-    const val Orchestrator = "androidx.test:orchestrator:1.2.0"
-    const val Rules = "androidx.test:rules:1.1.0"
-    const val Runner = "androidx.test:runner:1.1.0"
+    const val Core = "androidx.test:core:${Versions.AndroidXTest}"
+    const val Espresso = "androidx.test.espresso:espresso-core:3.3.0"
+    const val JUnit = "androidx.test.ext:junit:1.1.2"
+    const val Orchestrator = "androidx.test:orchestrator:${Versions.AndroidXTest}"
+    const val Rules = "androidx.test:rules:${Versions.AndroidXTest}"
+    const val Runner = "androidx.test:runner:${Versions.AndroidXTest}"
   }
 }
