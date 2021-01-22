@@ -6,14 +6,13 @@ import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.ui.tooling.asTree
+import radiography.ExperimentalRadiographyComposeApi
 import radiography.ScannableView
 import radiography.ScannableView.ChildRenderingError
 import radiography.ScannableView.ComposeView
-import radiography.ExperimentalRadiographyComposeApi
+import java.lang.reflect.Field
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
-private val VIEW_KEYED_TAGS_FIELD = View::class.java.getDeclaredField("mKeyedTags")
-    .apply { isAccessible = true }
 private const val WRAPPED_COMPOSITION_CLASS_NAME = "androidx.compose.ui.platform.WrappedComposition"
 private const val COMPOSITION_IMPL_CLASS_NAME = "androidx.compose.runtime.CompositionImpl"
 private const val ANDROID_COMPOSE_VIEW_CLASS_NAME =
@@ -41,6 +40,17 @@ internal val isComposeAvailable by lazy(PUBLICATION) {
  */
 internal val View.mightBeComposeView: Boolean
   get() = "AndroidComposeView" in this::class.java.name
+
+private val viewKeyedTagsField: Field? by lazy(PUBLICATION) {
+  try {
+    View::class.java.getDeclaredField("mKeyedTags")
+      .apply { isAccessible = true }
+  } catch (e: NoSuchFieldException) {
+    // Some devices don't have this field apparently.
+    // See https://github.com/square/radiography/issues/119.
+    null
+  }
+}
 
 /**
  * Tries to extract a list of [ComposeView]s from [composeView], which must be a view for which
@@ -119,7 +129,7 @@ private fun tryGetLayoutInfos(composeView: View): Sequence<ComposeLayoutInfo>? {
 }
 
 private fun View.getKeyedTags(): SparseArray<*> {
-  return VIEW_KEYED_TAGS_FIELD.get(this) as SparseArray<*>
+  return viewKeyedTagsField?.get(this) as SparseArray<*>? ?: SparseArray<Nothing>(0)
 }
 
 private inline fun SparseArray<*>.first(predicate: (Any?) -> Boolean): Any? {
