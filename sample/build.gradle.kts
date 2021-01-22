@@ -43,6 +43,7 @@ dependencies {
   androidTestImplementation(Dependencies.InstrumentationTests.Core)
   androidTestImplementation(Dependencies.InstrumentationTests.Espresso)
   androidTestImplementation(Dependencies.InstrumentationTests.Rules)
+  androidTestImplementation(Dependencies.InstrumentationTests.JUnit)
   androidTestImplementation(Dependencies.InstrumentationTests.Runner)
   androidTestImplementation(Dependencies.Truth)
 }
