@@ -25,22 +25,25 @@ class RadiographyUiTest {
   }
 
   @Test fun when_launchedActivity_then_hierarchyContainsActivity() {
-    ActivityScenario.launch<TestActivity>(TestActivity.intent)
+    val scenario = ActivityScenario.launch<TestActivity>(TestActivity.intent)
 
-    val hierarchy = Radiography.scan()
+    val hierarchy = scenario.runOnActivity { Radiography.scan() }
 
     assertThat(hierarchy).contains(TestActivity::class.java.name)
   }
 
   @Test fun when_includingPii_then_hierarchyContainsText() {
-    ActivityScenario.launch<TestActivity>(TestActivity.intent.withTextViewText("Yo"))
+    val scenario = ActivityScenario.launch<TestActivity>(TestActivity.intent.withTextViewText("Yo"))
 
-    val hierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
+    val hierarchy = scenario.runOnActivity {
+      Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
+    }
     assertThat(hierarchy).contains("Yo")
   }
 
   @Test fun when_showDialog_then_hierarchyHasTwoWindows() {
-    val activity = ActivityScenario.launch<TestActivity>(TestActivity.intent).activity
+    val scenario = ActivityScenario.launch<TestActivity>(TestActivity.intent)
+    val activity = scenario.activity
 
     activity.showDialog {
       AlertDialog.Builder(activity)
@@ -53,7 +56,8 @@ class RadiographyUiTest {
   }
 
   @Test fun when_onlyFocusedWindow_then_hierarchyHasOnlyDialog() {
-    val activity = ActivityScenario.launch<TestActivity>(TestActivity.intent).activity
+    val scenario = ActivityScenario.launch<TestActivity>(TestActivity.intent)
+    val activity = scenario.activity
 
     activity.showDialog {
       AlertDialog.Builder(activity)
@@ -61,10 +65,12 @@ class RadiographyUiTest {
         .create()
     }
 
-    val hierarchy = Radiography.scan(
-      scanScope = FocusedWindowScope,
-      viewStateRenderers = DefaultsIncludingPii
-    )
+    val hierarchy = scenario.runOnActivity {
+      Radiography.scan(
+        scanScope = FocusedWindowScope,
+        viewStateRenderers = DefaultsIncludingPii
+      )
+    }
 
     assertThat(hierarchy).contains("window-focus:true")
     assertThat(hierarchy).contains("Dialog title")
@@ -72,16 +78,19 @@ class RadiographyUiTest {
     assertThat(hierarchy.countSubstring("window-focus")).isEqualTo(1)
   }
 
+  private val ActivityScenario<*>.activity: Activity
+    get() = runOnActivity { it }
+
+  private fun <A : Activity, R> ActivityScenario<A>.runOnActivity(block: (A) -> R): R {
+    var result: R? = null
+    onActivity { result = block(it) }
+    @Suppress("UNCHECKED_CAST")
+    return result as R
+  }
+
   private fun String.countSubstring(substring: String) = windowed(substring.length)
     .filter { it == substring }
     .count()
-
-  private val ActivityScenario<*>.activity: Activity
-    get() {
-      lateinit var activity: Activity
-      onActivity { activity = it }
-      return activity
-    }
 
   private fun Activity.showDialog(block: () -> Dialog) {
     lateinit var dialog: Dialog
