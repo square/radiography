@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+Version 2.2.0
+-------------
+
+_2021-1-26_
+
+* Don't render curly braces when they would be empty. (#108)
+* Upgrade Compose to 1.0.0-alpha09. (#117)
+* Lazily reflect the mKeyedTags field and don't crash if it's not there. (#122)
+
 Version 2.1.0
 -------------
 
