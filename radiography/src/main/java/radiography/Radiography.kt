@@ -10,6 +10,7 @@ import radiography.ScanScopes.AllWindowsScope
 import radiography.ScannableView.AndroidView
 import radiography.ViewStateRenderers.DefaultsNoPii
 import radiography.internal.renderTreeString
+import radiography.internal.runningOnLooper
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit.SECONDS
 
@@ -55,20 +56,11 @@ public object Radiography {
       // The entire view tree is single threaded, and that's typically the main thread, but
       // it doesn't have to be, and we don't know where the passed in view is coming from.
       val viewLooper = (scanRoot as? AndroidView)?.view?.handler?.looper
-          ?: Looper.getMainLooper()!!
+        ?: Looper.getMainLooper()!!
 
-      if (viewLooper.thread == Thread.currentThread()) {
+      runningOnLooper(viewLooper) {
         scanFromLooperThread(scanRoot, viewStateRenderers, viewFilter)
-      } else {
-        val latch = CountDownLatch(1)
-        Handler(viewLooper).post {
-          scanFromLooperThread(scanRoot, viewStateRenderers, viewFilter)
-          latch.countDown()
-        }
-        if (!latch.await(5, SECONDS)) {
-          return "Could not retrieve view hierarchy from main thread after 5 seconds wait"
-        }
-      }
+      } ?: return "Could not retrieve view hierarchy from main thread after 5 seconds wait"
     }
   }
 

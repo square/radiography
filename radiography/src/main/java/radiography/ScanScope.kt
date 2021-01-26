@@ -11,6 +11,10 @@ package radiography
  */
 public fun interface ScanScope {
 
-  /** Returns the [ScannableView]s that scanning should start from. */
+  /**
+   * Returns the [ScannableView]s that scanning should start from.
+   *
+   * This method may be called from any thread.
+   */
   public fun findRoots(): List<ScannableView>
 }
