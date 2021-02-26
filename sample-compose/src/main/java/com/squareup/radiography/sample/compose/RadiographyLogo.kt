@@ -35,8 +35,8 @@ import kotlin.math.roundToInt
   Box(modifier.aspectRatio(aspectRatio)) {
     Image(outerImage)
     InfiniteMirror(
-        centerOffsetFraction = Offset(.5f, .59f),
-        scaleFactor = .46f
+      centerOffsetFraction = Offset(.5f, .59f),
+      scaleFactor = .46f
     ) {
       Image(innerImage)
     }
@@ -59,9 +59,9 @@ import kotlin.math.roundToInt
   // Use WithConstraints as a big box that centers the actual content within itself.
   // TODO Scanning doesn't handle subcomposition. https://github.com/square/radiography/issues/93
   WithConstraints(
-      Modifier
-          .fillMaxSize()
-          .wrapContentSize(FractionalAlignment(centerOffsetFraction))
+    Modifier
+      .fillMaxSize()
+      .wrapContentSize(FractionalAlignment(centerOffsetFraction))
   ) {
     // Don't draw the content if it's going to be too small to see, and stop recursing.
     val minSize = with(AmbientDensity.current) { minimumSizeThreshold.toIntPx() }
@@ -87,7 +87,7 @@ private class FractionalAlignment(
     space: IntSize,
     layoutDirection: LayoutDirection
   ): IntOffset = IntOffset(
-      x = (size.width * offsetFraction.x).roundToInt(),
-      y = (size.height * offsetFraction.y).roundToInt()
+    x = (size.width * offsetFraction.x).roundToInt(),
+    y = (size.height * offsetFraction.y).roundToInt()
   )
 }

@@ -22,10 +22,10 @@ class ComposeUnsupportedTest {
       val hierarchy = Radiography.scan(viewStateRenderers = DefaultsIncludingPii)
       assertThat(hierarchy).doesNotContain("FooBar")
       assertThat(hierarchy).contains(
-          "Composition was found, but either Compose Tooling artifact is missing or the Compose " +
-              "version is not supported. Please ensure you have a dependency on " +
-              "androidx.ui:ui-tooling or check https://github.com/square/radiography for a new " +
-              "release."
+        "Composition was found, but either Compose Tooling artifact is missing or the Compose " +
+          "version is not supported. Please ensure you have a dependency on " +
+          "androidx.ui:ui-tooling or check https://github.com/square/radiography for a new " +
+          "release."
       )
     }
   }

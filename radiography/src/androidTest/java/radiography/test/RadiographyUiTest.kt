@@ -67,8 +67,8 @@ class RadiographyUiTest {
 
     val hierarchy = scenario.runOnActivity {
       Radiography.scan(
-        scanScope = FocusedWindowScope,
-        viewStateRenderers = DefaultsIncludingPii
+      scanScope = FocusedWindowScope,
+      viewStateRenderers = DefaultsIncludingPii
       )
     }
 

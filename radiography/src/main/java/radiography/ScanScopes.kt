@@ -17,15 +17,15 @@ public object ScanScopes {
   @JvmField
   public val AllWindowsScope: ScanScope = ScanScope {
     WindowScanner.findAllRootViews()
-        .map(::AndroidView)
+      .map(::AndroidView)
   }
 
   /** Scans the window that currently has focus. */
   @JvmField
   public val FocusedWindowScope: ScanScope = ScanScope {
     AllWindowsScope.findRoots()
-        .filterIsInstance<AndroidView>()
-        .filter { it.view.parent?.parent != null || it.view.hasWindowFocus() }
+      .filterIsInstance<AndroidView>()
+      .filter { it.view.parent?.parent != null || it.view.hasWindowFocus() }
   }
 
   /** Scans the given [rootView]. */
@@ -75,11 +75,11 @@ public object ScanScopes {
     return ScanScope {
       try {
         return@ScanScope inScope.findRoots()
-            .asSequence()
-            .flatMap { rootView ->
-              rootView.subtreesMatching { (it is ComposeView) && testTag in it.findTestTags() }
-            }
-            .toList()
+          .asSequence()
+          .flatMap { rootView ->
+            rootView.subtreesMatching { (it is ComposeView) && testTag in it.findTestTags() }
+          }
+          .toList()
       } catch (e: LinkageError) {
         // Some version of Compose is available, but the Compose code on the classpath is
         // not what we expected – the app is probably using a newer (or older) version of Compose

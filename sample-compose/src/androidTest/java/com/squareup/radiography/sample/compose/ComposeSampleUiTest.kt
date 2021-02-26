@@ -21,14 +21,14 @@ class ComposeSampleUiTest {
 
   @Test fun displaysHierarchyInline() {
     composeRule.onNodeWithTag(LIVE_HIERARCHY_TEST_TAG)
-        .assert(hasSubstring("Remember me"))
-        .assert(hasSubstring("Unchecked"))
+      .assert(hasSubstring("Remember me"))
+      .assert(hasSubstring("Unchecked"))
 
     composeRule.onNodeWithTag(TEXT_FIELD_TEST_TAG)
-        .performTextReplacement("foobar")
+      .performTextReplacement("foobar")
 
     composeRule.onNodeWithTag(LIVE_HIERARCHY_TEST_TAG)
-        .assert(hasSubstring("Remember me"))
-        .assert(hasSubstring("foobar"))
+      .assert(hasSubstring("Remember me"))
+      .assert(hasSubstring("foobar"))
   }
 }

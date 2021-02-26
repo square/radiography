@@ -9,11 +9,11 @@ import radiography.ExperimentalRadiographyComposeApi
 @OptIn(ExperimentalRadiographyComposeApi::class)
 internal fun ComposeView.findTestTags(): Sequence<String> {
   return modifiers
-      .asSequence()
-      .filterIsInstance<SemanticsModifier>()
-      .flatMap { semantics ->
-        semantics.semanticsConfiguration.asSequence()
-            .filter { it.key == SemanticsProperties.TestTag }
-      }
-      .mapNotNull { it.value as? String }
+    .asSequence()
+    .filterIsInstance<SemanticsModifier>()
+    .flatMap { semantics ->
+      semantics.semanticsConfiguration.asSequence()
+        .filter { it.key == SemanticsProperties.TestTag }
+    }
+    .mapNotNull { it.value as? String }
 }

@@ -48,9 +48,9 @@ public object ViewFilters {
   public fun skipComposeTestTagsFilter(vararg skippedTestTags: String): ViewFilter =
     ViewFilter { view ->
       (view as? ComposeView)
-          ?.findTestTags()
-          ?.none { it in skippedTestTags }
-          ?: true
+        ?.findTestTags()
+        ?.none { it in skippedTestTags }
+        ?: true
     }
 
   /**

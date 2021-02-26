@@ -45,13 +45,13 @@ public sealed class ScannableView {
   ) : ScannableView() {
 
     internal constructor(layoutInfo: ComposeLayoutInfo) : this(
-        displayName = layoutInfo.name,
-        // Can't use width and height properties because we're not targeting 1.8 bytecode.
-        width = layoutInfo.bounds.run { right - left },
-        height = layoutInfo.bounds.run { bottom - top },
-        modifiers = layoutInfo.modifiers,
-        children = layoutInfo.children.map(::ComposeView) +
-            (layoutInfo.view?.let { sequenceOf(AndroidView(it)) } ?: emptySequence<ScannableView>())
+      displayName = layoutInfo.name,
+      // Can't use width and height properties because we're not targeting 1.8 bytecode.
+      width = layoutInfo.bounds.run { right - left },
+      height = layoutInfo.bounds.run { bottom - top },
+      modifiers = layoutInfo.modifiers,
+      children = layoutInfo.children.map(::ComposeView) +
+        (layoutInfo.view?.let { sequenceOf(AndroidView(it)) } ?: emptySequence<ScannableView>())
     )
 
     override fun toString(): String = "${ComposeView::class.java.simpleName}($displayName)"

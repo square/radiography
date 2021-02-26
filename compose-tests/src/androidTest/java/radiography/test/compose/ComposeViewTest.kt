@@ -40,7 +40,7 @@ class ComposeViewTest {
     }
 
     val textComposable = findRootComposeView().allDescendentsDepthFirst
-        .single { it.displayName == "BasicText" }
+      .single { it.displayName == "BasicText" }
     assertThat(textComposable.children.asIterable()).isEmpty()
   }
 
@@ -52,10 +52,10 @@ class ComposeViewTest {
     }
 
     val columnView = findRootComposeView().allDescendentsDepthFirst
-        .single { it.displayName == "Column" }
+      .single { it.displayName == "Column" }
     val androidViews = columnView.allDescendentsDepthFirst
-        .filterIsInstance<AndroidView>()
-        .toList()
+      .filterIsInstance<AndroidView>()
+      .toList()
     assertThat(androidViews.count { it.view is TextView }).isEqualTo(1)
   }
 
@@ -70,14 +70,14 @@ class ComposeViewTest {
     }
 
     val columnView = findRootComposeView()
-        .allDescendentsDepthFirst
-        .first { it.displayName == "Column" }
+      .allDescendentsDepthFirst
+      .first { it.displayName == "Column" }
     val columnChildren = columnView.children.toList()
     assertThat(columnChildren).hasSize(2)
     assertThat(columnChildren[0].displayName).isEqualTo("BasicText")
     assertThat(columnChildren[1].displayName).isEqualTo("Button")
     assertThat(columnChildren[1].allDescendentsDepthFirst.count { it.displayName == "Box" })
-        .isEqualTo(1)
+      .isEqualTo(1)
   }
 
   @Test fun composeView_reports_LayoutModifiers() {
@@ -118,8 +118,8 @@ class ComposeViewTest {
 
   private fun findRootComposeView(): ComposeView =
     findRootAndroidView().allDescendentsDepthFirst
-        .filterIsInstance<ComposeView>()
-        .first()
+      .filterIsInstance<ComposeView>()
+      .first()
 
   private fun findRootAndroidView(): AndroidView {
     val latch = CountDownLatch(1)
