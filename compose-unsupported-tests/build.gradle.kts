@@ -9,9 +9,9 @@ plugins {
  * Allows using a different version of Compose to validate that we degrade gracefully on apps
  * built with unsupported Compose versions.
  */
-val oldComposeVersion = "1.0.0-alpha04"
+val oldComposeVersion = "1.0.0-alpha09"
 // Older version of Compose requires an older version of Kotlin.
-val oldComposeCompiler = "1.4.0"
+val oldComposeCompiler = "1.4.21"
 
 android {
   compileSdkVersion(30)
@@ -35,8 +35,14 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerVersion = oldComposeCompiler
     kotlinCompilerExtensionVersion = oldComposeVersion
+  }
+
+  packagingOptions {
+    resources.excludes += listOf(
+      "META-INF/AL2.0",
+      "META-INF/LGPL2.1"
+    )
   }
 }
 
@@ -55,9 +61,7 @@ dependencies {
   androidTestImplementation(project(":radiography"))
   androidTestImplementation(Dependencies.AppCompat)
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Material)
-  // This artifact's maven coordinates are different in newer versions so we can't use the one from
-  // Dependencies.kt.
-  androidTestImplementation("androidx.ui:ui-test:$oldComposeVersion")
+  androidTestImplementation(Dependencies.Compose(oldComposeVersion).Testing)
   androidTestImplementation(Dependencies.InstrumentationTests.Rules)
   androidTestImplementation(Dependencies.InstrumentationTests.Runner)
   androidTestImplementation(Dependencies.Truth)
