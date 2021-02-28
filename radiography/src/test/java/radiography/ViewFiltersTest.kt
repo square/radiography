@@ -15,7 +15,7 @@ import radiography.ViewFilters.androidViewFilterFor
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class ViewFiltersTest {
+internal class ViewFiltersTest {
   @Suppress("DEPRECATION")
   private val context: Context = RuntimeEnvironment.application
 

@@ -3,10 +3,10 @@ object Versions {
    * To change this in the IDE, use `systemProp.square.kotlinVersion=x.y.z` in your
    * `~/.gradle/gradle.properties` file.
    */
-  val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.4.21"
+  val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.4.30"
 
   const val AndroidXTest = "1.3.0"
-  const val Compose = "1.0.0-alpha09"
+  const val Compose = "1.0.0-beta01"
 }
 
 object Dependencies {
@@ -26,9 +26,11 @@ object Dependencies {
   const val Truth = "com.google.truth:truth:1.0.1"
 
   class Compose(composeVersion: String = Versions.Compose) {
+    fun Activity(version: String = "1.3.0-alpha03") = "androidx.activity:activity-compose:$version"
     val Material = "androidx.compose.material:material:${composeVersion}"
     val Testing = "androidx.compose.ui:ui-test-junit4:${composeVersion}"
     val Tooling = "androidx.compose.ui:ui-tooling:${composeVersion}"
+    val ToolingData = "androidx.compose.ui:ui-tooling-data:${composeVersion}"
   }
 
   object InstrumentationTests {

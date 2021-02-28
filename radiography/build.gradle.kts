@@ -48,10 +48,7 @@ android {
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
-    freeCompilerArgs = listOfNotNull(
-      // allow-jvm-ir-dependencies is required to consume binaries built with the IR backend.
-      // It doesn't change the bytecode that gets generated for this module.
-      "-Xallow-jvm-ir-dependencies",
+    freeCompilerArgs += listOfNotNull(
       "-Xopt-in=kotlin.RequiresOptIn",
 
       // Require explicit public modifiers and types.
@@ -68,7 +65,7 @@ tasks.withType<KotlinCompile> {
 dependencies {
   // We don't want to bring any Compose dependencies in unless the consumer of this library is
   // bringing them in itself.
-  compileOnly(Dependencies.Compose().Tooling)
+  compileOnly(Dependencies.Compose().ToolingData)
 
   testImplementation(Dependencies.JUnit)
   testImplementation(Dependencies.Mockito)

@@ -39,9 +39,7 @@ android {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     jvmTarget = "1.8"
-    freeCompilerArgs = listOf(
-      "-Xallow-jvm-ir-dependencies",
-      "-Xskip-prerelease-check",
+    freeCompilerArgs += listOf(
       "-Xopt-in=kotlin.RequiresOptIn"
     )
   }

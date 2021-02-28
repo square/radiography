@@ -3,30 +3,50 @@ package radiography.test.compose
 import android.view.ViewGroup.LayoutParams
 import android.widget.TextView
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.SubcomposeLayout
-import androidx.compose.ui.layout.WithConstraints
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.Role.RadioButton
+import androidx.compose.ui.semantics.ScrollAxisRange
 import androidx.compose.ui.semantics.SemanticsProperties.ContentDescription
 import androidx.compose.ui.semantics.SemanticsProperties.Disabled
 import androidx.compose.ui.semantics.SemanticsProperties.Focused
-import androidx.compose.ui.semantics.SemanticsProperties.Hidden
+import androidx.compose.ui.semantics.SemanticsProperties.Heading
+import androidx.compose.ui.semantics.SemanticsProperties.HorizontalScrollAxisRange
+import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
+import androidx.compose.ui.semantics.SemanticsProperties.InvisibleToUser
 import androidx.compose.ui.semantics.SemanticsProperties.IsDialog
 import androidx.compose.ui.semantics.SemanticsProperties.IsPopup
+import androidx.compose.ui.semantics.SemanticsProperties.PaneTitle
+import androidx.compose.ui.semantics.SemanticsProperties.Password
+import androidx.compose.ui.semantics.SemanticsProperties.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsProperties.Role
+import androidx.compose.ui.semantics.SemanticsProperties.SelectableGroup
+import androidx.compose.ui.semantics.SemanticsProperties.Selected
 import androidx.compose.ui.semantics.SemanticsProperties.StateDescription
 import androidx.compose.ui.semantics.SemanticsProperties.TestTag
+import androidx.compose.ui.semantics.SemanticsProperties.TextSelectionRange
+import androidx.compose.ui.semantics.SemanticsProperties.ToggleableState
+import androidx.compose.ui.semantics.SemanticsProperties.VerticalScrollAxisRange
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.state.ToggleableState.On
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.ImeAction.Send
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import com.google.common.truth.Truth.assertThat
@@ -76,7 +96,7 @@ class ComposeUiTest {
 
   @Test fun viewSizeReported() {
     composeRule.setContentWithExplicitRoot {
-      val (width, height) = with(AmbientDensity.current) {
+      val (width, height) = with(LocalDensity.current) {
         Pair(30.toDp(), 40.toDp())
       }
       Box(modifier = Modifier.size(width, height))
@@ -101,6 +121,7 @@ class ComposeUiTest {
     assertThat(hierarchy).contains("Box")
   }
 
+  @OptIn(ExperimentalComposeUiApi::class)
   @Test fun semanticsAreReported() {
     composeRule.setContentWithExplicitRoot {
       Box(Modifier.semantics { set(TestTag, "test tag") })
@@ -109,9 +130,32 @@ class ComposeUiTest {
       Box(Modifier.semantics { set(Disabled, Unit) })
       Box(Modifier.semantics { set(Focused, true) })
       Box(Modifier.semantics { set(Focused, false) })
-      Box(Modifier.semantics { set(Hidden, Unit) })
+      Box(Modifier.semantics { set(InvisibleToUser, Unit) })
       Box(Modifier.semantics { set(IsDialog, Unit) })
       Box(Modifier.semantics { set(IsPopup, Unit) })
+      Box(Modifier.semantics { set(ProgressBarRangeInfo, ProgressBarRangeInfo(.2f, 0f..0.5f)) })
+      Box(Modifier.semantics { set(PaneTitle, "pane title") })
+      Box(Modifier.semantics { set(SelectableGroup, Unit) })
+      Box(Modifier.semantics { set(Heading, Unit) })
+      Box(Modifier.semantics { set(InvisibleToUser, Unit) })
+      Box(Modifier.semantics {
+        set(
+          HorizontalScrollAxisRange,
+          ScrollAxisRange(value = { .3f }, maxValue = { .5f })
+        )
+      })
+      Box(Modifier.semantics {
+        set(
+          VerticalScrollAxisRange,
+          ScrollAxisRange(value = { .4f }, maxValue = { .5f })
+        )
+      })
+      Box(Modifier.semantics { set(Role, RadioButton) })
+      Box(Modifier.semantics { set(TextSelectionRange, TextRange(3, 4)) })
+      Box(Modifier.semantics { set(ImeAction, Send) })
+      Box(Modifier.semantics { set(Selected, true) })
+      Box(Modifier.semantics { set(ToggleableState, On) })
+      Box(Modifier.semantics { set(Password, Unit) })
     }
 
     val hierarchy = composeRule.runOnIdle {
@@ -124,9 +168,21 @@ class ComposeUiTest {
     assertThat(hierarchy).contains("Box { DISABLED }")
     assertThat(hierarchy).contains("Box { FOCUSED }")
     assertThat(hierarchy).contains("Box")
-    assertThat(hierarchy).contains("Box { HIDDEN }")
     assertThat(hierarchy).contains("Box { DIALOG }")
     assertThat(hierarchy).contains("Box { POPUP }")
+    assertThat(hierarchy).contains("Box { progress-bar-range:ProgressBarRangeInfo(current=0.2, range=0.0..0.5, steps=0) }")
+    assertThat(hierarchy).contains("Box { pane-title:\"pane title\" }")
+    assertThat(hierarchy).contains("Box { SELECTABLE-GROUP }")
+    assertThat(hierarchy).contains("Box { HEADING }")
+    assertThat(hierarchy).contains("Box { INVISIBLE-TO-USER }")
+    assertThat(hierarchy).contains("Box { horizontal-scroll-axis-range:\"ScrollAxisRange(value=0.3, maxValue=0.5)\" }")
+    assertThat(hierarchy).contains("Box { vertical-scroll-axis-range:\"ScrollAxisRange(value=0.4, maxValue=0.5)\" }")
+    assertThat(hierarchy).contains("Box { roll:RadioButton }")
+    assertThat(hierarchy).contains("Box { SELECTED-TEXT }")
+    assertThat(hierarchy).contains("Box { ime-action:Send }")
+    assertThat(hierarchy).contains("Box { SELECTED }")
+    assertThat(hierarchy).contains("Box { toggle-state:On }")
+    assertThat(hierarchy).contains("Box { PASSWORD }")
   }
 
   @Test fun checkableChecked() {
@@ -140,6 +196,19 @@ class ComposeUiTest {
 
     assertThat(hierarchy).contains("Checkbox")
     assertThat(hierarchy).contains("Checked")
+  }
+
+  @Test fun textEmptyContents() {
+    composeRule.setContentWithExplicitRoot {
+      BasicText("")
+    }
+
+    val hierarchy = composeRule.runOnIdle {
+      Radiography.scan(viewStateRenderers = listOf(textViewRenderer(renderTextValue = true)))
+    }
+
+    assertThat(hierarchy).doesNotContain("text-length")
+    assertThat(hierarchy).contains("text:\"\"")
   }
 
   @Test fun textContents() {
@@ -186,6 +255,18 @@ class ComposeUiTest {
 
     assertThat(hierarchy).contains("text-length:21")
     assertThat(hierarchy).doesNotContain("text:")
+  }
+
+  @Test fun textFieldEmptyContents() {
+    composeRule.setContentWithExplicitRoot {
+      TextField("", onValueChange = {}, label = {})
+    }
+
+    val hierarchy = composeRule.runOnIdle {
+      Radiography.scan(viewStateRenderers = listOf(textViewRenderer(renderTextValue = true)))
+    }
+
+    assertThat(hierarchy).contains("text:\"\"")
   }
 
   @Test fun textFieldContents() {
@@ -274,7 +355,7 @@ class ComposeUiTest {
     composeRule.setContentWithExplicitRoot {
       Box(Modifier.testTag("root")) {
         AndroidView(::TextView) {
-          it.layoutParams = LayoutParams(0, 0)
+          it.layoutParams = LayoutParams(0, 42)
         }
       }
     }
@@ -283,18 +364,18 @@ class ComposeUiTest {
       Radiography.scan(composeTestTagScope("root"))
     }
 
-    // The stuff below the AndroidView is implementation details, testing it is brittle and
-    // pointless.
+    // The stuff immediately below the AndroidView is implementation details, testing it is brittle
+    // and pointless.
     @Suppress("RemoveCurlyBracesFromTemplate")
     assertThat(hierarchy).contains(
       """
       ${BLANK} Box:
-        ${BLANK}Box { test-tag:"root" }
-      ${BLANK} ${BLANK}╰─AndroidView
+        ${BLANK}Box { 0×42px, test-tag:"root" }
+      ${BLANK} ${BLANK}╰─AndroidView { 0×42px }
       """.trimIndent()
     )
     // But this view description should show up at some point.
-    assertThat(hierarchy).contains("╰─TextView { 0×0px, text-length:0 }")
+    assertThat(hierarchy).contains("╰─TextView { 0×42px, text-length:0 }")
   }
 
   @Test fun scanningHandlesDialog() {
@@ -312,10 +393,10 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |Providers:
-      |${BLANK}Providers { test-tag:"parent" }
+      |CompositionLocalProvider:
+      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─Dialog
-      |${BLANK}  ╰─Providers { DIALOG }
+      |${BLANK}  ╰─CompositionLocalProvider { DIALOG }
       |${BLANK}    ╰─Box { test-tag:"child" }
       |
       """.trimMargin()
@@ -341,10 +422,10 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |Providers:
-      |${BLANK}Providers { test-tag:"parent" }
+      |CompositionLocalProvider:
+      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─CustomTestDialog
-      |${BLANK}  ╰─Providers { DIALOG }
+      |${BLANK}  ╰─CompositionLocalProvider { DIALOG }
       |${BLANK}    ╰─Box { test-tag:"child" }
       |
       """.trimMargin()
@@ -366,8 +447,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |Providers:
-      |${BLANK}Providers { test-tag:"parent" }
+      |CompositionLocalProvider:
+      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
       |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
       |${BLANK}    ╰─Box { test-tag:"child" }
@@ -392,8 +473,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |Providers:
-      |${BLANK}Providers { test-tag:"parent" }
+      |CompositionLocalProvider:
+      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
       |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
       |${BLANK}    ├─Box { test-tag:"child1" }
@@ -424,8 +505,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |Providers:
-      |${BLANK}Providers { test-tag:"parent" }
+      |CompositionLocalProvider:
+      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─MultipleSubcompositionLayout { test-tag:"subcompose-layout" }
       |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
       |${BLANK}  │ ├─Box { test-tag:"child1.1" }
@@ -456,8 +537,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |Providers:
-      |${BLANK}Providers { test-tag:"parent" }
+      |CompositionLocalProvider:
+      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}├─SingleSubcompositionLayout { test-tag:"subcompose-layout1" }
       |${BLANK}│ ╰─<subcomposition of SingleSubcompositionLayout>
       |${BLANK}│   ╰─Box { test-tag:"child1" }
@@ -472,7 +553,7 @@ class ComposeUiTest {
   @Test fun scanningHandlesWithConstraints() {
     composeRule.setContent {
       Box(Modifier.testTag("parent")) {
-        WithConstraints(Modifier.testTag("with-constraints")) {
+        BoxWithConstraints(Modifier.testTag("with-constraints")) {
           Box(Modifier.testTag("child"))
         }
       }
@@ -484,10 +565,10 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |Providers:
-      |${BLANK}Providers { test-tag:"parent" }
-      |${BLANK}╰─WithConstraints { test-tag:"with-constraints" }
-      |${BLANK}  ╰─<subcomposition of WithConstraints>
+      |CompositionLocalProvider:
+      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
+      |${BLANK}╰─BoxWithConstraints { test-tag:"with-constraints" }
+      |${BLANK}  ╰─<subcomposition of BoxWithConstraints>
       |${BLANK}    ╰─Box { test-tag:"child" }
       |
       """.trimMargin()
@@ -514,16 +595,16 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |Providers:
-      |${BLANK}Providers { test-tag:"parent" }
+      |CompositionLocalProvider:
+      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─LazyColumn { test-tag:"list" }
       |${BLANK}  ├─<subcomposition of LazyColumn>
-      |${BLANK}  │ ╰─RestorableStateProvider { test-tag:"child:1" }
+      |${BLANK}  │ ╰─SaveableStateProvider { test-tag:"child:1" }
       |${BLANK}  ├─<subcomposition of LazyColumn>
-      |${BLANK}  │ ├─RestorableStateProvider { test-tag:"child:2" }
-      |${BLANK}  │ ╰─RestorableStateProvider { test-tag:"child:2 (even)" }
+      |${BLANK}  │ ├─SaveableStateProvider { test-tag:"child:2" }
+      |${BLANK}  │ ╰─SaveableStateProvider { test-tag:"child:2 (even)" }
       |${BLANK}  ╰─<subcomposition of LazyColumn>
-      |${BLANK}    ╰─RestorableStateProvider { test-tag:"child:3" }
+      |${BLANK}    ╰─SaveableStateProvider { test-tag:"child:3" }
       |
       """.trimMargin()
     )
@@ -532,16 +613,28 @@ class ComposeUiTest {
   @Test fun scanningSubcomposition_includesSize() {
     composeRule.setContent {
       // Convert 10 px to DP, since output is always in px.
-      val sizeDp = with(AmbientDensity.current) { 10.toDp() }
+      val sizeDp = with(LocalDensity.current) { 10.toDp() }
 
       Box(Modifier.testTag("parent")) {
         MultipleSubcompositionLayout(Modifier.testTag("subcompose-layout"),
           firstChildren = {
-            Box(Modifier.testTag("child1").size(sizeDp))
-            Box(Modifier.testTag("child2").size(sizeDp))
+            Box(
+              Modifier
+                .testTag("child1")
+                .size(sizeDp)
+            )
+            Box(
+              Modifier
+                .testTag("child2")
+                .size(sizeDp)
+            )
           },
           secondChildren = {
-            Box(Modifier.testTag("child3").size(sizeDp))
+            Box(
+              Modifier
+                .testTag("child3")
+                .size(sizeDp)
+            )
           }
         )
       }
@@ -553,8 +646,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |Providers:
-      |${BLANK}Providers { 10×30px, test-tag:"parent" }
+      |CompositionLocalProvider:
+      |${BLANK}CompositionLocalProvider { 10×30px, test-tag:"parent" }
       |${BLANK}╰─MultipleSubcompositionLayout { 10×30px, test-tag:"subcompose-layout" }
       |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
       |${BLANK}  │ ├─Box { 10×10px, test-tag:"child1" }

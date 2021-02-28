@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import radiography.internal.renderTreeString
 
-class RenderTreeStringTest {
+internal class RenderTreeStringTest {
 
   @Test fun `renderTreeString handles single node`() {
     val tree = Node("root")

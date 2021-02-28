@@ -5,16 +5,19 @@ import android.content.res.Resources.NotFoundException
 import android.view.View
 import android.widget.Checkable
 import android.widget.TextView
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.layout.LayoutIdParentData
+import androidx.compose.ui.semantics.ScrollAxisRange
 import androidx.compose.ui.semantics.SemanticsModifier
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.SemanticsProperties.EditableText
 import androidx.compose.ui.semantics.SemanticsProperties.Text
 import androidx.compose.ui.semantics.getOrNull
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
-import radiography.internal.isComposeAvailable
 import radiography.internal.ellipsize
 import radiography.internal.formatPixelDimensions
+import radiography.internal.isComposeAvailable
 
 @OptIn(ExperimentalRadiographyComposeApi::class)
 public object ViewStateRenderers {
@@ -54,6 +57,7 @@ public object ViewStateRenderers {
     }
   }
 
+  @OptIn(ExperimentalComposeUiApi::class)
   @ExperimentalRadiographyComposeApi
   private val ComposeViewRenderer: ViewStateRenderer = if (!isComposeAvailable) NoRenderer else {
     ViewStateRenderer {
@@ -75,14 +79,36 @@ public object ViewStateRenderers {
         .flatMap { semantics -> semantics.semanticsConfiguration }
         .forEach { (key, value) ->
           when (key) {
-            SemanticsProperties.TestTag -> append("test-tag:\"$value\"")
-            SemanticsProperties.ContentDescription -> append("content-description:\"$value\"")
-            SemanticsProperties.StateDescription -> append("state-description:\"$value\"")
+            SemanticsProperties.TestTag -> appendLabeledValue("test-tag", value)
+            SemanticsProperties.ContentDescription ->
+              appendLabeledValue("content-description", value)
+            SemanticsProperties.StateDescription -> appendLabeledValue("state-description", value)
             SemanticsProperties.Disabled -> append("DISABLED")
             SemanticsProperties.Focused -> if (value == true) append("FOCUSED")
-            SemanticsProperties.Hidden -> append("HIDDEN")
             SemanticsProperties.IsDialog -> append("DIALOG")
             SemanticsProperties.IsPopup -> append("POPUP")
+            SemanticsProperties.ProgressBarRangeInfo ->
+              appendLabeledValue("progress-bar-range", value)
+            SemanticsProperties.PaneTitle -> appendLabeledValue("pane-title", value)
+            SemanticsProperties.SelectableGroup -> append("SELECTABLE-GROUP")
+            SemanticsProperties.Heading -> append("HEADING")
+            SemanticsProperties.InvisibleToUser -> append("INVISIBLE-TO-USER")
+            SemanticsProperties.HorizontalScrollAxisRange ->
+              appendLabeledValue(
+                "horizontal-scroll-axis-range",
+                scrollAxisRangeToString(value as? ScrollAxisRange)
+              )
+            SemanticsProperties.VerticalScrollAxisRange ->
+              appendLabeledValue(
+                "vertical-scroll-axis-range",
+                scrollAxisRangeToString(value as? ScrollAxisRange)
+              )
+            SemanticsProperties.Role -> appendLabeledValue("roll", value)
+            SemanticsProperties.TextSelectionRange -> append("SELECTED-TEXT")
+            SemanticsProperties.ImeAction -> appendLabeledValue("ime-action", value)
+            SemanticsProperties.Selected -> append("SELECTED")
+            SemanticsProperties.ToggleableState -> appendLabeledValue("toggle-state", value)
+            SemanticsProperties.Password -> append("PASSWORD")
           }
         }
 
@@ -152,7 +178,7 @@ public object ViewStateRenderers {
     }
 
     val androidTextViewRenderer = androidViewStateRendererFor<TextView> { textView ->
-      appendTextValue(textView.text, renderTextValue, textValueMaxLength)
+      appendTextValue(label = "text", textView.text, renderTextValue, textValueMaxLength)
       if (textView.isInputMethodTarget) {
         append("ime-target")
       }
@@ -168,6 +194,8 @@ public object ViewStateRenderers {
   /**
    * Renders composables that expose a text value through the [Text] semantics property.
    *
+   * TODO update kdoc to mention editable vs text
+   *
    * @param renderTextValue whether to include the string value of the property in the rendered view
    * hierarchy. Defaults to false to avoid including any PII.
    *
@@ -182,15 +210,24 @@ public object ViewStateRenderers {
     renderTextValue: Boolean = false,
     textValueMaxLength: Int = Int.MAX_VALUE
   ): ViewStateRenderer = if (!isComposeAvailable) NoRenderer else ViewStateRenderer { view ->
-    val text = (view as? ComposeView)
+    val semantics = (view as? ComposeView)
       ?.modifiers
       ?.filterIsInstance<SemanticsModifier>()
-      ?.mapNotNull { it.semanticsConfiguration.getOrNull(Text)?.text }
-      ?.takeUnless { it.isEmpty() }
-      ?.joinToString(separator = " ")
       ?: return@ViewStateRenderer
 
-    appendTextValue(text, renderTextValue, textValueMaxLength)
+    semantics.mapNotNull { it.semanticsConfiguration.getOrNull(Text)?.text }
+      .takeUnless { it.isEmpty() }
+      ?.joinToString(separator = " ")
+      ?.also {
+        appendTextValue(label = "text", it, renderTextValue, textValueMaxLength)
+      }
+
+    semantics.mapNotNull { it.semanticsConfiguration.getOrNull(EditableText)?.text }
+      .takeUnless { it.isEmpty() }
+      ?.joinToString(separator = " ")
+      ?.also {
+        appendTextValue(label = "editable-text", it, renderTextValue, textValueMaxLength)
+      }
   }
 
   /**
@@ -223,6 +260,7 @@ public object ViewStateRenderers {
   }
 
   internal fun AttributeAppendable.appendTextValue(
+    label: String,
     text: CharSequence?,
     renderTextValue: Boolean,
     textValueMaxLength: Int
@@ -231,13 +269,25 @@ public object ViewStateRenderers {
 
     val appendTextLength = if (renderTextValue) {
       val ellipsizedText = text.ellipsize(textValueMaxLength)
-      append("text:\"$ellipsizedText\"")
+      appendLabeledValue(label, ellipsizedText)
       ellipsizedText.length != text.length
     } else {
       true
     }
     if (appendTextLength) {
-      append("text-length:${text.length}")
+      appendLabeledValue("$label-length", text.length)
     }
+  }
+
+  private fun AttributeAppendable.appendLabeledValue(label: String, value: Any?) {
+    if (value is CharSequence) {
+      append("""$label:"$value"""")
+    } else {
+      append("""$label:$value""")
+    }
+  }
+
+  private fun scrollAxisRangeToString(range: ScrollAxisRange?) = range?.let {
+    """ScrollAxisRange(value=${range.value()}, maxValue=${range.maxValue()})"""
   }
 }

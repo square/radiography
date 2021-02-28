@@ -1,5 +1,6 @@
 package radiography.internal
 
+import android.annotation.SuppressLint
 import android.os.Build.VERSION
 import android.view.View
 import java.lang.reflect.Field
@@ -35,18 +36,18 @@ internal object WindowScanner {
         (viewsField!![windowManager] as List<View>).toList()
       }
     } catch (ignored: RuntimeException) {
-      emptyList<View>()
+      emptyList()
     } catch (ignored: IllegalAccessException) {
-      emptyList<View>()
+      emptyList()
     }
   }
 
   private fun initialize() {
     initialized = true
-    val accessClass: String =
-      WINDOW_MANAGER_GLOBAL_CLASS
+    val accessClass: String = WINDOW_MANAGER_GLOBAL_CLASS
     val instanceMethod: String = GET_GLOBAL_INSTANCE
     try {
+      @SuppressLint("PrivateApi")
       val clazz = Class.forName(accessClass)
       val getMethod = clazz.getMethod(instanceMethod)
       windowManager = getMethod.invoke(null)

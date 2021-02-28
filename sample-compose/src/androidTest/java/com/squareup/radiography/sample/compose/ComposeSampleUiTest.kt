@@ -2,7 +2,7 @@ package com.squareup.radiography.sample.compose
 
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasSubstring
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -21,14 +21,14 @@ class ComposeSampleUiTest {
 
   @Test fun displaysHierarchyInline() {
     composeRule.onNodeWithTag(LIVE_HIERARCHY_TEST_TAG)
-      .assert(hasSubstring("Remember me"))
-      .assert(hasSubstring("Unchecked"))
+      .assert(hasText("Remember me", substring = true))
+      .assert(hasText("Unchecked", substring = true))
 
     composeRule.onNodeWithTag(TEXT_FIELD_TEST_TAG)
       .performTextReplacement("foobar")
 
     composeRule.onNodeWithTag(LIVE_HIERARCHY_TEST_TAG)
-      .assert(hasSubstring("Remember me"))
-      .assert(hasSubstring("foobar"))
+      .assert(hasText("Remember me", substring = true))
+      .assert(hasText("foobar", substring = true))
   }
 }

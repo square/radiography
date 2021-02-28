@@ -6,6 +6,9 @@ import androidx.compose.ui.Modifier
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
 import radiography.internal.ComposeLayoutInfo
+import radiography.internal.ComposeLayoutInfo.AndroidViewInfo
+import radiography.internal.ComposeLayoutInfo.LayoutNodeInfo
+import radiography.internal.ComposeLayoutInfo.SubcompositionInfo
 import radiography.internal.getComposeScannableViews
 import radiography.internal.mightBeComposeView
 
@@ -43,17 +46,6 @@ public sealed class ScannableView {
     public val modifiers: List<Modifier>,
     override val children: Sequence<ScannableView>
   ) : ScannableView() {
-
-    internal constructor(layoutInfo: ComposeLayoutInfo) : this(
-      displayName = layoutInfo.name,
-      // Can't use width and height properties because we're not targeting 1.8 bytecode.
-      width = layoutInfo.bounds.run { right - left },
-      height = layoutInfo.bounds.run { bottom - top },
-      modifiers = layoutInfo.modifiers,
-      children = layoutInfo.children.map(::ComposeView) +
-        (layoutInfo.view?.let { sequenceOf(AndroidView(it)) } ?: emptySequence<ScannableView>())
-    )
-
     override fun toString(): String = "${ComposeView::class.java.simpleName}($displayName)"
   }
 
@@ -91,4 +83,24 @@ private fun View.scannableChildren(): Sequence<ScannableView> = sequence {
     val view = getChildAt(i) ?: continue
     yield(AndroidView(view))
   }
+}
+
+@OptIn(ExperimentalRadiographyComposeApi::class)
+internal fun ComposeLayoutInfo.toScannableView(): ScannableView = when (val layoutInfo = this) {
+  is LayoutNodeInfo -> ComposeView(
+    displayName = layoutInfo.name,
+    // Can't use width and height properties because we're not targeting 1.8 bytecode.
+    width = layoutInfo.bounds.run { right - left },
+    height = layoutInfo.bounds.run { bottom - top },
+    modifiers = layoutInfo.modifiers,
+    children = layoutInfo.children.map(ComposeLayoutInfo::toScannableView)
+  )
+  is SubcompositionInfo -> ComposeView(
+    displayName = layoutInfo.name,
+    width = layoutInfo.bounds.run { right - left },
+    height = layoutInfo.bounds.run { bottom - top },
+    children = layoutInfo.children.map(ComposeLayoutInfo::toScannableView),
+    modifiers = emptyList()
+  )
+  is AndroidViewInfo -> AndroidView(layoutInfo.view)
 }

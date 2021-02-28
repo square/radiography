@@ -16,7 +16,7 @@ import radiography.ViewStateRenderers.appendTextValue
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class ViewStateRenderersTest {
+internal class ViewStateRenderersTest {
   @Suppress("DEPRECATION")
   private val context: Context = RuntimeEnvironment.application
 
@@ -51,7 +51,7 @@ class ViewStateRenderersTest {
 
     val result = buildString {
       AttributeAppendable(this)
-        .appendTextValue(text, renderTextValue = true, textValueMaxLength = 5)
+        .appendTextValue(label = "text", text, renderTextValue = true, textValueMaxLength = 5)
     }
 
     assertThat(result).isEqualTo("""text:"hell…", text-length:11""")
@@ -62,7 +62,7 @@ class ViewStateRenderersTest {
 
     val result = buildString {
       AttributeAppendable(this)
-        .appendTextValue(text, renderTextValue = true, textValueMaxLength = 11)
+        .appendTextValue(label = "text", text, renderTextValue = true, textValueMaxLength = 11)
     }
 
     assertThat(result).isEqualTo("""text:"hello world"""")
@@ -73,7 +73,7 @@ class ViewStateRenderersTest {
 
     val result = buildString {
       AttributeAppendable(this)
-        .appendTextValue(text, renderTextValue = true, textValueMaxLength = 100)
+        .appendTextValue(label = "text", text, renderTextValue = true, textValueMaxLength = 100)
     }
 
     assertThat(result).isEqualTo("""text:"hello world"""")
@@ -84,7 +84,7 @@ class ViewStateRenderersTest {
 
     val result = buildString {
       AttributeAppendable(this)
-        .appendTextValue(text, renderTextValue = false, textValueMaxLength = 0)
+        .appendTextValue(label = "text", text, renderTextValue = false, textValueMaxLength = 0)
     }
 
     assertThat(result).isEqualTo("""text-length:11""")

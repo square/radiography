@@ -6,7 +6,7 @@ plugins {
 }
 
 /** Use a separate property for the sample so we can test with different versions easily. */
-val sampleComposeVersion = "1.0.0-alpha09"
+val sampleComposeVersion = "1.0.0-beta01"
 
 android {
   compileSdkVersion(30)
@@ -47,9 +47,7 @@ android {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     jvmTarget = "1.8"
-    freeCompilerArgs = listOf(
-      "-Xallow-jvm-ir-dependencies",
-      "-Xskip-prerelease-check",
+    freeCompilerArgs += listOf(
       "-Xopt-in=kotlin.RequiresOptIn"
     )
   }
@@ -58,6 +56,7 @@ tasks.withType<KotlinCompile> {
 dependencies {
   implementation(project(":radiography"))
   implementation(Dependencies.AppCompat)
+  implementation(Dependencies.Compose(sampleComposeVersion).Activity())
   implementation(Dependencies.Compose(sampleComposeVersion).Material)
   implementation(Dependencies.Compose(sampleComposeVersion).Tooling)
 
