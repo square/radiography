@@ -11,7 +11,7 @@ object Versions {
 
 object Dependencies {
   object Build {
-    const val Android = "com.android.tools.build:gradle:4.2.0-alpha16"
+    const val Android = "com.android.tools.build:gradle:7.0.0-alpha08"
     const val MavenPublish = "com.vanniktech:gradle-maven-publish-plugin:0.12.0"
     val Kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KotlinCompiler}"
     const val Ktlint = "org.jlleitschuh.gradle:ktlint-gradle:9.2.1"

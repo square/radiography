@@ -1,7 +1,7 @@
 package radiography.test.compose
 
-import androidx.compose.foundation.Text
-import androidx.ui.test.createComposeRule
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.ui.test.junit4.createComposeRule
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
@@ -15,7 +15,7 @@ class ComposeUnsupportedTest {
 
   @Test fun when_composeVersionNotSupported_then_failsGracefully() {
     composeRule.setContent {
-      Text("FooBar")
+      BasicText("FooBar")
     }
 
     composeRule.runOnIdle {
