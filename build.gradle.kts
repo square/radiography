@@ -35,6 +35,9 @@ buildscript {
     classpath(Dependencies.Build.Kotlin)
     classpath(Dependencies.Build.Ktlint)
     classpath(Dependencies.Build.BinaryCompatibility)
+    // Required for the gradle-maven-publish-plugin plugin.
+    // See https://github.com/vanniktech/gradle-maven-publish-plugin/issues/205.
+    classpath(Dependencies.Build.Dokka)
   }
 }
 
