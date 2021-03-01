@@ -108,7 +108,7 @@ library is on the classpath. If you are using Compose, you're probably already u
 (the `@Preview` annotation lives in the Tooling library). On the other hand, if you're not using
 Compose, Radiography won't bloat your app with transitive dependencies on any Compose artifacts.
 
-Compose changes frequently, and while in alpha, is being released every two weeks. If you are using
+Compose changes frequently, and while in beta, is being released every two weeks. If you are using
 Radiography with an unsupported version of Compose, or you don't depend on the Tooling library, then
 Radiography will still try to detect compositions, but instead of rendering the actual hierarchy, it
 will just include a message asking you to upgrade Radiography or add the Tooling library.
@@ -119,7 +119,7 @@ The only thing required for Radiography to render composables is to include the 
 a dependency:
 ```kotlin
 dependencies {
-  implementation("androidx.ui:ui-tooling:1.0.0-alphaXY")
+  implementation("androidx.compose.ui:ui-tooling:1.0.0-betaXY")
 }
 ```
 

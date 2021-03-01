@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 2.3.0
+-------------
+
+_2021-3-1_
+
+* Upgrade Compose to beta01. (#128)
+
 Version 2.2.0
 -------------
 
