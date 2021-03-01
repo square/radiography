@@ -8,8 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.ScrollableRow
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,28 +16,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.tooling.preview.Preview
 import radiography.ExperimentalRadiographyComposeApi
 import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
@@ -60,7 +61,7 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
 
 @OptIn(ExperimentalRadiographyComposeApi::class, ExperimentalAnimationApi::class)
 @Composable fun ComposeSampleApp() {
-  val context = AmbientContext.current
+  val context = LocalContext.current
   val liveHierarchy = remember { mutableStateOf<String?>(null) }
 
   var username by remember { mutableStateOf("") }
@@ -79,14 +80,14 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
         value = username,
         onValueChange = { username = it },
         label = { Text("Username") },
-        backgroundColor = Color.Transparent,
+        colors = TextFieldDefaults.outlinedTextFieldColors(),
         modifier = Modifier.testTag(TEXT_FIELD_TEST_TAG)
       )
       TextField(
         value = password,
         onValueChange = { password = it },
         label = { Text("Password") },
-        backgroundColor = Color.Transparent,
+        colors = TextFieldDefaults.outlinedTextFieldColors(),
         visualTransformation = PasswordVisualTransformation()
       )
       Row(verticalAlignment = Alignment.CenterVertically) {
@@ -111,8 +112,12 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
       }
 
       liveHierarchy.value?.let {
-        ScrollableRow(modifier = Modifier.weight(1f)) {
-          ScrollableColumn {
+        Row(
+          modifier = Modifier
+            .horizontalScroll(rememberScrollState())
+            .weight(1f)
+        ) {
+          Column(Modifier.verticalScroll(rememberScrollState())) {
             Text(
               liveHierarchy.value.orEmpty(),
               fontFamily = FontFamily.Monospace,
@@ -126,7 +131,7 @@ internal const val LIVE_HIERARCHY_TEST_TAG = "live-hierarchy"
         Text("SHOW STRING RENDERING DIALOG")
       }
 
-      onCommit {
+      SideEffect {
         liveHierarchy.value = Radiography.scan(
           viewStateRenderers = DefaultsIncludingPii,
           // Don't trigger infinite recursion.

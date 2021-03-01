@@ -13,7 +13,7 @@ import androidx.compose.ui.layout.LayoutModifier
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
@@ -93,13 +93,13 @@ class ComposeViewTest {
   @Test fun composeView_reports_size() {
     var density: Density? = null
     composeRule.setContentWithExplicitRoot {
-      density = AmbientDensity.current
+      density = LocalDensity.current
       Box(Modifier.size(30.dp, 40.dp))
     }
 
     val (widthPx, heightPx) = composeRule.runOnIdle {
       with(density!!) {
-        Pair(30.dp.toIntPx(), 40.dp.toIntPx())
+        Pair(30.dp.roundToPx(), 40.dp.roundToPx())
       }
     }
 

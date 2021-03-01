@@ -5,11 +5,13 @@ import android.view.View
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.InternalComposeApi
-import androidx.compose.ui.tooling.asTree
+import androidx.compose.ui.tooling.data.UiToolingDataApi
+import androidx.compose.ui.tooling.data.asTree
 import radiography.ExperimentalRadiographyComposeApi
 import radiography.ScannableView
 import radiography.ScannableView.ChildRenderingError
 import radiography.ScannableView.ComposeView
+import radiography.toScannableView
 import java.lang.reflect.Field
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
@@ -66,7 +68,7 @@ internal fun getComposeScannableViews(composeView: View): Pair<List<ScannableVie
   var linkageError: LinkageError? = null
   val scannableViews = try {
     tryGetLayoutInfos(composeView)
-      ?.map(::ComposeView)
+      ?.map(ComposeLayoutInfo::toScannableView)
       ?.toList()
   } catch (e: LinkageError) {
     // The view looks like an AndroidComposeView, but the Compose code on the classpath is
@@ -123,7 +125,7 @@ private fun tryGetLayoutInfos(composeView: View): Sequence<ComposeLayoutInfo>? {
   // public (eg LayoutNode), so we'd need to use even more (brittle) reflection to do that parsing.
   // That said, once Compose is more stable, it might be worth it to read the slot table directly,
   // since then we could drop the requirement for the Tooling library to be on the classpath.
-  @OptIn(InternalComposeApi::class)
+  @OptIn(InternalComposeApi::class, UiToolingDataApi::class)
   val rootGroup = composer.compositionData.asTree()
   return rootGroup.layoutInfos
 }
@@ -141,7 +143,7 @@ private inline fun SparseArray<*>.first(predicate: (Any?) -> Boolean): Any? {
 }
 
 /**
- * If this is a `WrappedComposition`, returns the original composition, else returns this.
+ * If this is a `WrappedComposition`, returns the composition being wrapped, else returns this.
  */
 private fun Composition.unwrap(): Composition {
   if (this::class.java.name != WRAPPED_COMPOSITION_CLASS_NAME) return this
@@ -154,10 +156,10 @@ private fun Composition.unwrap(): Composition {
 /**
  * Tries to pull a [Composer] out of this [Composition], or returns null if it can't find one.
  */
-private fun Composition.getComposerOrNull(): Composer<*>? {
+private fun Composition.getComposerOrNull(): Composer? {
   if (this::class.java.name != COMPOSITION_IMPL_CLASS_NAME) return null
   val compositionImplClass = Class.forName(COMPOSITION_IMPL_CLASS_NAME)
   val composerField = compositionImplClass.getDeclaredField("composer")
     .apply { isAccessible = true }
-  return composerField.get(this) as? Composer<*>
+  return composerField.get(this) as? Composer
 }

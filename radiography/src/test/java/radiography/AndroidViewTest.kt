@@ -13,7 +13,7 @@ import radiography.ScannableView.AndroidView
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class AndroidViewTest {
+internal class AndroidViewTest {
   @Suppress("DEPRECATION")
   private val context: Context = RuntimeEnvironment.application
 

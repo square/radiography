@@ -21,7 +21,7 @@ import radiography.ViewStateRenderers.textViewRenderer
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class RadiographyTest {
+internal class RadiographyTest {
   @Suppress("DEPRECATION")
   private val context: Context = RuntimeEnvironment.application
 

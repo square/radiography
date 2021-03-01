@@ -9,9 +9,9 @@ plugins {
  * Allows using a different version of Compose to validate that we degrade gracefully on apps
  * built with unsupported Compose versions.
  */
-val oldComposeVersion = "1.0.0-alpha09"
+val oldComposeVersion = "1.0.0-alpha12"
 // Older version of Compose requires an older version of Kotlin.
-val oldComposeCompiler = "1.4.21"
+val oldComposeCompiler = "1.4.30"
 
 android {
   compileSdkVersion(30)
@@ -49,9 +49,7 @@ android {
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     jvmTarget = "1.8"
-    freeCompilerArgs = listOf(
-      "-Xallow-jvm-ir-dependencies",
-      "-Xskip-prerelease-check",
+    freeCompilerArgs += listOf(
       "-Xopt-in=kotlin.RequiresOptIn"
     )
   }
@@ -60,6 +58,7 @@ tasks.withType<KotlinCompile> {
 dependencies {
   androidTestImplementation(project(":radiography"))
   androidTestImplementation(Dependencies.AppCompat)
+  androidTestImplementation(Dependencies.Compose().Activity("1.3.0-alpha02"))
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Material)
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Testing)
   androidTestImplementation(Dependencies.InstrumentationTests.Rules)
