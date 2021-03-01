@@ -16,7 +16,7 @@ import radiography.test.utilities.TestActivity.Companion.withTextViewText
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit.SECONDS
 
-class RadiographyUiTest {
+internal class RadiographyUiTest {
 
   @Test fun when_noActivity_then_emptyHierarchy() {
     val hierarchy = Radiography.scan()

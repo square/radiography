@@ -46,6 +46,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           target: google_apis
+          profile: pixel
           arch: x86_64
           script: ./gradlew connectedCheck --no-build-cache --no-daemon --stacktrace
 

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.test.platform.app.InstrumentationRegistry
 import com.squareup.radiography.test.R
 
-class TestActivity : Activity() {
+internal class TestActivity : Activity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
