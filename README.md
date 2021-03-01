@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 ![Android CI](https://github.com/square/radiography/workflows/Android%20CI/badge.svg)
 
-Text-ray goggles for your Android views.
+Text-ray goggles for your Android UI.
 
 ```
 DecorView { 1080×2160px }
