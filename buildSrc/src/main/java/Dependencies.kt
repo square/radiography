@@ -21,6 +21,7 @@ object Dependencies {
 
   const val AppCompat = "androidx.appcompat:appcompat:1.2.0"
   const val ConstraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
+  const val Curtains = "com.squareup.curtains:curtains:1.0"
   const val JUnit = "junit:junit:4.13"
   const val Mockito = "org.mockito:mockito-core:3.4.6"
   const val Robolectric = "org.robolectric:robolectric:4.3.1"

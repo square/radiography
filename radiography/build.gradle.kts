@@ -63,6 +63,7 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
+  implementation(Dependencies.Curtains)
   // We don't want to bring any Compose dependencies in unless the consumer of this library is
   // bringing them in itself.
   compileOnly(Dependencies.Compose().ToolingData)
