@@ -2,6 +2,7 @@ package radiography
 
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.compose.ui.Modifier
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
@@ -27,7 +28,15 @@ public interface ScannableView {
   public val children: Sequence<ScannableView>
 
   public class AndroidView(public val view: View) : ScannableView {
-    override val displayName: String get() = view::class.java.simpleName
+    override val displayName: String get() {
+      val classSimpleName = view::class.java.simpleName
+      val windowTitle = (view.layoutParams as? WindowManager.LayoutParams)?.title?.toString()
+      if (windowTitle != null) {
+        return "$classSimpleName in $windowTitle window-focus:${view.hasWindowFocus()}"
+      } else {
+        return classSimpleName
+      }
+    }
     override val children: Sequence<ScannableView> = view.scannableChildren()
 
     override fun toString(): String = "${AndroidView::class.java.simpleName}($displayName)"

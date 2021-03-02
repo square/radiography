@@ -228,7 +228,6 @@ internal class RadiographyTest {
     )
     assertThat(prettyHierarchy).isEqualTo(
       """
-      |Root:
       |${BLANK}Root
       |${BLANK}├─Child A
       |${BLANK}╰─Child B

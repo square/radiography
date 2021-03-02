@@ -1,7 +1,5 @@
 package radiography
 
-import android.view.View
-import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import radiography.Radiography.scan
 import radiography.ScanScopes.AllWindowsScope
@@ -13,7 +11,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 
 /**
  * Utility class to scan through a view hierarchy and pretty print it to a [String].
- * Call [scan] or [View.scan].
+ * Call [scan] or [android.view.View.scan].
  */
 public object Radiography {
 
@@ -63,17 +61,8 @@ public object Radiography {
       appendLine()
     }
 
-    val androidView = (rootView as? AndroidView)?.view
-    val layoutParams = androidView?.layoutParams
-    val title = (layoutParams as? WindowManager.LayoutParams)?.title?.toString()
-      ?: rootView.displayName
-    appendLine("$title:")
-
     val startPosition = length
     try {
-      androidView?.let {
-        appendLine("window-focus:${it.hasWindowFocus()}")
-      }
       renderScannableViewTree(this, rootView, viewStateRenderers, viewFilter)
     } catch (e: Throwable) {
       insert(
