@@ -208,6 +208,35 @@ internal class RadiographyTest {
     assertThat(builder.toString()).isEqualTo("${BLANK}View\n")
   }
 
+  @Test fun `custom ScannableView details reported`() {
+    class Node(override val displayName: String) : ScannableView {
+      val mutableChildren = mutableListOf<Node>()
+
+      override val children: Sequence<ScannableView>
+        get() = mutableChildren.asSequence()
+    }
+
+    val root = Node("Root").apply {
+      mutableChildren += Node("Child A")
+      mutableChildren += Node("Child B")
+    }
+
+    val prettyHierarchy = Radiography.scan(
+      scanScope = ScanScope {
+        listOf(root)
+      }
+    )
+    assertThat(prettyHierarchy).isEqualTo(
+      """
+      |Root:
+      |${BLANK}Root
+      |${BLANK}├─Child A
+      |${BLANK}╰─Child B
+      |
+      """.trimMargin()
+    )
+  }
+
   companion object {
     private const val BLANK = '\u00a0'
   }
