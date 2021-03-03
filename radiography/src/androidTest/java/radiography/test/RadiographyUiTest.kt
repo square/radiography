@@ -8,6 +8,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicReference
 import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
 import radiography.ViewStateRenderers.DefaultsIncludingPii
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 class RadiographyUiTest {
 
   @Test fun when_noActivity_then_emptyHierarchy() {
-    val hierarchy = Radiography.scan()
+    val hierarchy = getOnMain { Radiography.scan() }
 
     assertThat(hierarchy).isEmpty()
   }
@@ -50,7 +51,7 @@ class RadiographyUiTest {
         .create()
     }
 
-    val hierarchy = Radiography.scan()
+    val hierarchy = getOnMain { Radiography.scan() }
 
     assertThat(hierarchy.countSubstring("window-focus")).isEqualTo(2)
   }
@@ -99,6 +100,14 @@ class RadiographyUiTest {
       dialog.show()
     }
     waitForFocus(dialog, this)
+  }
+
+  private fun <T> getOnMain(runOnMainSync: () -> T): T {
+    val result = AtomicReference<T>()
+    getInstrumentation().runOnMainSync {
+      result.set(runOnMainSync())
+    }
+    return result.get()
   }
 
   /**

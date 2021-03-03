@@ -1,12 +1,12 @@
 package radiography
 
 import android.view.View
+import curtains.Curtains
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
 import radiography.internal.composeRenderingError
 import radiography.internal.findTestTags
 import radiography.internal.isComposeAvailable
-import radiography.internal.WindowScanner
 
 public object ScanScopes {
 
@@ -16,7 +16,7 @@ public object ScanScopes {
   /** Scans all the windows owned by the app. */
   @JvmField
   public val AllWindowsScope: ScanScope = ScanScope {
-    WindowScanner.findAllRootViews()
+    Curtains.rootViews
       .map(::AndroidView)
   }
 
