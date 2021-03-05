@@ -33,8 +33,7 @@ jobs:
           - 23
           - 26
           - 29
-          # The 30 emulator seems to be broken. See #130.
-          #- 30
+          - 30
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
