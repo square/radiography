@@ -20,7 +20,7 @@ plugins {
 }
 
 android {
-  compileSdkVersion(30)
+  compileSdk = 30
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -28,8 +28,8 @@ android {
   }
 
   defaultConfig {
-    minSdkVersion(21)
-    targetSdkVersion(30)
+    minSdk = 21
+    targetSdk = 30
     applicationId = "com.squareup.radiography.sample"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

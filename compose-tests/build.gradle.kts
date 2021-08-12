@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-  compileSdkVersion(30)
+  compileSdk = 30
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -14,10 +14,8 @@ android {
   }
 
   defaultConfig {
-    minSdkVersion(21)
-    targetSdkVersion(30)
-    versionCode = 1
-    versionName = "1.0"
+    minSdk = 21
+    targetSdk = 30
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
@@ -31,8 +29,10 @@ android {
   }
 
   packagingOptions {
-    exclude("META-INF/AL2.0")
-    exclude("META-INF/LGPL2.1")
+    resources.excludes += listOf(
+      "META-INF/AL2.0",
+      "META-INF/LGPL2.1",
+    )
   }
 }
 
