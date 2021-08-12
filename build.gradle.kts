@@ -79,7 +79,7 @@ subprojects {
         allWarningsAsErrors = true
       }
 
-      jvmTarget = "1.6"
+      jvmTarget = "1.8"
     }
   }
 

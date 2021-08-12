@@ -60,8 +60,8 @@ public object ViewStateRenderers {
   @OptIn(ExperimentalComposeUiApi::class)
   @ExperimentalRadiographyComposeApi
   private val ComposeViewRenderer: ViewStateRenderer = if (!isComposeAvailable) NoRenderer else {
-    ViewStateRenderer {
-      val composeView = it as? ComposeView ?: return@ViewStateRenderer
+    ViewStateRenderer { scannableView ->
+      val composeView = scannableView as? ComposeView ?: return@ViewStateRenderer
 
       // Dimensions
       composeView.apply {
@@ -80,8 +80,10 @@ public object ViewStateRenderers {
         .forEach { (key, value) ->
           when (key) {
             SemanticsProperties.TestTag -> appendLabeledValue("test-tag", value)
-            SemanticsProperties.ContentDescription ->
-              appendLabeledValue("content-description", value)
+            SemanticsProperties.ContentDescription -> appendLabeledValue(
+              "content-description",
+              (value as List<*>).map { "\"$it\"" }
+            )
             SemanticsProperties.StateDescription -> appendLabeledValue("state-description", value)
             SemanticsProperties.Disabled -> append("DISABLED")
             SemanticsProperties.Focused -> if (value == true) append("FOCUSED")
@@ -215,7 +217,7 @@ public object ViewStateRenderers {
       ?.filterIsInstance<SemanticsModifier>()
       ?: return@ViewStateRenderer
 
-    semantics.mapNotNull { it.semanticsConfiguration.getOrNull(Text)?.text }
+    semantics.mapNotNull { it.semanticsConfiguration.getOrNull(Text)?.joinToString() }
       .takeUnless { it.isEmpty() }
       ?.joinToString(separator = " ")
       ?.also {

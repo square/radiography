@@ -1,1 +1,8 @@
-<manifest package="com.squareup.radiography.test.compose.unsupported" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.squareup.radiography.test.compose.unsupported">
+
+  <application>
+    <activity android:name="androidx.activity.ComponentActivity" />
+  </application>
+</manifest>
+
