@@ -14,7 +14,7 @@ val oldComposeVersion = "1.0.0-alpha12"
 val oldComposeCompiler = "1.4.30"
 
 android {
-  compileSdkVersion(30)
+  compileSdk = 30
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -22,10 +22,8 @@ android {
   }
 
   defaultConfig {
-    minSdkVersion(21)
-    targetSdkVersion(30)
-    versionCode = 1
-    versionName = "1.0"
+    minSdk = 21
+    targetSdk = 30
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
