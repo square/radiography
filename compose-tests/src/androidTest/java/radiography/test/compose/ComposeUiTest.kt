@@ -20,7 +20,7 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.semantics.Role.RadioButton
+import androidx.compose.ui.semantics.Role.Companion.RadioButton
 import androidx.compose.ui.semantics.ScrollAxisRange
 import androidx.compose.ui.semantics.SemanticsProperties.ContentDescription
 import androidx.compose.ui.semantics.SemanticsProperties.Disabled
@@ -46,7 +46,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.state.ToggleableState.On
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.ImeAction.Send
+import androidx.compose.ui.text.input.ImeAction.Companion.Send
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import com.google.common.truth.Truth.assertThat
@@ -125,7 +125,7 @@ class ComposeUiTest {
   @Test fun semanticsAreReported() {
     composeRule.setContentWithExplicitRoot {
       Box(Modifier.semantics { set(TestTag, "test tag") })
-      Box(Modifier.semantics { set(ContentDescription, "content description") })
+      Box(Modifier.semantics { set(ContentDescription, listOf("content description")) })
       Box(Modifier.semantics { set(StateDescription, "state description") })
       Box(Modifier.semantics { set(Disabled, Unit) })
       Box(Modifier.semantics { set(Focused, true) })
@@ -163,7 +163,7 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).contains("Box { test-tag:\"test tag\" }")
-    assertThat(hierarchy).contains("Box { content-description:\"content description\" }")
+    assertThat(hierarchy).contains("Box { content-description:[\"content description\"] }")
     assertThat(hierarchy).contains("Box { state-description:\"state description\" }")
     assertThat(hierarchy).contains("Box { DISABLED }")
     assertThat(hierarchy).contains("Box { FOCUSED }")
@@ -195,7 +195,7 @@ class ComposeUiTest {
     }
 
     assertThat(hierarchy).contains("Checkbox")
-    assertThat(hierarchy).contains("Checked")
+    assertThat(hierarchy).contains("toggle-state:On")
   }
 
   @Test fun textEmptyContents() {
@@ -597,7 +597,7 @@ class ComposeUiTest {
       """
       |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
-      |${BLANK}╰─LazyColumn { test-tag:"list" }
+      |${BLANK}╰─LazyColumn { test-tag:"list", vertical-scroll-axis-range:"ScrollAxisRange(value=0.0, maxValue=Infinity)" }
       |${BLANK}  ├─<subcomposition of LazyColumn>
       |${BLANK}  │ ╰─SaveableStateProvider { test-tag:"child:1" }
       |${BLANK}  ├─<subcomposition of LazyColumn>

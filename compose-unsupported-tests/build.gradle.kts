@@ -9,9 +9,9 @@ plugins {
  * Allows using a different version of Compose to validate that we degrade gracefully on apps
  * built with unsupported Compose versions.
  */
-val oldComposeVersion = "1.0.0-alpha12"
+val oldComposeVersion = "1.0.1"
 // Older version of Compose requires an older version of Kotlin.
-val oldComposeCompiler = "1.4.30"
+val oldComposeCompiler = "1.5.21"
 
 android {
   compileSdk = 30
