@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 2.4.0
+-------------
+
+_2021-8-18_
+
+* Use Curtains instead of WindowScanner. (#136)
+* Upgrade Compose to 1.0.1 (and other dependency updates). (#141)
+
 Version 2.3.0
 -------------
 
