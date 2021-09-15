@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 2.4.1
+-------------
+
+_2021-9-15_
+
+* Upgrade Curtains to 1.2.2 to avoid main thread check crashes. (#145)
+
 Version 2.4.0
 -------------
 
