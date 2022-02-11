@@ -119,7 +119,7 @@ The only thing required for Radiography to render composables is to include the 
 a dependency:
 ```kotlin
 dependencies {
-  implementation("androidx.compose.ui:ui-tooling:1.0.0-betaXY")
+  implementation("androidx.compose.ui:ui-tooling:1.2.0-alpha03")
 }
 ```
 
