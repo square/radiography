@@ -58,7 +58,7 @@ will scan all the windows owned by your app.
 val prettyHierarchy = someView.scan()
 
 // Render only the view hierarchy from the focused window, if any.
-val prettyHierarchy = Radiography.scan(scanScope = FocusedWindowScanScope)
+val prettyHierarchy = Radiography.scan(scanScope = FocusedWindowScope)
 
 // Filter out views with specific ids.
 val prettyHierarchy = Radiography.scan(viewFilter = skipIdsViewFilter(R.id.debug_drawer))
