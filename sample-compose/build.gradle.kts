@@ -6,10 +6,10 @@ plugins {
 }
 
 /** Use a separate property for the sample so we can test with different versions easily. */
-val sampleComposeVersion = "1.0.1"
+val sampleComposeVersion = "1.4.2"
 
 android {
-  compileSdk = 30
+  compileSdk = 33
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -18,7 +18,7 @@ android {
 
   defaultConfig {
     minSdk = 21
-    targetSdk = 30
+    targetSdk = 33
     applicationId = "com.squareup.radiography.sample.compose"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -31,24 +31,20 @@ android {
     kotlinCompilerExtensionVersion = sampleComposeVersion
   }
 
-  lint {
-    // Workaround lint bug.
-    disable("InvalidFragmentVersionForActivityResult")
-  }
-
   packagingOptions {
     resources.excludes += listOf(
       "META-INF/AL2.0",
       "META-INF/LGPL2.1"
     )
   }
+  namespace = "com.squareup.radiography.sample.compose"
 }
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     jvmTarget = "1.8"
     freeCompilerArgs += listOf(
-      "-Xopt-in=kotlin.RequiresOptIn"
+      "-opt-in=kotlin.RequiresOptIn"
     )
   }
 }

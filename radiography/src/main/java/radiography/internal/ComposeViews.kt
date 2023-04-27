@@ -127,6 +127,7 @@ private fun tryGetLayoutInfos(composeView: View): Sequence<ComposeLayoutInfo>? {
   // since then we could drop the requirement for the Tooling library to be on the classpath.
   @OptIn(InternalComposeApi::class, UiToolingDataApi::class)
   val rootGroup = composer.compositionData.asTree()
+  @OptIn(InternalComposeApi::class, UiToolingDataApi::class)
   return rootGroup.layoutInfos
 }
 

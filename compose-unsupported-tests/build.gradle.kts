@@ -9,12 +9,12 @@ plugins {
  * Allows using a different version of Compose to validate that we degrade gracefully on apps
  * built with unsupported Compose versions.
  */
-val oldComposeVersion = "1.0.1"
+val oldComposeVersion = "1.2.1"
 // Older version of Compose requires an older version of Kotlin.
-val oldComposeCompiler = "1.5.21"
+val oldComposeCompiler = "1.7.20"
 
 android {
-  compileSdk = 30
+  compileSdk = 33
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -23,7 +23,7 @@ android {
 
   defaultConfig {
     minSdk = 21
-    targetSdk = 30
+    targetSdk = 33
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
@@ -42,13 +42,15 @@ android {
       "META-INF/LGPL2.1"
     )
   }
+  namespace = "com.squareup.radiography.test.compose.unsupported.empty"
+  testNamespace = "com.squareup.radiography.test.compose.unsupported"
 }
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     jvmTarget = "1.8"
     freeCompilerArgs += listOf(
-      "-Xopt-in=kotlin.RequiresOptIn"
+      "-opt-in=kotlin.RequiresOptIn"
     )
   }
 }
@@ -56,7 +58,7 @@ tasks.withType<KotlinCompile> {
 dependencies {
   androidTestImplementation(project(":radiography"))
   androidTestImplementation(Dependencies.AppCompat)
-  androidTestImplementation(Dependencies.Compose().Activity("1.3.0-alpha02"))
+  androidTestImplementation(Dependencies.Compose().Activity("1.5.0"))
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Material)
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Testing)
   androidTestImplementation(Dependencies.InstrumentationTests.Rules)

@@ -141,6 +141,7 @@ internal class RadiographyTest {
     })
     layout.addView(EditText(context))
 
+    @Suppress("USELESS_IS_CHECK")
     val filter = skipIdsViewFilter(42) and ViewFilter { it !is EditText }
     layout.scan(viewFilter = filter)
       .also {

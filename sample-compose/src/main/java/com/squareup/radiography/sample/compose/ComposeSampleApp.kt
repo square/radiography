@@ -155,6 +155,7 @@ private fun showSelectionDialog(context: Context) {
       Radiography.scan(viewFilter = skipComposeTestTagsFilter(TEXT_FIELD_TEST_TAG))
     },
     "Focused window and custom filter" to {
+      @Suppress("USELESS_IS_CHECK")
       Radiography.scan(
         scanScope = FocusedWindowScope,
         viewFilter = { view -> view !is LinearLayout }

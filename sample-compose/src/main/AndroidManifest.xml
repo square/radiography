@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.squareup.radiography.sample.compose">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <application
       android:label="Radiography Compose"
@@ -8,7 +7,8 @@
 
     <activity
         android:name=".MainActivity"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
