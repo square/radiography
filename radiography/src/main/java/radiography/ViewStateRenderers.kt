@@ -105,7 +105,7 @@ public object ViewStateRenderers {
                 "vertical-scroll-axis-range",
                 scrollAxisRangeToString(value as? ScrollAxisRange)
               )
-            SemanticsProperties.Role -> appendLabeledValue("roll", value)
+            SemanticsProperties.Role -> appendLabeledValue("role", value)
             SemanticsProperties.TextSelectionRange -> append("SELECTED-TEXT")
             SemanticsProperties.ImeAction -> appendLabeledValue("ime-action", value)
             SemanticsProperties.Selected -> append("SELECTED")
