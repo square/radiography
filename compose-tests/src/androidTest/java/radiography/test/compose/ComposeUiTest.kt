@@ -177,7 +177,7 @@ class ComposeUiTest {
     assertThat(hierarchy).contains("Box { INVISIBLE-TO-USER }")
     assertThat(hierarchy).contains("Box { horizontal-scroll-axis-range:\"ScrollAxisRange(value=0.3, maxValue=0.5)\" }")
     assertThat(hierarchy).contains("Box { vertical-scroll-axis-range:\"ScrollAxisRange(value=0.4, maxValue=0.5)\" }")
-    assertThat(hierarchy).contains("Box { roll:RadioButton }")
+    assertThat(hierarchy).contains("Box { role:RadioButton }")
     assertThat(hierarchy).contains("Box { SELECTED-TEXT }")
     assertThat(hierarchy).contains("Box { ime-action:Send }")
     assertThat(hierarchy).contains("Box { SELECTED }")
