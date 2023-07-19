@@ -8,6 +8,7 @@ public abstract interface annotation class radiography/ExperimentalRadiographyCo
 
 public final class radiography/Radiography {
 	public static final field INSTANCE Lradiography/Radiography;
+	public final synthetic fun renderScannableViewTree$radiography_release (Ljava/lang/StringBuilder;Lradiography/ScannableView;Ljava/util/List;Lradiography/ViewFilter;)V
 	public static final fun scan ()Ljava/lang/String;
 	public static final fun scan (Lradiography/ScanScope;)Ljava/lang/String;
 	public static final fun scan (Lradiography/ScanScope;Ljava/util/List;)Ljava/lang/String;
@@ -21,6 +22,7 @@ public abstract interface class radiography/ScanScope {
 
 public final class radiography/ScanScopes {
 	public static final field AllWindowsScope Lradiography/ScanScope;
+	public static final field EmptyScope Lradiography/ScanScope;
 	public static final field FocusedWindowScope Lradiography/ScanScope;
 	public static final field INSTANCE Lradiography/ScanScopes;
 	public static final fun composeTestTagScope (Ljava/lang/String;)Lradiography/ScanScope;
@@ -58,6 +60,10 @@ public final class radiography/ScannableView$ComposeView : radiography/Scannable
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class radiography/ScannableViewKt {
+	public static final fun toScannableView (Lradiography/internal/ComposeLayoutInfo;)Lradiography/ScannableView;
+}
+
 public abstract interface class radiography/ViewFilter {
 	public abstract fun matches (Lradiography/ScannableView;)Z
 }
@@ -67,6 +73,7 @@ public final class radiography/ViewFilters {
 	public static final field NoFilter Lradiography/ViewFilter;
 	public static final fun and (Lradiography/ViewFilter;Lradiography/ViewFilter;)Lradiography/ViewFilter;
 	public static final fun androidViewFilterFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)Lradiography/ViewFilter;
+	public final synthetic fun androidViewFilterFor (Lkotlin/jvm/functions/Function1;)Lradiography/ViewFilter;
 	public static final fun skipComposeTestTagsFilter ([Ljava/lang/String;)Lradiography/ViewFilter;
 	public static final fun skipIdsViewFilter ([I)Lradiography/ViewFilter;
 }
@@ -82,6 +89,10 @@ public final class radiography/ViewStateRenderers {
 	public static final field INSTANCE Lradiography/ViewStateRenderers;
 	public static final field ViewRenderer Lradiography/ViewStateRenderer;
 	public static final fun androidViewStateRendererFor (Ljava/lang/Class;Lkotlin/jvm/functions/Function2;)Lradiography/ViewStateRenderer;
+	public final synthetic fun androidViewStateRendererFor (Lkotlin/jvm/functions/Function2;)Lradiography/ViewStateRenderer;
+	public final fun appendTextValue$radiography_release (Lradiography/AttributeAppendable;Ljava/lang/String;Ljava/lang/CharSequence;ZI)V
+	public static final synthetic fun composeTextRenderer$radiography_release (ZI)Lradiography/ViewStateRenderer;
+	public static synthetic fun composeTextRenderer$radiography_release$default (ZIILjava/lang/Object;)Lradiography/ViewStateRenderer;
 	public static final fun textViewRenderer ()Lradiography/ViewStateRenderer;
 	public static final fun textViewRenderer (Z)Lradiography/ViewStateRenderer;
 	public static final fun textViewRenderer (ZI)Lradiography/ViewStateRenderer;
@@ -91,5 +102,81 @@ public final class radiography/ViewStateRenderers {
 public final class radiography/ViewsKt {
 	public static final synthetic fun scan (Landroid/view/View;Ljava/util/List;Lradiography/ViewFilter;)Ljava/lang/String;
 	public static synthetic fun scan$default (Landroid/view/View;Ljava/util/List;Lradiography/ViewFilter;ILjava/lang/Object;)Ljava/lang/String;
+}
+
+public abstract class radiography/internal/ComposeLayoutInfo {
+}
+
+public final class radiography/internal/ComposeLayoutInfo$AndroidViewInfo : radiography/internal/ComposeLayoutInfo {
+	public fun <init> (Landroid/view/View;)V
+	public final fun component1 ()Landroid/view/View;
+	public final fun copy (Landroid/view/View;)Lradiography/internal/ComposeLayoutInfo$AndroidViewInfo;
+	public static synthetic fun copy$default (Lradiography/internal/ComposeLayoutInfo$AndroidViewInfo;Landroid/view/View;ILjava/lang/Object;)Lradiography/internal/ComposeLayoutInfo$AndroidViewInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getView ()Landroid/view/View;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class radiography/internal/ComposeLayoutInfo$LayoutNodeInfo : radiography/internal/ComposeLayoutInfo {
+	public fun <init> (Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Ljava/util/List;Lkotlin/sequences/Sequence;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Landroidx/compose/ui/unit/IntRect;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Lkotlin/sequences/Sequence;
+	public final fun copy (Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Ljava/util/List;Lkotlin/sequences/Sequence;)Lradiography/internal/ComposeLayoutInfo$LayoutNodeInfo;
+	public static synthetic fun copy$default (Lradiography/internal/ComposeLayoutInfo$LayoutNodeInfo;Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Ljava/util/List;Lkotlin/sequences/Sequence;ILjava/lang/Object;)Lradiography/internal/ComposeLayoutInfo$LayoutNodeInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBounds ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getChildren ()Lkotlin/sequences/Sequence;
+	public final fun getModifiers ()Ljava/util/List;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class radiography/internal/ComposeLayoutInfo$SubcompositionInfo : radiography/internal/ComposeLayoutInfo {
+	public fun <init> (Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Lkotlin/sequences/Sequence;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Landroidx/compose/ui/unit/IntRect;
+	public final fun component3 ()Lkotlin/sequences/Sequence;
+	public final fun copy (Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Lkotlin/sequences/Sequence;)Lradiography/internal/ComposeLayoutInfo$SubcompositionInfo;
+	public static synthetic fun copy$default (Lradiography/internal/ComposeLayoutInfo$SubcompositionInfo;Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Lkotlin/sequences/Sequence;ILjava/lang/Object;)Lradiography/internal/ComposeLayoutInfo$SubcompositionInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBounds ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getChildren ()Lkotlin/sequences/Sequence;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class radiography/internal/ComposeLayoutInfoKt {
+	public static final fun getLayoutInfos (Landroidx/compose/ui/tooling/data/Group;)Lkotlin/sequences/Sequence;
+}
+
+public final class radiography/internal/ComposeViewsKt {
+	public static final field COMPOSE_UNSUPPORTED_MESSAGE Ljava/lang/String;
+	public static final fun composeRenderingError (Ljava/lang/LinkageError;)Lradiography/ScannableView;
+	public static final fun getComposeScannableViews (Landroid/view/View;)Lkotlin/Pair;
+	public static final fun getMightBeComposeView (Landroid/view/View;)Z
+	public static final fun isComposeAvailable ()Z
+}
+
+public final class radiography/internal/CompositionContextsKt {
+	public static final fun getCompositionContexts (Landroidx/compose/ui/tooling/data/Group;)Lkotlin/sequences/Sequence;
+	public static final fun tryGetComposers (Landroidx/compose/runtime/CompositionContext;)Ljava/lang/Iterable;
+}
+
+public final class radiography/internal/RenderTreeStringKt {
+	public static final fun renderTreeString (Ljava/lang/StringBuilder;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)V
+}
+
+public final class radiography/internal/SemanticsKt {
+	public static final fun findTestTags (Lradiography/ScannableView$ComposeView;)Lkotlin/sequences/Sequence;
+}
+
+public final class radiography/internal/StringsKt {
+	public static final fun ellipsize (Ljava/lang/CharSequence;I)Ljava/lang/CharSequence;
+	public static final fun formatPixelDimensions (II)Ljava/lang/String;
 }
 

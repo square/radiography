@@ -22,7 +22,7 @@ plugins {
 }
 
 android {
-  compileSdk = 30
+  compileSdk = 33
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -31,7 +31,7 @@ android {
 
   defaultConfig {
     minSdk = 17
-    targetSdk = 30
+    targetSdk = 33
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
@@ -42,12 +42,13 @@ android {
   testOptions {
     execution = "ANDROIDX_TEST_ORCHESTRATOR"
   }
+  namespace = "com.squareup.radiography"
 }
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs += listOfNotNull(
-      "-Xopt-in=kotlin.RequiresOptIn",
+      "-opt-in=kotlin.RequiresOptIn",
 
       // Require explicit public modifiers and types.
       // TODO this should be moved to a top-level `kotlin { explicitApi() }` once that's working

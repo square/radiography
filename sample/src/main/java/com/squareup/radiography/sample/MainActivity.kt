@@ -42,6 +42,7 @@ class MainActivity : Activity() {
         Radiography.scan(viewFilter = skipIdsViewFilter(R.id.show_dialog))
       },
       "Focused window and custom filter" to {
+        @Suppress("USELESS_IS_CHECK")
         Radiography.scan(
           scanScope = FocusedWindowScope,
           viewFilter = { it !is LinearLayout }
