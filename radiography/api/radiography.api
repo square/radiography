@@ -29,7 +29,7 @@ public final class radiography/ScanScopes {
 	public static final fun singleViewScope (Landroid/view/View;)Lradiography/ScanScope;
 }
 
-public abstract class radiography/ScannableView {
+public abstract interface class radiography/ScannableView {
 	public abstract fun getChildren ()Lkotlin/sequences/Sequence;
 	public abstract fun getDisplayName ()Ljava/lang/String;
 }

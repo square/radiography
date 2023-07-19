@@ -1,9 +1,5 @@
 package radiography
 
-import android.os.Handler
-import android.os.Looper
-import android.view.View
-import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import radiography.Radiography.scan
 import radiography.ScanScopes.AllWindowsScope
@@ -15,7 +11,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 
 /**
  * Utility class to scan through a view hierarchy and pretty print it to a [String].
- * Call [scan] or [View.scan].
+ * Call [scan] or [android.view.View.scan].
  */
 public object Radiography {
 
@@ -23,9 +19,7 @@ public object Radiography {
    * Scans the view hierarchies and pretty print them to a [String].
    *
    * You should generally call this method from the main thread, as views are meant to be accessed
-   * from a single thread. If you call this from a background thread, this will schedule a message
-   * to the main thread to retrieve the view hierarchy from there and will wait up to 5 seconds
-   * or return an error message. This method will never throw, any thrown exception will have
+   * from a single thread. This method will never throw, any thrown exception will have
    * its message included in the returned string.
    *
    * @param scanScope the [ScanScope] that determines what to scan. [AllWindowsScope] by default.
@@ -52,27 +46,11 @@ public object Radiography {
     }
 
     roots.forEach { scanRoot ->
-      // The entire view tree is single threaded, and that's typically the main thread, but
-      // it doesn't have to be, and we don't know where the passed in view is coming from.
-      val viewLooper = (scanRoot as? AndroidView)?.view?.handler?.looper
-        ?: Looper.getMainLooper()!!
-
-      if (viewLooper.thread == Thread.currentThread()) {
-        scanFromLooperThread(scanRoot, viewStateRenderers, viewFilter)
-      } else {
-        val latch = CountDownLatch(1)
-        Handler(viewLooper).post {
-          scanFromLooperThread(scanRoot, viewStateRenderers, viewFilter)
-          latch.countDown()
-        }
-        if (!latch.await(5, SECONDS)) {
-          return "Could not retrieve view hierarchy from main thread after 5 seconds wait"
-        }
-      }
+      scanSingleRoot(scanRoot, viewStateRenderers, viewFilter)
     }
   }
 
-  private fun StringBuilder.scanFromLooperThread(
+  private fun StringBuilder.scanSingleRoot(
     rootView: ScannableView,
     viewStateRenderers: List<ViewStateRenderer>,
     viewFilter: ViewFilter
@@ -83,17 +61,8 @@ public object Radiography {
       appendLine()
     }
 
-    val androidView = (rootView as? AndroidView)?.view
-    val layoutParams = androidView?.layoutParams
-    val title = (layoutParams as? WindowManager.LayoutParams)?.title?.toString()
-      ?: rootView.displayName
-    appendLine("$title:")
-
     val startPosition = length
     try {
-      androidView?.let {
-        appendLine("window-focus:${it.hasWindowFocus()}")
-      }
       renderScannableViewTree(this, rootView, viewStateRenderers, viewFilter)
     } catch (e: Throwable) {
       insert(

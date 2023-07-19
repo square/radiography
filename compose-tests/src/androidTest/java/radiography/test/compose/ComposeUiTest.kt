@@ -338,7 +338,6 @@ class ComposeUiTest {
     @Suppress("RemoveCurlyBracesFromTemplate")
     assertThat(hierarchy).contains(
       """
-        Box:
       $BLANK ${BLANK}Box { test-tag:"root" }
       $BLANK ${BLANK}├─Box
       $BLANK ${BLANK}├─Column
@@ -393,7 +392,6 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─Dialog
       |${BLANK}  ╰─CompositionLocalProvider { DIALOG }
@@ -422,7 +420,6 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─CustomTestDialog
       |${BLANK}  ╰─CompositionLocalProvider { DIALOG }
@@ -447,7 +444,6 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
       |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
@@ -473,7 +469,6 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
       |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
@@ -505,7 +500,6 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─MultipleSubcompositionLayout { test-tag:"subcompose-layout" }
       |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
@@ -537,7 +531,6 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}├─SingleSubcompositionLayout { test-tag:"subcompose-layout1" }
       |${BLANK}│ ╰─<subcomposition of SingleSubcompositionLayout>
@@ -565,7 +558,6 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─BoxWithConstraints { test-tag:"with-constraints" }
       |${BLANK}  ╰─<subcomposition of BoxWithConstraints>
@@ -595,7 +587,6 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
       |${BLANK}╰─LazyColumn { test-tag:"list", vertical-scroll-axis-range:"ScrollAxisRange(value=0.0, maxValue=Infinity)" }
       |${BLANK}  ├─<subcomposition of LazyColumn>
@@ -646,7 +637,6 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { 10×30px, test-tag:"parent" }
       |${BLANK}╰─MultipleSubcompositionLayout { 10×30px, test-tag:"subcompose-layout" }
       |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>

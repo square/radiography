@@ -2,6 +2,7 @@ package radiography
 
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.compose.ui.Modifier
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
@@ -18,16 +19,24 @@ import radiography.internal.mightBeComposeView
  * Can either be an actual Android [View] ([AndroidView]) or a grouping of Composables that roughly
  * represents the concept of a logical "view" ([ComposeView]).
  */
-public sealed class ScannableView {
+public interface ScannableView {
 
   /** The string that be used to identify the type of the view in the rendered output. */
-  public abstract val displayName: String
+  public val displayName: String
 
   /** The children of this view. */
-  public abstract val children: Sequence<ScannableView>
+  public val children: Sequence<ScannableView>
 
-  public class AndroidView(public val view: View) : ScannableView() {
-    override val displayName: String get() = view::class.java.simpleName
+  public class AndroidView(public val view: View) : ScannableView {
+    override val displayName: String get() {
+      val classSimpleName = view::class.java.simpleName
+      val windowTitle = (view.layoutParams as? WindowManager.LayoutParams)?.title?.toString()
+      if (windowTitle != null) {
+        return "$classSimpleName in $windowTitle window-focus:${view.hasWindowFocus()}"
+      } else {
+        return classSimpleName
+      }
+    }
     override val children: Sequence<ScannableView> = view.scannableChildren()
 
     override fun toString(): String = "${AndroidView::class.java.simpleName}($displayName)"
@@ -45,7 +54,7 @@ public sealed class ScannableView {
     public val height: Int,
     public val modifiers: List<Modifier>,
     override val children: Sequence<ScannableView>
-  ) : ScannableView() {
+  ) : ScannableView {
     override fun toString(): String = "${ComposeView::class.java.simpleName}($displayName)"
   }
 
@@ -57,7 +66,7 @@ public sealed class ScannableView {
    * return the error message along with any portion of the tree that was rendered before the
    * exception was thrown.
    */
-  public class ChildRenderingError(private val message: String) : ScannableView() {
+  public class ChildRenderingError(private val message: String) : ScannableView {
     override val displayName: String get() = message
     override val children: Sequence<ScannableView> get() = emptySequence()
   }
