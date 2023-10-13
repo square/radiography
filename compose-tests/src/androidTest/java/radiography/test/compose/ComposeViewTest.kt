@@ -44,6 +44,7 @@ class ComposeViewTest {
     assertThat(textComposable.children.asIterable()).isEmpty()
   }
 
+  // Needs fixing
   @Test fun composeView_children_includes_AndroidView() {
     composeRule.setContentWithExplicitRoot {
       Column {

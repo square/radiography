@@ -2,7 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.android.library")
+  // Older version of Compose requires an older version of Kotlin.
   kotlin("android")
+//  kotlin("android") version "1.5.21"
 }
 
 /**
@@ -10,11 +12,9 @@ plugins {
  * built with unsupported Compose versions.
  */
 val oldComposeVersion = "1.0.1"
-// Older version of Compose requires an older version of Kotlin.
-val oldComposeCompiler = "1.5.21"
 
 android {
-  compileSdk = 31
+  compileSdk = 34
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -23,7 +23,7 @@ android {
 
   defaultConfig {
     minSdk = 21
-    targetSdk = 31
+    targetSdk = 34
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
@@ -58,10 +58,11 @@ tasks.withType<KotlinCompile> {
 dependencies {
   androidTestImplementation(project(":radiography"))
   androidTestImplementation(Dependencies.AppCompat)
-  androidTestImplementation(Dependencies.Compose().Activity("1.3.0-alpha02"))
+  androidTestImplementation(Dependencies.Compose().Activity("1.3.1"))
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Material)
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Testing)
   androidTestImplementation(Dependencies.InstrumentationTests.Rules)
+  androidTestImplementation(Dependencies.InstrumentationTests.JUnit)
   androidTestImplementation(Dependencies.InstrumentationTests.Runner)
   androidTestImplementation(Dependencies.Truth)
 }

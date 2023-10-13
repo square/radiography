@@ -4,7 +4,9 @@ package radiography.internal
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.node.InteroperableComposeUiNode
 import androidx.compose.ui.node.Ref
 import androidx.compose.ui.tooling.data.CallGroup
 import androidx.compose.ui.tooling.data.Group
@@ -125,13 +127,13 @@ private fun Group.subComposedChildren(name: String): Sequence<SubcompositionInfo
  * view, and it would be reported by this function. That would almost certainly be a code smell for
  * a number of reasons though, so we don't try to ignore those cases.
  */
-private fun Group.androidViewChildren(): List<AndroidViewInfo> = data.mapNotNull { datum ->
-  (datum as? Ref<*>)
-    ?.value
-    // The concrete type is actually an internal ViewGroup subclass that has all the wiring, but
-    // ultimately it's still just a ViewGroup so this simple check works.
-    ?.let { it as? ViewGroup }
-    ?.let(::AndroidViewInfo)
+@OptIn(InternalComposeUiApi::class)
+private fun Group.androidViewChildren(): List<AndroidViewInfo> {
+  return data.mapNotNull { datum ->
+    (datum as? InteroperableComposeUiNode)
+      ?.getInteropView()
+      ?.let(::AndroidViewInfo)
+  }
 }
 
 /**

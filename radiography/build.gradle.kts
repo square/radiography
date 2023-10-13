@@ -22,7 +22,7 @@ plugins {
 }
 
 android {
-  compileSdk = 31
+  compileSdk = 34
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -31,7 +31,7 @@ android {
 
   defaultConfig {
     minSdk = 17
-    targetSdk = 31
+    targetSdk = 34
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 

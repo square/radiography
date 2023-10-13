@@ -38,7 +38,7 @@ object Dependencies {
   object InstrumentationTests {
     const val Core = "androidx.test:core:${Versions.AndroidXTest}"
     const val Espresso = "androidx.test.espresso:espresso-core:3.5.1"
-    const val JUnit = "androidx.test.ext:junit:1.1.3"
+    const val JUnit = "androidx.test.ext:junit:1.1.5"
     const val Orchestrator = "androidx.test:orchestrator:1.4.2"
     const val Rules = "androidx.test:rules:${Versions.AndroidXTest}"
     const val Runner = "androidx.test:runner:${Versions.AndroidXTest}"
