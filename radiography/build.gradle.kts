@@ -22,7 +22,7 @@ plugins {
 }
 
 android {
-  compileSdk = 30
+  compileSdk = 31
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -31,7 +31,7 @@ android {
 
   defaultConfig {
     minSdk = 17
-    targetSdk = 30
+    targetSdk = 31
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
@@ -42,6 +42,8 @@ android {
   testOptions {
     execution = "ANDROIDX_TEST_ORCHESTRATOR"
   }
+    namespace = "com.squareup.radiography"
+    testNamespace = "com.squareup.radiography.test"
 }
 
 tasks.withType<KotlinCompile> {

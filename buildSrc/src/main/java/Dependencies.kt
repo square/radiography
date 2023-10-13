@@ -3,15 +3,15 @@ object Versions {
    * To change this in the IDE, use `systemProp.square.kotlinVersion=x.y.z` in your
    * `~/.gradle/gradle.properties` file.
    */
-  val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.5.21"
+  val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.9.10"
 
-  const val AndroidXTest = "1.4.0"
-  const val Compose = "1.0.1"
+  const val AndroidXTest = "1.5.0"
+  const val Compose = "1.5.3"
 }
 
 object Dependencies {
   object Build {
-    const val Android = "com.android.tools.build:gradle:7.0.0"
+    const val Android = "com.android.tools.build:gradle:8.1.2"
     const val MavenPublish = "com.vanniktech:gradle-maven-publish-plugin:0.14.0"
     val Kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KotlinCompiler}"
     const val Ktlint = "org.jlleitschuh.gradle:ktlint-gradle:9.2.1"
@@ -24,7 +24,7 @@ object Dependencies {
   const val Curtains = "com.squareup.curtains:curtains:1.2.2"
   const val JUnit = "junit:junit:4.13"
   const val Mockito = "org.mockito:mockito-core:3.11.2"
-  const val Robolectric = "org.robolectric:robolectric:4.6.1"
+  const val Robolectric = "org.robolectric:robolectric:4.10.3"
   const val Truth = "com.google.truth:truth:1.1.3"
 
   class Compose(composeVersion: String = Versions.Compose) {
@@ -37,9 +37,9 @@ object Dependencies {
 
   object InstrumentationTests {
     const val Core = "androidx.test:core:${Versions.AndroidXTest}"
-    const val Espresso = "androidx.test.espresso:espresso-core:3.4.0"
+    const val Espresso = "androidx.test.espresso:espresso-core:3.5.1"
     const val JUnit = "androidx.test.ext:junit:1.1.3"
-    const val Orchestrator = "androidx.test:orchestrator:${Versions.AndroidXTest}"
+    const val Orchestrator = "androidx.test:orchestrator:1.4.2"
     const val Rules = "androidx.test:rules:${Versions.AndroidXTest}"
     const val Runner = "androidx.test:runner:${Versions.AndroidXTest}"
   }

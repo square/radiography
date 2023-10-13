@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-  compileSdk = 30
+  compileSdk = 31
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -15,7 +15,7 @@ android {
 
   defaultConfig {
     minSdk = 21
-    targetSdk = 30
+    targetSdk = 31
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
@@ -28,12 +28,14 @@ android {
     kotlinCompilerExtensionVersion = Versions.Compose
   }
 
-  packagingOptions {
+  packaging {
     resources.excludes += listOf(
       "META-INF/AL2.0",
       "META-INF/LGPL2.1",
     )
   }
+  namespace = "com.squareup.radiography.test.compose.empty"
+  testNamespace = "com.squareup.radiography.test.compose"
 }
 
 tasks.withType<KotlinCompile> {

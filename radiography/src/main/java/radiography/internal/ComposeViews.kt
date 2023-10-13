@@ -4,7 +4,6 @@ import android.util.SparseArray
 import android.view.View
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
-import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.ui.tooling.data.UiToolingDataApi
 import androidx.compose.ui.tooling.data.asTree
 import radiography.ExperimentalRadiographyComposeApi
@@ -125,8 +124,9 @@ private fun tryGetLayoutInfos(composeView: View): Sequence<ComposeLayoutInfo>? {
   // public (eg LayoutNode), so we'd need to use even more (brittle) reflection to do that parsing.
   // That said, once Compose is more stable, it might be worth it to read the slot table directly,
   // since then we could drop the requirement for the Tooling library to be on the classpath.
-  @OptIn(InternalComposeApi::class, UiToolingDataApi::class)
+  @OptIn(UiToolingDataApi::class)
   val rootGroup = composer.compositionData.asTree()
+  @OptIn(UiToolingDataApi::class)
   return rootGroup.layoutInfos
 }
 

@@ -14,7 +14,7 @@ val oldComposeVersion = "1.0.1"
 val oldComposeCompiler = "1.5.21"
 
 android {
-  compileSdk = 30
+  compileSdk = 31
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -23,7 +23,7 @@ android {
 
   defaultConfig {
     minSdk = 21
-    targetSdk = 30
+    targetSdk = 31
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
@@ -36,12 +36,14 @@ android {
     kotlinCompilerExtensionVersion = oldComposeVersion
   }
 
-  packagingOptions {
+  packaging {
     resources.excludes += listOf(
       "META-INF/AL2.0",
       "META-INF/LGPL2.1"
     )
   }
+    namespace = "com.squareup.radiography.test.compose.unsupported.empty"
+    testNamespace = "com.squareup.radiography.test.compose.unsupported"
 }
 
 tasks.withType<KotlinCompile> {
