@@ -2,9 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("com.android.library")
-  // Older version of Compose requires an older version of Kotlin.
   kotlin("android")
-//  kotlin("android") version "1.5.21"
 }
 
 /**
@@ -58,7 +56,7 @@ tasks.withType<KotlinCompile> {
 dependencies {
   androidTestImplementation(project(":radiography"))
   androidTestImplementation(Dependencies.AppCompat)
-  androidTestImplementation(Dependencies.Compose().Activity("1.3.1"))
+  androidTestImplementation(Dependencies.Compose().Activity("1.3.0-alpha02"))
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Material)
   androidTestImplementation(Dependencies.Compose(oldComposeVersion).Testing)
   androidTestImplementation(Dependencies.InstrumentationTests.Rules)

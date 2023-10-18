@@ -31,12 +31,7 @@ android {
     kotlinCompilerExtensionVersion = sampleComposeVersion
   }
 
-//  lint {
-//    // Workaround lint bug.
-//    disable("InvalidFragmentVersionForActivityResult")
-//  }
-
-  packagingOptions {
+  packaging {
     resources.excludes += listOf(
       "META-INF/AL2.0",
       "META-INF/LGPL2.1"
