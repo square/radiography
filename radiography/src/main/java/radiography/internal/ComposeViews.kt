@@ -1,9 +1,12 @@
 package radiography.internal
 
+import android.annotation.SuppressLint
 import android.util.SparseArray
 import android.view.View
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
+import androidx.compose.ui.node.RootForTest
+import androidx.compose.ui.platform.ViewRootForTest
 import androidx.compose.ui.tooling.data.UiToolingDataApi
 import androidx.compose.ui.tooling.data.asTree
 import radiography.ExperimentalRadiographyComposeApi
@@ -62,9 +65,11 @@ private val viewKeyedTagsField: Field? by lazy(PUBLICATION) {
  * the right Compose artifacts aren't on the classpath, or the runtime Compose version is
  * unsupported, this function will return a [ChildRenderingError] and false.
  */
+@SuppressLint("VisibleForTests")
 @OptIn(ExperimentalRadiographyComposeApi::class)
 internal fun getComposeScannableViews(composeView: View): Pair<List<ScannableView>, Boolean> {
   var linkageError: LinkageError? = null
+
   val scannableViews = try {
     tryGetLayoutInfos(composeView)
       ?.map(ComposeLayoutInfo::toScannableView)
@@ -126,8 +131,10 @@ private fun tryGetLayoutInfos(composeView: View): Sequence<ComposeLayoutInfo>? {
   // since then we could drop the requirement for the Tooling library to be on the classpath.
   @OptIn(UiToolingDataApi::class)
   val rootGroup = composer.compositionData.asTree()
+
+  val semanticsOwner = (composeView as? RootForTest)?.semanticsOwner
   @OptIn(UiToolingDataApi::class)
-  return rootGroup.layoutInfos
+  return rootGroup.computeLayoutInfos(semanticsOwner = semanticsOwner)
 }
 
 private fun View.getKeyedTags(): SparseArray<*> {
