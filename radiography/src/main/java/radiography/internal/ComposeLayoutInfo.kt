@@ -100,7 +100,7 @@ internal fun Group.computeLayoutInfos(
     name = name,
     bounds = box,
     modifiers = modifierInfo.map { it.modifier },
-    semanticsNodes  = semanticsNodes,
+    semanticsNodes = semanticsNodes,
     children = children + irregularChildren,
   )
   return sequenceOf(layoutInfo)

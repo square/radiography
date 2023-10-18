@@ -214,7 +214,6 @@ public object ViewStateRenderers {
   ): ViewStateRenderer = if (!isComposeAvailable) NoRenderer else ViewStateRenderer { view ->
     val semantics = (view as? ComposeView)?.semanticsConfigurations ?: emptyList()
 
-
     semantics.mapNotNull { it.getOrNull(Text)?.joinToString() }
       .takeUnless { it.isEmpty() }
       ?.joinToString(separator = " ")

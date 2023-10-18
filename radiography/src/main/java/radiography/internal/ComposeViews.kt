@@ -6,7 +6,6 @@ import android.view.View
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
 import androidx.compose.ui.node.RootForTest
-import androidx.compose.ui.platform.ViewRootForTest
 import androidx.compose.ui.tooling.data.UiToolingDataApi
 import androidx.compose.ui.tooling.data.asTree
 import radiography.ExperimentalRadiographyComposeApi
