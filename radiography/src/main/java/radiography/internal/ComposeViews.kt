@@ -65,7 +65,6 @@ private val viewKeyedTagsField: Field? by lazy(PUBLICATION) {
  * unsupported, this function will return a [ChildRenderingError] and false.
  */
 @SuppressLint("VisibleForTests")
-@OptIn(ExperimentalRadiographyComposeApi::class)
 internal fun getComposeScannableViews(composeView: View): Pair<List<ScannableView>, Boolean> {
   var linkageError: LinkageError? = null
 
