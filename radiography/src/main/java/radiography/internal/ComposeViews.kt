@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composition
 import androidx.compose.ui.node.RootForTest
 import androidx.compose.ui.tooling.data.UiToolingDataApi
 import androidx.compose.ui.tooling.data.asTree
-import radiography.ExperimentalRadiographyComposeApi
 import radiography.ScannableView
 import radiography.ScannableView.ChildRenderingError
 import radiography.ScannableView.ComposeView
