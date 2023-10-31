@@ -9,7 +9,7 @@ plugins {
  * Allows using a different version of Compose to validate that we degrade gracefully on apps
  * built with unsupported Compose versions.
  */
-val oldComposeVersion = "1.0.1"
+val oldComposeVersion = "1.3.0"
 
 android {
   compileSdk = 34
@@ -31,7 +31,7 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = oldComposeVersion
+    kotlinCompilerExtensionVersion = Versions.Compose
   }
 
   packaging {

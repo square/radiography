@@ -65,6 +65,10 @@ internal sealed class ComposeLayoutInfo {
  */
 internal fun Group.computeLayoutInfos(
   parentName: String = "",
+  /**
+   * The semantics owner for this Group. This is used to look up the semantics nodes for each
+   * layout node.
+   */
   semanticsOwner: SemanticsOwner? = null,
 ): Sequence<ComposeLayoutInfo> {
   val name = parentName.ifBlank { this.name }.orEmpty()
