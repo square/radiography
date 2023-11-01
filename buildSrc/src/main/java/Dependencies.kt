@@ -16,7 +16,7 @@ object Dependencies {
     val Kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KotlinCompiler}"
     const val Ktlint = "org.jlleitschuh.gradle:ktlint-gradle:11.6.1"
     const val BinaryCompatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.6.0"
-    const val Dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.5.0"
+    const val Dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.9.10"
   }
 
   const val AppCompat = "androidx.appcompat:appcompat:1.3.1"
