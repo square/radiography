@@ -3,6 +3,9 @@ package radiography
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.SemanticsConfiguration
+import androidx.compose.ui.semantics.SemanticsModifier
+import androidx.compose.ui.semantics.SemanticsNode
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
 import radiography.internal.ComposeLayoutInfo
@@ -44,9 +47,18 @@ public sealed class ScannableView {
     public val width: Int,
     public val height: Int,
     public val modifiers: List<Modifier>,
-    override val children: Sequence<ScannableView>
+    public val semanticsNodes: List<SemanticsNode>,
+    override val children: Sequence<ScannableView>,
   ) : ScannableView() {
     override fun toString(): String = "${ComposeView::class.java.simpleName}($displayName)"
+
+    public val semanticsConfigurations: List<SemanticsConfiguration>
+      get() {
+        return semanticsNodes.map { it.config }.ifEmpty { null }
+          ?: modifiers
+            .filterIsInstance<SemanticsModifier>()
+            .map { it.semanticsConfiguration }
+      }
   }
 
   /**
@@ -63,7 +75,6 @@ public sealed class ScannableView {
   }
 }
 
-@OptIn(ExperimentalRadiographyComposeApi::class)
 private fun View.scannableChildren(): Sequence<ScannableView> = sequence {
   if (mightBeComposeView) {
     val (composableViews, parsedComposables) = getComposeScannableViews(this@scannableChildren)
@@ -93,14 +104,18 @@ internal fun ComposeLayoutInfo.toScannableView(): ScannableView = when (val layo
     width = layoutInfo.bounds.run { right - left },
     height = layoutInfo.bounds.run { bottom - top },
     modifiers = layoutInfo.modifiers,
+    semanticsNodes = layoutInfo.semanticsNodes,
     children = layoutInfo.children.map(ComposeLayoutInfo::toScannableView)
   )
+
   is SubcompositionInfo -> ComposeView(
     displayName = layoutInfo.name,
     width = layoutInfo.bounds.run { right - left },
     height = layoutInfo.bounds.run { bottom - top },
+    modifiers = emptyList(),
+    semanticsNodes = emptyList(),
     children = layoutInfo.children.map(ComposeLayoutInfo::toScannableView),
-    modifiers = emptyList()
   )
+
   is AndroidViewInfo -> AndroidView(layoutInfo.view)
 }

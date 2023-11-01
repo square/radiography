@@ -1,6 +1,21 @@
 Change Log
 ==========
 
+Version 3.0.0
+-------------
+
+_2023-10-30_
+
+Compose 1.5 is now supported. Due to breaking API changes within the Compose runtime, this version
+is not compatible with earlier versions of Compose. If you need to use an earlier version of Compose,
+use a 2.x version of Radiography.
+
+The ScannableView.ComposeView has a new property, `semanticsConfigurations`, which exposes SemanticsConfiguration objects
+from both Modifiers and the new Semantics tree. In newer versions of Compose, SemanticsConfigurations cannot
+be read from the Modifier list, and are present only in the Semantics tree, 
+so if you were previously using the `modifiers` property for this you should switch to
+using `semanticsConfigurations` instead.
+
 Version 2.4.1
 -------------
 

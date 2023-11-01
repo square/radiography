@@ -597,14 +597,14 @@ class ComposeUiTest {
       """
       |CompositionLocalProvider:
       |${BLANK}CompositionLocalProvider { test-tag:"parent" }
-      |${BLANK}╰─LazyColumn { test-tag:"list", vertical-scroll-axis-range:"ScrollAxisRange(value=0.0, maxValue=Infinity)" }
+      |${BLANK}╰─LazyColumn { test-tag:"list", vertical-scroll-axis-range:"ScrollAxisRange(value=0.0, maxValue=0.0)" }
       |${BLANK}  ├─<subcomposition of LazyColumn>
-      |${BLANK}  │ ╰─SaveableStateProvider { test-tag:"child:1" }
+      |${BLANK}  │ ╰─SkippableItem { test-tag:"child:1" }
       |${BLANK}  ├─<subcomposition of LazyColumn>
-      |${BLANK}  │ ├─SaveableStateProvider { test-tag:"child:2" }
-      |${BLANK}  │ ╰─SaveableStateProvider { test-tag:"child:2 (even)" }
+      |${BLANK}  │ ├─SkippableItem { test-tag:"child:2" }
+      |${BLANK}  │ ╰─SkippableItem { test-tag:"child:2 (even)" }
       |${BLANK}  ╰─<subcomposition of LazyColumn>
-      |${BLANK}    ╰─SaveableStateProvider { test-tag:"child:3" }
+      |${BLANK}    ╰─SkippableItem { test-tag:"child:3" }
       |
       """.trimMargin()
     )

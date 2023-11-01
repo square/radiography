@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
+import radiography.ScannableView
 import radiography.ViewFilters.skipIdsViewFilter
 import radiography.ViewStateRenderers
 import radiography.ViewStateRenderers.DefaultsIncludingPii
@@ -44,7 +45,9 @@ class MainActivity : Activity() {
       "Focused window and custom filter" to {
         Radiography.scan(
           scanScope = FocusedWindowScope,
-          viewFilter = { it !is LinearLayout }
+          viewFilter = {
+            (it as? ScannableView.AndroidView)?.view !is LinearLayout
+          }
         )
       },
       "Include PII" to {

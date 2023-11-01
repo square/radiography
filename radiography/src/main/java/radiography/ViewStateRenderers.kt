@@ -212,19 +212,16 @@ public object ViewStateRenderers {
     renderTextValue: Boolean = false,
     textValueMaxLength: Int = Int.MAX_VALUE
   ): ViewStateRenderer = if (!isComposeAvailable) NoRenderer else ViewStateRenderer { view ->
-    val semantics = (view as? ComposeView)
-      ?.modifiers
-      ?.filterIsInstance<SemanticsModifier>()
-      ?: return@ViewStateRenderer
+    val semantics = (view as? ComposeView)?.semanticsConfigurations ?: emptyList()
 
-    semantics.mapNotNull { it.semanticsConfiguration.getOrNull(Text)?.joinToString() }
+    semantics.mapNotNull { it.getOrNull(Text)?.joinToString() }
       .takeUnless { it.isEmpty() }
       ?.joinToString(separator = " ")
       ?.also {
         appendTextValue(label = "text", it, renderTextValue, textValueMaxLength)
       }
 
-    semantics.mapNotNull { it.semanticsConfiguration.getOrNull(EditableText)?.text }
+    semantics.mapNotNull { it.getOrNull(EditableText)?.text }
       .takeUnless { it.isEmpty() }
       ?.joinToString(separator = " ")
       ?.also {
