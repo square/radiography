@@ -43,6 +43,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import radiography.ExperimentalRadiographyComposeApi
 import radiography.Radiography
 import radiography.ScanScopes.FocusedWindowScope
+import radiography.ScannableView
 import radiography.ViewFilters.skipComposeTestTagsFilter
 import radiography.ViewStateRenderers.CheckableRenderer
 import radiography.ViewStateRenderers.DefaultsIncludingPii
@@ -157,7 +158,8 @@ private fun showSelectionDialog(context: Context) {
     "Focused window and custom filter" to {
       Radiography.scan(
         scanScope = FocusedWindowScope,
-        viewFilter = { view -> view !is LinearLayout }
+        viewFilter = { view ->
+          (view as? ScannableView.AndroidView)?.view !is LinearLayout }
       )
     },
     "Include PII" to {
