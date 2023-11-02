@@ -87,16 +87,10 @@ git push origin v{NEW_VERSION}
 
 * Upload the artifacts to Sonatype OSS Nexus
 ```bash
-./gradlew uploadArchives --no-daemon --no-parallel
+./gradlew publish --no-daemon --no-parallel --no-configuration-cache && \
+./gradlew closeAndReleaseRepository
 ```
 
-* Release to Maven Central
-    * Login to Sonatype OSS Nexus: https://oss.sonatype.org/
-    * Click on **Staging Repositories**
-    * Scroll to the bottom, you should see an entry named `comsquareup-XXXX`
-    * Check the box next to the `comsquareup-XXXX` entry, click **Close** then **Confirm**
-    * Wait a bit, hit **Refresh**, until the *Status* for that column changes to *Closed*.
-    * Check the box next to the `comsquareup-XXXX` entry, click **Release** then **Confirm**
 * Merge the release branch to main
 ```bash
 git checkout main

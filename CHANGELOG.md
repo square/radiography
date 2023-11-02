@@ -1,10 +1,10 @@
 Change Log
 ==========
 
-Version 3.0.0
+Version 2.5
 -------------
 
-_2023-10-30_
+_2023-11-01_
 
 Compose 1.5 is now supported. Due to breaking API changes within the Compose runtime, this version
 is not compatible with earlier versions of Compose. If you need to use an earlier version of Compose,
