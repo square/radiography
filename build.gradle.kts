@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.vanniktech.maven.publish.MavenPublishBaseExtension
+import com.vanniktech.maven.publish.SonatypeHost
 import kotlinx.validation.ApiValidationExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
@@ -70,6 +72,12 @@ subprojects {
   }
 
   apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+  plugins.withId("com.vanniktech.maven.publish.base") {
+    configure<MavenPublishBaseExtension> {
+      publishToMavenCentral(SonatypeHost.S01)
+    }
+  }
 
   tasks.withType<KotlinCompile> {
     kotlinOptions {
