@@ -87,7 +87,7 @@ git push origin v{NEW_VERSION}
 
 * Upload the artifacts to Sonatype OSS Nexus
 ```bash
-./gradlew publish --no-daemon --no-parallel && \
+./gradlew publish --no-daemon --no-parallel --no-configuration-cache && \
 ./gradlew closeAndReleaseRepository
 ```
 
