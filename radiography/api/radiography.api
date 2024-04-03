@@ -44,6 +44,19 @@ public final class radiography/ScannableView$AndroidView : radiography/Scannable
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class radiography/ScannableView$CallGroupInfo {
+	public fun <init> (Ljava/lang/String;Landroidx/compose/ui/tooling/data/SourceLocation;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Landroidx/compose/ui/tooling/data/SourceLocation;
+	public final fun copy (Ljava/lang/String;Landroidx/compose/ui/tooling/data/SourceLocation;)Lradiography/ScannableView$CallGroupInfo;
+	public static synthetic fun copy$default (Lradiography/ScannableView$CallGroupInfo;Ljava/lang/String;Landroidx/compose/ui/tooling/data/SourceLocation;ILjava/lang/Object;)Lradiography/ScannableView$CallGroupInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLocation ()Landroidx/compose/ui/tooling/data/SourceLocation;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class radiography/ScannableView$ChildRenderingError : radiography/ScannableView {
 	public fun <init> (Ljava/lang/String;)V
 	public fun getChildren ()Lkotlin/sequences/Sequence;
@@ -51,7 +64,8 @@ public final class radiography/ScannableView$ChildRenderingError : radiography/S
 }
 
 public final class radiography/ScannableView$ComposeView : radiography/ScannableView {
-	public fun <init> (Ljava/lang/String;IILjava/util/List;Ljava/util/List;Lkotlin/sequences/Sequence;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;IILjava/util/List;Ljava/util/List;Lkotlin/sequences/Sequence;)V
+	public final fun getCallChain ()Ljava/util/List;
 	public fun getChildren ()Lkotlin/sequences/Sequence;
 	public fun getDisplayName ()Ljava/lang/String;
 	public final fun getHeight ()I
@@ -121,16 +135,18 @@ public final class radiography/internal/ComposeLayoutInfo$AndroidViewInfo : radi
 }
 
 public final class radiography/internal/ComposeLayoutInfo$LayoutNodeInfo : radiography/internal/ComposeLayoutInfo {
-	public fun <init> (Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Ljava/util/List;Lkotlin/sequences/Sequence;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Landroidx/compose/ui/unit/IntRect;Ljava/util/List;Lkotlin/sequences/Sequence;Ljava/util/List;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Landroidx/compose/ui/unit/IntRect;
-	public final fun component3 ()Ljava/util/List;
-	public final fun component4 ()Lkotlin/sequences/Sequence;
-	public final fun component5 ()Ljava/util/List;
-	public final fun copy (Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Ljava/util/List;Lkotlin/sequences/Sequence;Ljava/util/List;)Lradiography/internal/ComposeLayoutInfo$LayoutNodeInfo;
-	public static synthetic fun copy$default (Lradiography/internal/ComposeLayoutInfo$LayoutNodeInfo;Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Ljava/util/List;Lkotlin/sequences/Sequence;Ljava/util/List;ILjava/lang/Object;)Lradiography/internal/ComposeLayoutInfo$LayoutNodeInfo;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Landroidx/compose/ui/unit/IntRect;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Lkotlin/sequences/Sequence;
+	public final fun component6 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Landroidx/compose/ui/unit/IntRect;Ljava/util/List;Lkotlin/sequences/Sequence;Ljava/util/List;)Lradiography/internal/ComposeLayoutInfo$LayoutNodeInfo;
+	public static synthetic fun copy$default (Lradiography/internal/ComposeLayoutInfo$LayoutNodeInfo;Ljava/lang/String;Ljava/util/List;Landroidx/compose/ui/unit/IntRect;Ljava/util/List;Lkotlin/sequences/Sequence;Ljava/util/List;ILjava/lang/Object;)Lradiography/internal/ComposeLayoutInfo$LayoutNodeInfo;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBounds ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getCallChain ()Ljava/util/List;
 	public final fun getChildren ()Lkotlin/sequences/Sequence;
 	public final fun getModifiers ()Ljava/util/List;
 	public final fun getName ()Ljava/lang/String;
@@ -140,14 +156,16 @@ public final class radiography/internal/ComposeLayoutInfo$LayoutNodeInfo : radio
 }
 
 public final class radiography/internal/ComposeLayoutInfo$SubcompositionInfo : radiography/internal/ComposeLayoutInfo {
-	public fun <init> (Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Lkotlin/sequences/Sequence;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Landroidx/compose/ui/unit/IntRect;Lkotlin/sequences/Sequence;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Landroidx/compose/ui/unit/IntRect;
-	public final fun component3 ()Lkotlin/sequences/Sequence;
-	public final fun copy (Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Lkotlin/sequences/Sequence;)Lradiography/internal/ComposeLayoutInfo$SubcompositionInfo;
-	public static synthetic fun copy$default (Lradiography/internal/ComposeLayoutInfo$SubcompositionInfo;Ljava/lang/String;Landroidx/compose/ui/unit/IntRect;Lkotlin/sequences/Sequence;ILjava/lang/Object;)Lradiography/internal/ComposeLayoutInfo$SubcompositionInfo;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Landroidx/compose/ui/unit/IntRect;
+	public final fun component4 ()Lkotlin/sequences/Sequence;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Landroidx/compose/ui/unit/IntRect;Lkotlin/sequences/Sequence;)Lradiography/internal/ComposeLayoutInfo$SubcompositionInfo;
+	public static synthetic fun copy$default (Lradiography/internal/ComposeLayoutInfo$SubcompositionInfo;Ljava/lang/String;Ljava/util/List;Landroidx/compose/ui/unit/IntRect;Lkotlin/sequences/Sequence;ILjava/lang/Object;)Lradiography/internal/ComposeLayoutInfo$SubcompositionInfo;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBounds ()Landroidx/compose/ui/unit/IntRect;
+	public final fun getCallChain ()Ljava/util/List;
 	public final fun getChildren ()Lkotlin/sequences/Sequence;
 	public final fun getName ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -155,8 +173,8 @@ public final class radiography/internal/ComposeLayoutInfo$SubcompositionInfo : r
 }
 
 public final class radiography/internal/ComposeLayoutInfoKt {
-	public static final fun computeLayoutInfos (Landroidx/compose/ui/tooling/data/Group;Ljava/lang/String;Landroidx/compose/ui/semantics/SemanticsOwner;)Lkotlin/sequences/Sequence;
-	public static synthetic fun computeLayoutInfos$default (Landroidx/compose/ui/tooling/data/Group;Ljava/lang/String;Landroidx/compose/ui/semantics/SemanticsOwner;ILjava/lang/Object;)Lkotlin/sequences/Sequence;
+	public static final fun computeLayoutInfos (Landroidx/compose/ui/tooling/data/Group;Ljava/util/List;Landroidx/compose/ui/semantics/SemanticsOwner;)Lkotlin/sequences/Sequence;
+	public static synthetic fun computeLayoutInfos$default (Landroidx/compose/ui/tooling/data/Group;Ljava/util/List;Landroidx/compose/ui/semantics/SemanticsOwner;ILjava/lang/Object;)Lkotlin/sequences/Sequence;
 }
 
 public final class radiography/internal/ComposeViewsKt {

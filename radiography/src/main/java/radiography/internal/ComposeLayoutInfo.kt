@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.data.NodeGroup
 import androidx.compose.ui.tooling.data.UiToolingDataApi
 import androidx.compose.ui.tooling.data.asTree
 import androidx.compose.ui.unit.IntRect
+import radiography.ScannableView.CallGroupInfo
 import radiography.internal.ComposeLayoutInfo.AndroidViewInfo
 import radiography.internal.ComposeLayoutInfo.LayoutNodeInfo
 import radiography.internal.ComposeLayoutInfo.SubcompositionInfo
@@ -34,6 +35,7 @@ import radiography.internal.ComposeLayoutInfo.SubcompositionInfo
 internal sealed class ComposeLayoutInfo {
   data class LayoutNodeInfo(
       val name: String,
+      val callChain: List<CallGroupInfo>,
       val bounds: IntRect,
       val modifiers: List<Modifier>,
       val children: Sequence<ComposeLayoutInfo>,
@@ -42,6 +44,7 @@ internal sealed class ComposeLayoutInfo {
 
   data class SubcompositionInfo(
     val name: String,
+    val callChain: List<CallGroupInfo>,
     val bounds: IntRect,
     val children: Sequence<ComposeLayoutInfo>
   ) : ComposeLayoutInfo()
@@ -62,33 +65,37 @@ internal sealed class ComposeLayoutInfo {
  * the groups in between each of these nodes, but uses the top-most Group under the previous node
  * to derive the "name" of the [ComposeLayoutInfo]. The other [ComposeLayoutInfo] properties come directly off
  * [NodeGroup] values.
+ *
+ * To preserve details about the Call Groups between Layout Nodes, the call chain is preserved in order
+ * to provide granular detail about the hierarchy if desired.
  */
 internal fun Group.computeLayoutInfos(
-  parentName: String = "",
+  parentCallChain: List<CallGroupInfo> = emptyList(),
   /**
    * The semantics owner for this Group. This is used to look up the semantics nodes for each
    * layout node.
    */
   semanticsOwner: SemanticsOwner? = null,
 ): Sequence<ComposeLayoutInfo> {
-  val name = parentName.ifBlank { this.name }.orEmpty()
+  val callChain = this.name?.let { parentCallChain + CallGroupInfo(it, this.location) } ?: parentCallChain
+
   // Things that we want to consider children of the current node, but aren't actually child nodes
   // as reported by Group.children.
-  val irregularChildren = subComposedChildren(name, semanticsOwner) + androidViewChildren()
+  val irregularChildren = subComposedChildren(callChain, semanticsOwner) + androidViewChildren()
 
   // Certain composables produce an internal structure that is hard to read if we report it exactly.
   // Instead, we use heuristics to recognize subtrees that match certain expected structures and
   // aggregate them somewhat before reporting.
-  tryParseSubcomposition(name, irregularChildren, semanticsOwner)
+  tryParseSubcomposition(callChain, irregularChildren, semanticsOwner)
     ?.let { return it }
-  tryParseAndroidView(name, irregularChildren, semanticsOwner)
+  tryParseAndroidView(callChain, irregularChildren, semanticsOwner)
     ?.let { return it }
 
   // This is an intermediate group that doesn't represent a LayoutNode, so we flatten by just
   // reporting its children without reporting a new subtree.
   if (this !is NodeGroup) {
     return children.asSequence()
-      .flatMap { it.computeLayoutInfos(name, semanticsOwner) } + irregularChildren
+      .flatMap { it.computeLayoutInfos(callChain, semanticsOwner) } + irregularChildren
   }
 
   val children = children.asSequence()
@@ -101,7 +108,8 @@ internal fun Group.computeLayoutInfos(
     ?: emptyList()
 
   val layoutInfo = LayoutNodeInfo(
-    name = name,
+    name = callChain.firstOrNull()?.name.orEmpty(),
+    callChain = callChain,
     bounds = box,
     modifiers = modifierInfo.map { it.modifier },
     semanticsNodes = semanticsNodes,
@@ -116,12 +124,13 @@ internal fun Group.computeLayoutInfos(
  * The compositionData val is marked as internal, and not intended for public consumption.
  * The returned [SubcompositionInfo]s should be collated by [tryParseSubcomposition].
  */
-private fun Group.subComposedChildren(name: String, semanticsOwner: SemanticsOwner?): Sequence<SubcompositionInfo> =
+private fun Group.subComposedChildren(callChain: List<CallGroupInfo>, semanticsOwner: SemanticsOwner?): Sequence<SubcompositionInfo> =
   getCompositionContexts()
     .flatMap { it.tryGetComposers().asSequence() }
     .map { subcomposer ->
       SubcompositionInfo(
-        name = name,
+        name = callChain.firstOrNull()?.name.orEmpty(),
+        callChain = callChain,
         bounds = box,
         children = subcomposer.compositionData.asTree().computeLayoutInfos(semanticsOwner = semanticsOwner)
       )
@@ -162,14 +171,14 @@ private fun Group.androidViewChildren(): List<AndroidViewInfo> {
  * - That LayoutNode has no children of its own.
  */
 private fun Group.tryParseSubcomposition(
-  name: String,
+  callChain: List<CallGroupInfo>,
   irregularChildren: Sequence<ComposeLayoutInfo>,
   semanticsOwner: SemanticsOwner?
 ): Sequence<ComposeLayoutInfo>? {
   if (this.name != "SubcomposeLayout") return null
 
   val (subcompositions, regularChildren) =
-    (children.asSequence().flatMap { it.computeLayoutInfos(name, semanticsOwner) } + irregularChildren)
+    (children.asSequence().flatMap { it.computeLayoutInfos(callChain, semanticsOwner) } + irregularChildren)
       .partition { it is SubcompositionInfo }
       .let {
         // There's no type-safe partition operator so we just cast.
@@ -217,7 +226,7 @@ private fun Group.tryParseSubcomposition(
  * the logic of both if that happens if they're completely independent.
  */
 private fun Group.tryParseAndroidView(
-  name: String,
+  callChain: List<CallGroupInfo>,
   irregularChildren: Sequence<ComposeLayoutInfo>,
   semanticsOwner: SemanticsOwner?
 ): Sequence<ComposeLayoutInfo>? {
@@ -225,7 +234,7 @@ private fun Group.tryParseAndroidView(
   if (this !is CallGroup) return null
 
   val (androidViews, regularChildren) =
-    (children.asSequence().flatMap { it.computeLayoutInfos(name, semanticsOwner) } + irregularChildren)
+    (children.asSequence().flatMap { it.computeLayoutInfos(callChain, semanticsOwner) } + irregularChildren)
       .partition { it is AndroidViewInfo }
       .let {
         // There's no type-safe partition operator so we just cast.

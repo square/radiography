@@ -6,6 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsConfiguration
 import androidx.compose.ui.semantics.SemanticsModifier
 import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.tooling.data.SourceLocation
+import androidx.compose.ui.tooling.data.UiToolingDataApi
 import radiography.ScannableView.AndroidView
 import radiography.ScannableView.ComposeView
 import radiography.internal.ComposeLayoutInfo
@@ -44,6 +46,17 @@ public sealed class ScannableView {
   @ExperimentalRadiographyComposeApi
   public class ComposeView(
     override val displayName: String,
+    /**
+     * This [ComposeView] represents a collapsed chain of Compose nodes, with the [children] and
+     * and other details only coming from nodes that emit values. For simplicity, the "Call" nodes
+     * (ie, Compose functions that don't emit values) are not directly included in the
+     * [children] of this [ComposeView]; however, the top most "Call" node provides the [displayName]
+     * of this [ComposeView].
+     *
+     * This [callChain] provides the complete chain of Compose Call Groups wrapping the ultimate layout
+     * node, which you can use to see granular data about the exact compose hierarchy.
+     */
+    public val callChain: List<CallGroupInfo>,
     public val width: Int,
     public val height: Int,
     public val modifiers: List<Modifier>,
@@ -60,6 +73,12 @@ public sealed class ScannableView {
             .map { it.semanticsConfiguration }
       }
   }
+
+  @OptIn(UiToolingDataApi::class)
+  public data class CallGroupInfo(
+    val name: String,
+    val location: SourceLocation?,
+  )
 
   /**
    * Indicates that an exception was thrown while rendering part of the tree.
@@ -100,6 +119,7 @@ private fun View.scannableChildren(): Sequence<ScannableView> = sequence {
 internal fun ComposeLayoutInfo.toScannableView(): ScannableView = when (val layoutInfo = this) {
   is LayoutNodeInfo -> ComposeView(
     displayName = layoutInfo.name,
+    callChain = layoutInfo.callChain,
     // Can't use width and height properties because we're not targeting 1.8 bytecode.
     width = layoutInfo.bounds.run { right - left },
     height = layoutInfo.bounds.run { bottom - top },
@@ -110,6 +130,7 @@ internal fun ComposeLayoutInfo.toScannableView(): ScannableView = when (val layo
 
   is SubcompositionInfo -> ComposeView(
     displayName = layoutInfo.name,
+    callChain = layoutInfo.callChain,
     width = layoutInfo.bounds.run { right - left },
     height = layoutInfo.bounds.run { bottom - top },
     modifiers = emptyList(),
