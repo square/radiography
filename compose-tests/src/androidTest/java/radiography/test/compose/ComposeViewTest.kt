@@ -135,7 +135,7 @@ class ComposeViewTest {
       .isEqualTo(0)
 
     assertThat(callGroup.displayName)
-      .isEqualTo("Call3")
+      .isEqualTo("Call1")
 
     assertThat(callGroup.semanticsConfigurations.firstNotNullOfOrNull { it[SemanticsProperties.Text] }
       ?.map { it.toString() })
@@ -157,7 +157,7 @@ class ComposeViewTest {
       .hasSize(6)
 
     assertThat(callGroup.callChain.map { it.name })
-      .containsExactly("Call3", "Call2", "Call1", "BasicText", "Layout", "ReusableComposeNode")
+      .containsExactly("Call1", "Call2", "Call3", "BasicText", "Layout", "ReusableComposeNode")
 
     assertThat(callGroup.callChain.map { it.location?.sourceFile })
       .containsExactly(
@@ -173,23 +173,24 @@ class ComposeViewTest {
   private fun renderCallChainUI() {
     composeRule.setContentWithExplicitRoot {
 
+
       @Composable
-      fun Call1() {
+      fun Call3() {
         BasicText(text = "hello")
       }
 
       @Composable
       fun Call2() {
-        Call1()
+        Call3()
       }
 
       @Composable
-      fun Call3() {
+      fun Call1() {
         Call2()
       }
 
       Column {
-        Call3()
+        Call1()
       }
     }
   }

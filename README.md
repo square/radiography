@@ -96,6 +96,57 @@ window-focus:false
 
 This sample app lives in this repo in the `sample` directory.
 
+## Custom Hierarchy Exploration
+
+The `Radiography.scan` function provides a String representation of the view hierarchy, but you can also work
+with the raw hierarchy data directly if you want to programmatically explore it and integrate it
+into your own custom tools.
+
+Use the `ScanScopes` object to identify the root of a hierarchy you want to explore. You can use the
+resulting `ScannableView` objects, and their `ScannableView.children`, to explore the hierarchy.
+
+For example, to get the hierarchy starting with a specific Compose test tag in a given activity,
+you can do this:
+```kotlin
+@OptIn(ExperimentalRadiographyComposeApi::class)
+fun Activity.findComposableRootWithTestTag(tag: String): ScannableView.ComposeView {
+   val rootView = window.decorView.findViewById<ViewGroup>(R.id.content)
+
+   return ScanScopes.composeTestTagScope(
+      testTag = tag,
+      inScope = ScanScopes.singleViewScope(rootView)
+   ).findRoots()
+      .firstOrNull()
+      as? ScannableView.ComposeView
+      ?: error("No composable found with test tag $tag")
+}
+```
+
+The information provided by the ScannableView.ComposeView can be powerful. In particular, the
+semantic information can be used to validate certain expectations and programmatically test your
+application. For example:
+```kotlin
+val myComposableScreen = findComposableRootWithTestTag("My screen tag")
+
+myComposableScreen.allDescendentsDepthFirst
+  .filterIsInstance<ScannableView.ComposeView>()
+  .onEach { composeView ->
+    
+    // Validate that all images have a content description set
+    if (composeView.displayName == "Image") {
+      check(composeView.semanticsConfigurations.any { it.contains(SemanticsProperties.ContentDescription) })
+    }
+    
+    // Perform a click on all clickable elements to ensure none of them cause a crash
+    composeView.semanticsConfigurations
+      .map { it[SemanticsActions.OnClick] }
+      .onEach { clickAction -> clickAction.action?.invoke() }
+}
+
+val ScannableView.allDescendentsDepthFirst: Sequence<ScannableView>
+    get() = children.flatMap { sequenceOf(it) + it.allDescendentsDepthFirst }
+```
+
 ## Jetpack Compose support
 
 [Jetpack Compose](https://developer.android.com/jetpack/compose) is Google's new declarative UI
@@ -108,7 +159,7 @@ library is on the classpath. If you are using Compose, you're probably already u
 (the `@Preview` annotation lives in the Tooling library). On the other hand, if you're not using
 Compose, Radiography won't bloat your app with transitive dependencies on any Compose artifacts.
 
-Compose changes frequently, and while in beta, is being released every two weeks. If you are using
+Compose occasionally has internal implementation changes that affect Radiography. If you are using
 Radiography with an unsupported version of Compose, or you don't depend on the Tooling library, then
 Radiography will still try to detect compositions, but instead of rendering the actual hierarchy, it
 will just include a message asking you to upgrade Radiography or add the Tooling library.
@@ -263,6 +314,51 @@ implementation currently in Compose contains references to all actual compositio
 parent. Reflection is used to pull the actual subcompositions out of the parent reference, and then
 those compositions' slot tables are analyzed in turn, and its root composables are rendered as
 childrens of the node that owns the `CompositionReference`.
+
+### Call group collapsing
+To simplify the hierarchy output of the Compose tree, only nodes that are "emitted" to the layout are
+included. This means that intermediate "call" nodes are collapsed together with the emitted node
+that they wrap. Each emitted node inherits the display name of the top level call node wrapping it.
+
+For example, with this Compose code:
+```kotlin
+@Composable
+fun Call3() {
+  BasicText(text = "hello")
+}
+
+@Composable
+fun Call2() {
+  Call3()
+}
+
+@Composable
+fun Call1() {
+  Call2()
+}
+
+Column {
+  Call1()
+}
+```
+
+The hierarchy output will simply look like this: `Column -> Call1`.
+
+The `BasicText` composable and its text are represented by the name `Call1`, because that is the
+composable function that wraps it. The `Call3` and `Call2` nodes are not shown because they don't emit a layout,
+and they are wrapped by `Call1`.
+
+This approach helps to manage the many levels of nesting that can occur in a Compose tree. However,
+sometimes you may want to see the granular view of all the calls in the tree. To do this, you can use
+the `ComposeView.callChain` property to see the full call chain that led to the emitted node. In this
+case, the values of the property would look like this:
+```
+"Call1", "Call2", "Call3", "BasicText", "Layout", "ReusableComposeNode"
+```
+
+You can access this property if you implement a custom `ViewStateRenderer` or use [Custom Hierarchy Exploration](#custom-hierarchy-exploration).
+
+For more details on how Radiography works with Compose, see [How are compositions rendered?](#How are compositions rendered?)
 
 ### Compose example output
 
