@@ -173,7 +173,6 @@ class ComposeViewTest {
   private fun renderCallChainUI() {
     composeRule.setContentWithExplicitRoot {
 
-
       @Composable
       fun Call3() {
         BasicText(text = "hello")
