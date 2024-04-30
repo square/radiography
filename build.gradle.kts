@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import com.vanniktech.maven.publish.SonatypeHost
 import kotlinx.validation.ApiValidationExtension
@@ -58,7 +59,7 @@ extensions.configure<ApiValidationExtension> {
     "compose-tests",
     "compose-unsupported-tests",
     "sample",
-    "sample-compose"
+    "sample-compose",
   )
 }
 
@@ -78,6 +79,10 @@ subprojects {
       publishToMavenCentral(SonatypeHost.S01)
       signAllPublications()
       pomFromGradleProperties()
+
+      configure(
+        AndroidSingleVariantLibrary(variant = "release", sourcesJar = true, publishJavadocJar = true),
+      )
     }
   }
 
