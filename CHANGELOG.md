@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 2.6
+-----------
+
+_2024-04-30_
+
+Compose call group chain information is now available. (#160)
+
 Version 2.5
 -------------
 
