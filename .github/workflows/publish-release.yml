@@ -1,0 +1,38 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish-release:
+    runs-on: macos-latest
+    if: github.repository == 'square/radiography'
+    timeout-minutes: 35
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - uses: gradle/wrapper-validation-action@699bb18358f12c5b78b37bb0111d3a0e2276e0e2 # v2
+#
+#      - name: Ensure this isn't a -SNAPSHOT version
+#        uses: rickbusarow/actions/gradle-task@bf0940965387f10bcb8b6699a79499d18167dfbe # v1
+#        with:
+#          task: checkVersionIsNotSnapshot
+
+      - name: Assemble
+        uses: rickbusarow/actions/gradle-task@bf0940965387f10bcb8b6699a79499d18167dfbe # v1
+        with:
+          task: assemble
+#
+#      - name: Check
+#        uses: rickbusarow/actions/gradle-task@bf0940965387f10bcb8b6699a79499d18167dfbe # v1
+#        with:
+#          task: check -x artifactsCheck
+
+      - name: Publish Release
+        uses: rickbusarow/actions/gradle-task@bf0940965387f10bcb8b6699a79499d18167dfbe # v1
+        with:
+          task: publish
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ARTIFACT_SIGNING_PRIVATE_KEY }}
