@@ -12,7 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - uses: gradle/wrapper-validation-action@699bb18358f12c5b78b37bb0111d3a0e2276e0e2 # v2
+
+# checkVersionIsNotSnapshot doesn't exist in Rick's horde. Pretty trivial to re-implement,
+# but also not crucial while this is not part of CI (unlikely ever to happen). And in the meantime,
+# quite handy to leave this check out so that we can use this workflow to publish
+# SNAPSHOTs.
 #
+# OTOH, if we get around to making a Publish Snapshot alternative to this workflow
+# and tie it to CI, having a checkVersionIsSnapshot task will be very important for that.
 #      - name: Ensure this isn't a -SNAPSHOT version
 #        uses: rickbusarow/actions/gradle-task@bf0940965387f10bcb8b6699a79499d18167dfbe # v1
 #        with:
@@ -22,7 +29,10 @@ jobs:
         uses: rickbusarow/actions/gradle-task@bf0940965387f10bcb8b6699a79499d18167dfbe # v1
         with:
           task: assemble
-#
+
+# artifactsCheck doesn't exist in Rick's horde, so we continue to rely on manual discipline
+# to run tests locally before publishing. Could copy this from workflow, but it's tied
+# to the build-logic system there so doing so would be Actual Work.
 #      - name: Check
 #        uses: rickbusarow/actions/gradle-task@bf0940965387f10bcb8b6699a79499d18167dfbe # v1
 #        with:
