@@ -34,7 +34,7 @@ git commit -am "Prepare {NEW_VERSION} release"
 
 * Perform a clean build
 ```bash
-./gradlew clean &&  build && connectedCheck
+./gradlew clean && gw build && gw connectedCheck
 ```
 
 * Create a tag and push it
