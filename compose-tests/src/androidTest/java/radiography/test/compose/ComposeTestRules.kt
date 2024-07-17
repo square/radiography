@@ -2,6 +2,7 @@ package radiography.test.compose
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 
 /**
@@ -14,6 +15,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
  */
 fun ComposeContentTestRule.setContentWithExplicitRoot(content: @Composable () -> Unit) {
   setContent {
+    currentComposer.collectParameterInformation()
     Box {
       content()
     }

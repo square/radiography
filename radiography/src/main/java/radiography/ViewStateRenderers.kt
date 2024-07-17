@@ -72,11 +72,10 @@ public object ViewStateRenderers {
 
       // Semantics
       composeView
-        .modifiers
-        .filterIsInstance<SemanticsModifier>()
+        .semanticsConfigurations
         // Technically there can be multiple semantic modifiers on a single node, so read them
         // all.
-        .flatMap { semantics -> semantics.semanticsConfiguration }
+        .flatten()
         .forEach { (key, value) ->
           when (key) {
             SemanticsProperties.TestTag -> appendLabeledValue("test-tag", value)

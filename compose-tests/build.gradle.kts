@@ -25,7 +25,7 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = Versions.Compose
+    kotlinCompilerExtensionVersion = "1.5.3"
   }
 
   packaging {

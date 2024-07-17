@@ -6,7 +6,9 @@ object Versions {
   val KotlinCompiler = System.getProperty("square.kotlinVersion") ?: "1.9.10"
 
   const val AndroidXTest = "1.5.0"
-  const val Compose = "1.5.3"
+//  const val Compose = "1.5.3"
+//  const val Compose = "1.6.8"
+  const val Compose = "1.7.0-beta05"
 }
 
 object Dependencies {
