@@ -9,6 +9,7 @@ object Versions {
 //  const val Compose = "1.5.3"
 //  const val Compose = "1.6.8"
   const val Compose = "1.7.0-beta05"
+  const val ComposeCompiler = "1.5.3"
 }
 
 object Dependencies {

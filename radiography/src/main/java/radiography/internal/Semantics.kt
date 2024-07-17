@@ -1,6 +1,5 @@
 package radiography.internal
 
-import androidx.compose.ui.semantics.SemanticsModifier
 import androidx.compose.ui.semantics.SemanticsProperties
 import radiography.ScannableView.ComposeView
 import radiography.ExperimentalRadiographyComposeApi
@@ -10,7 +9,6 @@ import radiography.ExperimentalRadiographyComposeApi
 internal fun ComposeView.findTestTags(): Sequence<String> {
   return semanticsConfigurations
     .asSequence()
-//    .filterIsInstance<SemanticsModifier>()
     .flatMap { semantics ->
       semantics.filter { it.key == SemanticsProperties.TestTag }
     }
