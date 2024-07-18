@@ -3,6 +3,8 @@ package radiography
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.SemanticsModifierNode
 import androidx.compose.ui.semantics.SemanticsConfiguration
 import androidx.compose.ui.semantics.SemanticsModifier
 import androidx.compose.ui.semantics.SemanticsNode
@@ -68,9 +70,25 @@ public sealed class ScannableView {
     public val semanticsConfigurations: List<SemanticsConfiguration>
       get() {
         return semanticsNodes.map { it.config }.ifEmpty { null }
+          // Before Compose 1.6, semantics could be held in a SemanticsModifier
           ?: modifiers
             .filterIsInstance<SemanticsModifier>()
             .map { it.semanticsConfiguration }
+            .ifEmpty { null }
+            // After Compose 1.6, semantics are held in nodes. While this usually gets represented
+            // by semanticsNodes, sometimes they instead are only found in SemanticsModifierNode,
+            // which we must then extract.
+          ?: modifiers
+            .filterIsInstance<ModifierNodeElement<*>>()
+            .map { it.create() }
+            .filterIsInstance<SemanticsModifierNode>()
+            .map { semanticsModifierNode ->
+              semanticsModifierNode.run {
+                val semanticsConfiguration = SemanticsConfiguration()
+                semanticsConfiguration.applySemantics()
+                semanticsConfiguration
+              }
+            }
       }
   }
 

@@ -6,7 +6,8 @@ plugins {
 }
 
 /** Use a separate property for the sample so we can test with different versions easily. */
-val sampleComposeVersion = "1.5.3"
+val sampleComposeVersion = "1.6.8"
+val sampleComposeCompilerVersion = "1.5.3"
 
 android {
   compileSdk = 34
@@ -28,7 +29,7 @@ android {
   }
 
   composeOptions {
-    kotlinCompilerExtensionVersion = sampleComposeVersion
+    kotlinCompilerExtensionVersion = sampleComposeCompilerVersion
   }
 
   packaging {

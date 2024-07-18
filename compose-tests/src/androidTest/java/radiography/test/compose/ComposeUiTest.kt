@@ -14,6 +14,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.SubcomposeLayout
@@ -380,6 +381,8 @@ class ComposeUiTest {
 
   @Test fun scanningHandlesDialog() {
     composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
       Box(Modifier.testTag("parent")) {
         Dialog(onDismissRequest = {}) {
           Box(Modifier.testTag("child"))
@@ -393,8 +396,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
-      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
+      |Box:
+      |${BLANK}Box { test-tag:"parent" }
       |${BLANK}╰─Dialog
       |${BLANK}  ╰─CompositionLocalProvider { DIALOG }
       |${BLANK}    ╰─Box { test-tag:"child" }
@@ -409,6 +412,8 @@ class ComposeUiTest {
     }
 
     composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
       Box(Modifier.testTag("parent")) {
         CustomTestDialog {
           Box(Modifier.testTag("child"))
@@ -422,8 +427,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
-      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
+      |Box:
+      |${BLANK}Box { test-tag:"parent" }
       |${BLANK}╰─CustomTestDialog
       |${BLANK}  ╰─CompositionLocalProvider { DIALOG }
       |${BLANK}    ╰─Box { test-tag:"child" }
@@ -434,6 +439,8 @@ class ComposeUiTest {
 
   @Test fun scanningHandlesSingleSubcomposeLayout_withSingleChild() {
     composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
       Box(Modifier.testTag("parent")) {
         SingleSubcompositionLayout(Modifier.testTag("subcompose-layout")) {
           Box(Modifier.testTag("child"))
@@ -447,8 +454,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
-      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
+      |Box:
+      |${BLANK}Box { test-tag:"parent" }
       |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
       |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
       |${BLANK}    ╰─Box { test-tag:"child" }
@@ -459,6 +466,8 @@ class ComposeUiTest {
 
   @Test fun scanningHandlesSingleSubcomposeLayout_withMultipleChildren() {
     composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
       Box(Modifier.testTag("parent")) {
         SingleSubcompositionLayout(Modifier.testTag("subcompose-layout")) {
           Box(Modifier.testTag("child1"))
@@ -473,8 +482,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
-      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
+      |Box:
+      |${BLANK}Box { test-tag:"parent" }
       |${BLANK}╰─SingleSubcompositionLayout { test-tag:"subcompose-layout" }
       |${BLANK}  ╰─<subcomposition of SingleSubcompositionLayout>
       |${BLANK}    ├─Box { test-tag:"child1" }
@@ -486,6 +495,8 @@ class ComposeUiTest {
 
   @Test fun scanningHandlesSingleSubcomposeLayout_withMultipleSubcompositionsAndChildren() {
     composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
       Box(Modifier.testTag("parent")) {
         MultipleSubcompositionLayout(Modifier.testTag("subcompose-layout"),
           firstChildren = {
@@ -505,8 +516,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
-      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
+      |Box:
+      |${BLANK}Box { test-tag:"parent" }
       |${BLANK}╰─MultipleSubcompositionLayout { test-tag:"subcompose-layout" }
       |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
       |${BLANK}  │ ├─Box { test-tag:"child1.1" }
@@ -521,6 +532,8 @@ class ComposeUiTest {
 
   @Test fun scanningHandlesSiblingSubcomposeLayouts() {
     composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
       Box(Modifier.testTag("parent")) {
         SingleSubcompositionLayout(Modifier.testTag("subcompose-layout1")) {
           Box(Modifier.testTag("child1"))
@@ -537,8 +550,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
-      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
+      |Box:
+      |${BLANK}Box { test-tag:"parent" }
       |${BLANK}├─SingleSubcompositionLayout { test-tag:"subcompose-layout1" }
       |${BLANK}│ ╰─<subcomposition of SingleSubcompositionLayout>
       |${BLANK}│   ╰─Box { test-tag:"child1" }
@@ -552,6 +565,8 @@ class ComposeUiTest {
 
   @Test fun scanningHandlesWithConstraints() {
     composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
       Box(Modifier.testTag("parent")) {
         BoxWithConstraints(Modifier.testTag("with-constraints")) {
           Box(Modifier.testTag("child"))
@@ -565,8 +580,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
-      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
+      |Box:
+      |${BLANK}Box { test-tag:"parent" }
       |${BLANK}╰─BoxWithConstraints { test-tag:"with-constraints" }
       |${BLANK}  ╰─<subcomposition of BoxWithConstraints>
       |${BLANK}    ╰─Box { test-tag:"child" }
@@ -577,6 +592,8 @@ class ComposeUiTest {
 
   @Test fun scanningHandlesLazyLists() {
     composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
       Box(Modifier.testTag("parent")) {
         LazyColumn(Modifier.testTag("list")) {
           items(listOf(1, 2, 3)) {
@@ -595,9 +612,9 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
-      |${BLANK}CompositionLocalProvider { test-tag:"parent" }
-      |${BLANK}╰─LazyColumn { test-tag:"list", vertical-scroll-axis-range:"ScrollAxisRange(value=0.0, maxValue=0.0)" }
+      |Box:
+      |${BLANK}Box { test-tag:"parent" }
+      |${BLANK}╰─LazyColumn { vertical-scroll-axis-range:"ScrollAxisRange(value=0.0, maxValue=0.0)", test-tag:"list" }
       |${BLANK}  ├─<subcomposition of LazyColumn>
       |${BLANK}  │ ╰─SkippableItem { test-tag:"child:1" }
       |${BLANK}  ├─<subcomposition of LazyColumn>
@@ -612,6 +629,8 @@ class ComposeUiTest {
 
   @Test fun scanningSubcomposition_includesSize() {
     composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
       // Convert 10 px to DP, since output is always in px.
       val sizeDp = with(LocalDensity.current) { 10.toDp() }
 
@@ -646,8 +665,8 @@ class ComposeUiTest {
 
     assertThat(hierarchy).isEqualTo(
       """
-      |CompositionLocalProvider:
-      |${BLANK}CompositionLocalProvider { 10×30px, test-tag:"parent" }
+      |Box:
+      |${BLANK}Box { 10×30px, test-tag:"parent" }
       |${BLANK}╰─MultipleSubcompositionLayout { 10×30px, test-tag:"subcompose-layout" }
       |${BLANK}  ├─<subcomposition of MultipleSubcompositionLayout>
       |${BLANK}  │ ├─Box { 10×10px, test-tag:"child1" }
