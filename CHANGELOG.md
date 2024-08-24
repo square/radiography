@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+
+
+Version 2.7
+-----------
+
+_2024-08-24_
+
+Update to Compose 1.7 ([#169](https://github.com/square/radiography/pull/169)).
+
 Version 2.6
 -----------
 
