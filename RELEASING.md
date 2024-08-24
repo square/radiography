@@ -34,7 +34,7 @@ git commit -am "Prepare {NEW_VERSION} release"
 
 * Perform a clean build
 ```bash
-./gradlew clean && gw build && gw connectedCheck
+./gradlew clean && ./gradlew build && ./gradlew connectedCheck
 ```
 
 * Create a tag and push it
@@ -47,6 +47,8 @@ git push origin v{NEW_VERSION}
 ```bash
 gh workflow run publish-release.yml --ref v{NEW_VERSION}
 ```
+
+Alternatively, you can run the workflow manually from the GitHub UI [here](https://github.com/square/radiography/actions/workflows/publish-release.yml) and select it to run from the release tag.
 
 * Merge the release branch to main
 ```bash
