@@ -15,7 +15,7 @@ brew install gh
 mate CHANGELOG.md
 ```
 
-* Create a local release branch from `main` and update `VERSION_NAME` in `gradle.properties` (removing `-SNAPSHOT`) and the README, then start the publish workflow:
+* Create a local release branch from `main` and update `VERSION_NAME` in `gradle.properties` (removing `-SNAPSHOT`) and the README, then run the publish workflow and finish the release:
 
 ```bash
 git checkout main && \
@@ -30,12 +30,7 @@ git commit -am "Prepare {NEW_VERSION} release" && \
 git tag v{NEW_VERSION} && \
 git push origin v{NEW_VERSION} && \
 gh workflow run publish-release.yml --ref v{NEW_VERSION} && \
-gh run watch
-```
-
-* Press enter to confirm selection of the currently running workflow, wait for it to finish running then finish the release:
-
-```bash
+gh run list --workflow=publish-release.yml --branch v{NEW_VERSION} --json databaseId --jq ".[].databaseId" | xargs -I{} gh run watch {} --exit-status && \
 git checkout main && \
 git pull && \
 git merge --no-ff --no-edit release_{NEW_VERSION} && \
