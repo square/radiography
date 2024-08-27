@@ -1,78 +1,42 @@
 # Releasing
 
-* Install GitHub CLI if needed
+## Set up GitHub CLI
+
+Install GitHub CLI
+
 ```bash
 brew install gh
 ```
 
-* Create a local release branch from `main`
-```bash
-git checkout main
-git pull
-git checkout -b release_{NEW_VERSION}
-```
-
-* Update `VERSION_NAME` in `gradle.properties` (remove `-SNAPSHOT`)
-```gradle
-sed -i '' 's/VERSION_NAME={NEW_VERSION}-SNAPSHOT/VERSION_NAME={NEW_VERSION}/' gradle.properties
-```
+## Creating the release
 
 * Update the changelog
 ```bash
 mate CHANGELOG.md
-```	
-
-* Update the released version in the readme
-```bash
-mate README.md
-```	
-
-* Commit all local changes
-```bash
-git commit -am "Prepare {NEW_VERSION} release"
 ```
 
-* Perform a clean build
-```bash
-./gradlew clean && ./gradlew build && ./gradlew connectedCheck
-```
+* Create a local release branch from `main` and update `VERSION_NAME` in `gradle.properties` (removing `-SNAPSHOT`) and the README, then run the publish workflow and finish the release:
 
-* Create a tag and push it
 ```bash
-git tag v{NEW_VERSION}
-git push origin v{NEW_VERSION}
-```
-
-* Run the _Publish Release_ workflow
-```bash
-gh workflow run publish-release.yml --ref v{NEW_VERSION}
-```
-
-Alternatively, you can run the workflow manually from the GitHub UI [here](https://github.com/square/radiography/actions/workflows/publish-release.yml) and select it to run from the release tag.
-
-* Merge the release branch to main
-```bash
-git checkout main
-git pull
-git merge --no-ff release_{NEW_VERSION}
-```
-* Update `VERSION_NAME` in `gradle.properties` (increase version and add `-SNAPSHOT`)
-```gradle
-sed -i '' 's/VERSION_NAME={NEW_VERSION}/VERSION_NAME={NEXT_VERSION}-SNAPSHOT/' gradle.properties
-```
-
-* Commit your changes
-```bash
-git commit -am "Prepare for next development iteration"
-```
-
-* Push your changes
-```bash
-git push
-```
-
-* Create a new release
-```bash
+git checkout main && \
+git pull && \
+git checkout -b release_{NEW_VERSION} && \
+sed -i '' 's/VERSION_NAME=.*-SNAPSHOT/VERSION_NAME={NEW_VERSION}/' gradle.properties
+sed -i '' "s/com.squareup.radiography:radiography:.*'/com.squareup.radiography:radiography:{NEW_VERSION}'/" README.md && \
+git commit -am "Prepare {NEW_VERSION} release" && \
+./gradlew clean && \
+./gradlew build && \
+./gradlew connectedCheck && \
+git tag v{NEW_VERSION} && \
+git push origin v{NEW_VERSION} && \
+gh workflow run publish-release.yml --ref v{NEW_VERSION} && \
+gh run list --workflow=publish-release.yml --branch v{NEW_VERSION} --json databaseId --jq ".[].databaseId" | xargs -I{} gh run watch {} --exit-status && \
+git checkout main && \
+git pull && \
+git merge --no-ff --no-edit release_{NEW_VERSION} && \
+sed -i '' 's/VERSION_NAME={NEW_VERSION}/VERSION_NAME={NEXT_VERSION}-SNAPSHOT/' gradle.properties && \
+git commit -am "Prepare for next development iteration" && \
+git push && \
 gh release create v{NEW_VERSION} --title v{NEW_VERSION} --notes 'See [Change Log](https://github.com/square/radiography/blob/main/CHANGELOG.md)'
 ```
 
