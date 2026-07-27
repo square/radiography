@@ -46,7 +46,7 @@ import androidx.compose.ui.semantics.SemanticsProperties.ToggleableState
 import androidx.compose.ui.semantics.SemanticsProperties.VerticalScrollAxisRange
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.state.ToggleableState.On
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction.Companion.Send
 import androidx.compose.ui.viewinterop.AndroidView
@@ -417,7 +417,7 @@ class ComposeUiTest {
       |Box:
       |${BLANK}Box { test-tag:"parent" }
       |${BLANK}╰─Dialog
-      |${BLANK}  ╰─CompositionLocalProvider { DIALOG }
+      |${BLANK}  ╰─ProvideCompositionLocals { DIALOG }
       |${BLANK}    ╰─Box { test-tag:"child" }
       |
       """.trimMargin()
@@ -448,7 +448,7 @@ class ComposeUiTest {
       |Box:
       |${BLANK}Box { test-tag:"parent" }
       |${BLANK}╰─CustomTestDialog
-      |${BLANK}  ╰─CompositionLocalProvider { DIALOG }
+      |${BLANK}  ╰─ProvideCompositionLocals { DIALOG }
       |${BLANK}    ╰─Box { test-tag:"child" }
       |
       """.trimMargin()
@@ -739,6 +739,66 @@ class ComposeUiTest {
         }
       }
     }
+  }
+
+  /**
+   * Like [SingleSubcompositionLayout] but creates one subcomposition per slot, in the order
+   * slots are provided. Used to test that radiography reports subcompositions in subcompose-call
+   * order even when the internal Set of composers does not preserve insertion order.
+   */
+  @Composable private fun MultiSlotSubcompositionLayout(
+    modifier: Modifier,
+    slots: List<@Composable () -> Unit>
+  ) {
+    SubcomposeLayout(modifier) { constraints ->
+      val allPlaceables = slots.mapIndexed { index, content ->
+        subcompose(index, content).map { it.measure(constraints) }
+      }.flatten()
+
+      layout(0, 0) {
+        allPlaceables.forEach { it.placeRelative(0, 0) }
+      }
+    }
+  }
+
+  @Test fun scanningHandlesMultipleSubcompositionsInDeterministicOrder() {
+    composeRule.setContent {
+      currentComposer.collectParameterInformation()
+
+      Box(Modifier.testTag("parent")) {
+        MultiSlotSubcompositionLayout(
+          modifier = Modifier.testTag("subcompose-layout"),
+          slots = listOf(
+            { Box(Modifier.testTag("slot1")) },
+            { Box(Modifier.testTag("slot2")) },
+            { Box(Modifier.testTag("slot3")) },
+            { Box(Modifier.testTag("slot4")) },
+          )
+        )
+      }
+    }
+
+    val hierarchy = composeRule.runOnIdle {
+      Radiography.scan(composeTestTagScope("parent"))
+    }
+
+    @Suppress("RemoveCurlyBracesFromTemplate")
+    assertThat(hierarchy).isEqualTo(
+      """
+      |Box:
+      |${BLANK}Box { test-tag:"parent" }
+      |${BLANK}╰─MultiSlotSubcompositionLayout { test-tag:"subcompose-layout" }
+      |${BLANK}  ├─<subcomposition of MultiSlotSubcompositionLayout>
+      |${BLANK}  │ ╰─Box { test-tag:"slot1" }
+      |${BLANK}  ├─<subcomposition of MultiSlotSubcompositionLayout>
+      |${BLANK}  │ ╰─Box { test-tag:"slot2" }
+      |${BLANK}  ├─<subcomposition of MultiSlotSubcompositionLayout>
+      |${BLANK}  │ ╰─Box { test-tag:"slot3" }
+      |${BLANK}  ╰─<subcomposition of MultiSlotSubcompositionLayout>
+      |${BLANK}    ╰─Box { test-tag:"slot4" }
+      |
+      """.trimMargin()
+    )
   }
 
   companion object {

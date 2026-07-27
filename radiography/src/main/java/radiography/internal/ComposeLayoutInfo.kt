@@ -21,6 +21,8 @@ import radiography.ScannableView.CallGroupInfo
 import radiography.internal.ComposeLayoutInfo.AndroidViewInfo
 import radiography.internal.ComposeLayoutInfo.LayoutNodeInfo
 import radiography.internal.ComposeLayoutInfo.SubcompositionInfo
+import java.lang.reflect.Method
+import java.util.IdentityHashMap
 
 /**
  * Information about a Compose `LayoutNode`, extracted from a [Group] tree via [Group.computeLayoutInfos].
@@ -34,12 +36,14 @@ import radiography.internal.ComposeLayoutInfo.SubcompositionInfo
  */
 internal sealed class ComposeLayoutInfo {
   data class LayoutNodeInfo(
-      val name: String,
-      val callChain: List<CallGroupInfo>,
-      val bounds: IntRect,
-      val modifiers: List<Modifier>,
-      val children: Sequence<ComposeLayoutInfo>,
-      val semanticsNodes: List<SemanticsNode>,
+    val name: String,
+    val callChain: List<CallGroupInfo>,
+    val bounds: IntRect,
+    val modifiers: List<Modifier>,
+    val children: Sequence<ComposeLayoutInfo>,
+    val semanticsNodes: List<SemanticsNode>,
+    // Node reference used to sort Subcompose Layouts deterministically across runs
+    val layoutNode: Any? = null,
   ) : ComposeLayoutInfo()
 
   data class SubcompositionInfo(
@@ -114,6 +118,7 @@ internal fun Group.computeLayoutInfos(
     modifiers = modifierInfo.map { it.modifier },
     semanticsNodes = semanticsNodes,
     children = children + irregularChildren,
+    layoutNode = this.node,
   )
   return sequenceOf(layoutInfo)
 }
@@ -195,10 +200,13 @@ private fun Group.tryParseSubcomposition(
 
   // We can be pretty confident at this point that this is an actual SubcomposeLayout, so
   // expose its layout node as the parent of all its subcompositions.
+  // Sort subcompositions by the placement order of their children within the parent LayoutNode,
+  // since the set backing composers may not preserve insertion order.
   val subcompositionName = "<subcomposition of ${mainNode.name}>"
   return sequenceOf(
-    mainNode.copy(children = subcompositions.asSequence()
-      .map { it.copy(name = subcompositionName) }
+    mainNode.copy(
+      children = sortSubcompositionsByChildOrder(this, subcompositions).asSequence()
+        .map { it.copy(name = subcompositionName) }
     )
   )
 }
@@ -251,6 +259,52 @@ private fun Group.tryParseAndroidView(
   // We can be pretty confident at this point that this is an actual AndroidView composable,
   // so expose its layout node as the parent of its actual view.
   return sequenceOf(mainNode.copy(children = mainNode.children + androidViews))
+}
+
+/**
+ * Sorts subcompositions by the placement order of their first child LayoutNode within the parent
+ * LayoutNode. Uses object identity to match layout nodes, which is reliable regardless of whether
+ * the nodes have semantics. Falls back to the original order if reflection fails.
+ */
+private fun sortSubcompositionsByChildOrder(
+  parentGroup: Group,
+  subcompositions: List<SubcompositionInfo>
+): List<SubcompositionInfo> {
+  if (subcompositions.size <= 1) return subcompositions
+  val childOrder = getChildLayoutNodeOrder(parentGroup) ?: return subcompositions
+  val materialized = subcompositions.map {
+    it.copy(children = it.children.toList().asSequence())
+  }
+
+  return materialized.sortedBy { sub ->
+    sub.children
+      .filterIsInstance<LayoutNodeInfo>()
+      .firstOrNull { it.layoutNode != null && it.layoutNode in childOrder }
+      ?.let { childOrder[it.layoutNode] }
+      ?: Int.MAX_VALUE
+  }
+}
+
+private val GET_CHILDREN_METHOD: Method by lazy {
+  Class.forName("androidx.compose.ui.node.LayoutNode").getMethod($$"getChildren$ui")
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun getChildLayoutNodeOrder(parentGroup: Group): IdentityHashMap<Any, Int>? {
+  val children = GET_CHILDREN_METHOD(checkNotNull(findNodeGroup(parentGroup)).node) as List<*>
+  val order = IdentityHashMap<Any, Int>(children.size)
+  children.forEachIndexed { index, child ->
+    if (child != null) order[child] = index
+  }
+  return order
+}
+
+private fun findNodeGroup(group: Group): NodeGroup? {
+  if (group is NodeGroup) return group
+  for (child in group.children) {
+    findNodeGroup(child)?.let { return it }
+  }
+  return null
 }
 
 private fun Sequence<*>.isEmpty(): Boolean = !iterator().hasNext()

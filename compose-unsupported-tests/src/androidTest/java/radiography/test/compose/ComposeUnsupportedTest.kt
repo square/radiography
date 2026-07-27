@@ -1,7 +1,7 @@
 package radiography.test.compose
 
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
